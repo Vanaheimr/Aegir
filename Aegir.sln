@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aegir", "Aegir\Aegir.csproj", "{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Depenencies", "Depenencies", "{67ED31EF-D21A-4136-8DCD-0390FDAE21D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons", "..\Illias\Commons\Commons.csproj", "{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3} = {67ED31EF-D21A-4136-8DCD-0390FDAE21D7}
+	EndGlobalSection
+EndGlobal

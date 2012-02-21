@@ -1,0 +1,7 @@
+*.pidb
+*.VisualState.xml
+*.suo
+*.csproj.user
+*.vsp
+/Aegir/obj
+/Aegir/bin
