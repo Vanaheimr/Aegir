@@ -5,3 +5,7 @@
 *.vsp
 /Aegir/obj
 /Aegir/bin
+/AegirTests/obj
+/AegirTests/bin
+/AegirTiles/bin
+/AegirTiles/obj
