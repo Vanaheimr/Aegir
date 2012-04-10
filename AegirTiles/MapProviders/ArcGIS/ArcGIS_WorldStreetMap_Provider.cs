@@ -1,12 +1,12 @@
 ﻿/*
- * Copyright (c) 2010-2012 Achim 'ahzf' Friedland <achim.friedland@aperis.com>
- * This file is part of TileServer <http://www.github.com/ahzf/TileServer>
+ * Copyright (c) 2010-2012, Achim 'ahzf' Friedland <code@ahzf.de>
+ * This file is part of Aegir <http://www.github.com/Vanaheimr/Aegir>
  *
- * Licensed under the Affero GPL license, Version 3.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.gnu.org/licenses/agpl.html
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ using System;
 
 #endregion
 
-namespace de.ahzf.TileServer
+namespace de.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
