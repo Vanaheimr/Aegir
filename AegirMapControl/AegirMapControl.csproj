@@ -89,6 +89,10 @@
       <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
       <Name>Hermod</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">
+      <Project>{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}</Project>
+      <Name>Commons</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AegirTiles\AegirTiles.csproj">
       <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
       <Name>AegirTiles</Name>
