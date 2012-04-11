@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TileServer")]
-[assembly: AssemblyDescription("A caching tiles proxy to access different map providers.")]
+[assembly: AssemblyTitle("HeatMap")]
+[assembly: AssemblyDescription("Working with graphs and heat maps.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ahzf.de")]
-[assembly: AssemblyProduct("TileServer")]
-[assembly: AssemblyCopyright("Copyright © Achim 'ahzf' Friedland 2011-2012")]
+[assembly: AssemblyProduct("HeatMap")]
+[assembly: AssemblyCopyright("Copyright © Achim 'ahzf' Friedland 2010-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7f13f9f1-6535-46c0-8fcf-1a258fa42301")]
+[assembly: Guid("9011cfc4-0b89-49eb-8d3a-e7aba6fc3ab1")]
 
 // Version information for an assembly consists of the following four values:
 //

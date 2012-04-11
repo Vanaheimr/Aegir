@@ -45,6 +45,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyxTests", "..\Styx\StyxTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AegirMapControl", "AegirMapControl\AegirMapControl.csproj", "{17FC3955-9E9E-4358-A666-A3CD53CCDCE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatMap", "HeatMap\HeatMap.csproj", "{472F0378-292E-4D92-9A37-D59ACCCC307C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatMapTests", "HeatMapTests\HeatMapTests.csproj", "{1DEA5F98-67AF-497B-842B-CDF865AE682C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AegirTilesTests", "AegirTilesTests\AegirTilesTests.csproj", "{634759F0-41E5-418C-A51B-EDA342190CAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +155,24 @@ Global
 		{17FC3955-9E9E-4358-A666-A3CD53CCDCE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17FC3955-9E9E-4358-A666-A3CD53CCDCE5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17FC3955-9E9E-4358-A666-A3CD53CCDCE5}.Release|x86.ActiveCfg = Release|Any CPU
+		{472F0378-292E-4D92-9A37-D59ACCCC307C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{472F0378-292E-4D92-9A37-D59ACCCC307C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{472F0378-292E-4D92-9A37-D59ACCCC307C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{472F0378-292E-4D92-9A37-D59ACCCC307C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{472F0378-292E-4D92-9A37-D59ACCCC307C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{472F0378-292E-4D92-9A37-D59ACCCC307C}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DEA5F98-67AF-497B-842B-CDF865AE682C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DEA5F98-67AF-497B-842B-CDF865AE682C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DEA5F98-67AF-497B-842B-CDF865AE682C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DEA5F98-67AF-497B-842B-CDF865AE682C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DEA5F98-67AF-497B-842B-CDF865AE682C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DEA5F98-67AF-497B-842B-CDF865AE682C}.Release|x86.ActiveCfg = Release|Any CPU
+		{634759F0-41E5-418C-A51B-EDA342190CAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{634759F0-41E5-418C-A51B-EDA342190CAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{634759F0-41E5-418C-A51B-EDA342190CAD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{634759F0-41E5-418C-A51B-EDA342190CAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{634759F0-41E5-418C-A51B-EDA342190CAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{634759F0-41E5-418C-A51B-EDA342190CAD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

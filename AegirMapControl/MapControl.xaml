@@ -8,10 +8,10 @@
              d:DesignHeight="400" d:DesignWidth="600">
     <Grid>
         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
-            <my:MappingCanvas x:Name="MapCanvas1" Background="White" ClipToBounds="True" Grid.Column="0" SnapsToDevicePixels="True" SizeChanged="MappingCanvas_SizeChanged" MouseLeftButtonDown="MapCanvas_MouseLeftButtonDown" MouseMove="AllCanvas_MouseMove">
+            <my:AegirMapCanvas x:Name="MapCanvas1" Background="White" ClipToBounds="True" Grid.Column="0" SnapsToDevicePixels="True" SizeChanged="MappingCanvas_SizeChanged" MouseLeftButtonDown="MapCanvas_MouseLeftButtonDown" MouseMove="AllCanvas_MouseMove">
                 <Button Name="ZoomInButton"  Height="23" Width="23" Content="+" Canvas.Left="5" Canvas.Top="5"  Canvas.ZIndex="99" Click="ZoomInButton_Click"  />
                 <Button Name="ZoomOutButton" Height="23" Width="23" Content="-" Canvas.Left="5" Canvas.Top="33" Canvas.ZIndex="99" Click="ZoomOutButton_Click" />
-            </my:MappingCanvas>
+            </my:AegirMapCanvas>
         </Border>
         
     </Grid>

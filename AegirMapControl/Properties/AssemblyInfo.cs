@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AegirMapControl")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Working with graphs and maps using WPF.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AegirMapControl")]

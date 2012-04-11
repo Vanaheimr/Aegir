@@ -88,7 +88,7 @@ namespace de.Vanaheimr.Aegir.Controls
         /// An event getting fired whenever the position of the mouse
         /// on the map changes.
         /// </summary>
-        public event MappingCanvas.GeoPositionChangedEventHandler GeoPositionChanged
+        public event AegirMapCanvas.GeoPositionChangedEventHandler GeoPositionChanged
         {
 
             add

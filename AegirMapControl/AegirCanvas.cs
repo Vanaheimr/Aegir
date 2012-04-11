@@ -38,9 +38,9 @@ namespace de.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// Creates a new canvas for visualizing map.
+    /// A canvas for visualizing a map.
     /// </summary>
-    public class MappingCanvas : Canvas
+    public class AegirMapCanvas : Canvas
     {
 
         public delegate void GeoPositionChangedEventHandler(object sender, Tuple<Double, Double> GeoPosition);
@@ -122,12 +122,12 @@ namespace de.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region MappingCanvas()
+        #region AegirMapCanvas()
 
         /// <summary>
-        /// Creates a new canvas for visualizing the given property graph.
+        /// Creates a new canvas for visualizing a map.
         /// </summary>
-        public MappingCanvas()
+        public AegirMapCanvas()
         {
 
             this.DrawingOffsetX = 0;
