@@ -130,7 +130,7 @@ namespace de.Vanaheimr.Aegir.Tiles
         {
 
             var _Content = Encoding.UTF8.GetBytes(new JObject(
-                               new JProperty(__MapProviders, TileServer.MapProviders.Select(_MapProvider => _MapProvider.Key))
+                               new JProperty(__MapProviders, TileServer.RegisteredMapProviderNames)
                            ).ToString());
 
             return new HTTPResponseBuilder()
@@ -163,7 +163,7 @@ namespace de.Vanaheimr.Aegir.Tiles
             
             IMapProvider _MapProvider;
 
-            if (TileServer.MapProviders.TryGetValue(Provider, out _MapProvider))
+            if (TileServer.RegisteredMapProviders.TryGetValue(Provider, out _MapProvider))
             {
 
                 var _Content = Encoding.UTF8.GetBytes(new JObject(

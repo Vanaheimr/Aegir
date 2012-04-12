@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatMapTests", "HeatMapTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AegirTilesTests", "AegirTilesTests\AegirTilesTests.csproj", "{634759F0-41E5-418C-A51B-EDA342190CAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AegirTilesClient", "AegirTilesClient\AegirTilesClient.csproj", "{D6A73280-9D66-4509-9131-3F379E8A3F5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,12 @@ Global
 		{634759F0-41E5-418C-A51B-EDA342190CAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{634759F0-41E5-418C-A51B-EDA342190CAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{634759F0-41E5-418C-A51B-EDA342190CAD}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6A73280-9D66-4509-9131-3F379E8A3F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A73280-9D66-4509-9131-3F379E8A3F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A73280-9D66-4509-9131-3F379E8A3F5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6A73280-9D66-4509-9131-3F379E8A3F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A73280-9D66-4509-9131-3F379E8A3F5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6A73280-9D66-4509-9131-3F379E8A3F5A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

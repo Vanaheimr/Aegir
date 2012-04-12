@@ -34,12 +34,12 @@ namespace de.Vanaheimr.Aegir.Tiles
     /// <summary>
     /// A tcp/http based TileServer.
     /// </summary>
-    public class TileServer : HTTPServer<ITileService>
+    public class TileServer : HTTPServer<ITileService>, ITileClient
     {
 
         #region Data
 
-        private AutoDiscovery<IMapProvider> AutoMapProviders;
+        private readonly AutoDiscovery<IMapProvider> AutoMapProviders;
 
         #endregion
         
@@ -60,26 +60,34 @@ namespace de.Vanaheimr.Aegir.Tiles
 
         #endregion
 
-        #region MapProviders
-
-        private IDictionary<String, IMapProvider> _MapProviders;
+        #region RegisteredMapProviderNames
 
         /// <summary>
-        /// An enumeration of all map providers.
+        /// Return an enumeration of all registered map provider names.
         /// </summary>
-        public IDictionary<String, IMapProvider> MapProviders
+        public IEnumerable<String> RegisteredMapProviderNames
         {
             get
             {
+                return from   MapProvider
+                       in     AutoMapProviders.RegisteredTypes
+                       select MapProvider.Name;
+            }
+        }
 
-                if (_MapProviders != null)
-                    return _MapProviders;
+        #endregion
 
-                _MapProviders = AutoMapProviders.RegisteredTypes.ToDictionary(MapProvider => MapProvider.Name,
-                                                                              MapProvider => MapProvider);
+        #region RegisteredMapProviders
 
-                return _MapProviders;
-
+        /// <summary>
+        /// Return an enumeration of all registered map providers.
+        /// </summary>
+        public IDictionary<String, IMapProvider> RegisteredMapProviders
+        {
+            get
+            {
+                return AutoMapProviders.RegisteredTypes.ToDictionary(MapProvider => MapProvider.Name,
+                                                                     MapProvider => MapProvider);
             }
         }
 
@@ -99,7 +107,7 @@ namespace de.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
 
             base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
 
@@ -119,7 +127,7 @@ namespace de.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
 
             base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
 
@@ -140,7 +148,7 @@ namespace de.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
 
             base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
 
@@ -160,7 +168,7 @@ namespace de.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
 
             base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
 
@@ -171,44 +179,31 @@ namespace de.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        public Byte[] GetTile(String MapProviderName, UInt32 Zoom, UInt32 X, UInt32 Y)
-        {
-            
-            IMapProvider _MapProvider = null;
-            if (MapProviders.TryGetValue(MapProviderName, out _MapProvider))
-            {
-                return _MapProvider.GetTile(Zoom, X, Y);
-            }
-
-            return null;
-
-        }
-
-        public Stream GetTileStream(String MapProviderName, UInt32 Zoom, UInt32 X, UInt32 Y)
-        {
-
-            IMapProvider _MapProvider = null;
-            if (MapProviders.TryGetValue(MapProviderName, out _MapProvider))
-            {
-                return _MapProvider.GetTileStream(Zoom, X, Y);
-            }
-
-            return null;
-
-        }
-
-
-        #region ToString()
+        #region GetTile(MapProviderName, Zoom, X, Y)
 
         /// <summary>
-        /// Returns a string representation of this object.
+        /// Return the tile for the given parameters.
         /// </summary>
-        public override string ToString()
+        /// <param name="MapProviderName">The unique identification of the map provider.</param>
+        /// <param name="ZoomLevel">The zoom level.</param>
+        /// <param name="X">The x coordinate of the tile.</param>
+        /// <param name="Y">The y coordinate of the tile.</param>
+        /// <returns>The requested tile as an array of bytes.</returns>
+        public Byte[] GetTile(String MapProviderName, UInt32 ZoomLevel, UInt32 X, UInt32 Y)
         {
-            return "TileServer";
+
+            IMapProvider _MapProvider = null;
+            if (AutoMapProviders.TryGetInstance(MapProviderName, out _MapProvider))
+            {
+                return _MapProvider.GetTile(ZoomLevel, X, Y);
+            }
+
+            return null;
+
         }
 
         #endregion
+
 
     }
 
