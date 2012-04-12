@@ -60,7 +60,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AegirCanvas.cs" />
+    <Compile Include="AegirMapCanvas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -96,6 +96,10 @@
     <ProjectReference Include="..\AegirTiles\AegirTiles.csproj">
       <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
       <Name>AegirTiles</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Aegir\Aegir.csproj">
+      <Project>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</Project>
+      <Name>Aegir</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

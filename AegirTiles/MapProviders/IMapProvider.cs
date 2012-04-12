@@ -66,7 +66,9 @@ namespace de.Vanaheimr.Aegir.Tiles
 
 
 
-        Stream GetTile(UInt32 Zoom, UInt32 X, UInt32 Y);
+        Byte[] GetTile(UInt32 Zoom, UInt32 X, UInt32 Y);
+
+        Stream GetTileStream(UInt32 ZoomLevel, UInt32 X, UInt32 Y);
 
     }
 

@@ -171,13 +171,26 @@ namespace de.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        public Stream GetTile(String MapProviderName, UInt32 Zoom, UInt32 X, UInt32 Y)
+        public Byte[] GetTile(String MapProviderName, UInt32 Zoom, UInt32 X, UInt32 Y)
         {
             
             IMapProvider _MapProvider = null;
             if (MapProviders.TryGetValue(MapProviderName, out _MapProvider))
             {
                 return _MapProvider.GetTile(Zoom, X, Y);
+            }
+
+            return null;
+
+        }
+
+        public Stream GetTileStream(String MapProviderName, UInt32 Zoom, UInt32 X, UInt32 Y)
+        {
+
+            IMapProvider _MapProvider = null;
+            if (MapProviders.TryGetValue(MapProviderName, out _MapProvider))
+            {
+                return _MapProvider.GetTileStream(Zoom, X, Y);
             }
 
             return null;

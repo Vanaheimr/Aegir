@@ -202,29 +202,29 @@ namespace de.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        #region (virtual) GetTile(Zoom, X, Y)
+        #region (virtual) GetTile(ZoomLevel, X, Y)
 
         /// <summary>
-        /// Return the tile for the given zoom, x and y parameters.
+        /// Return the tile for the given ZoomLevel, X and Y coordinates.
         /// </summary>
-        /// <param name="Zoom">The zoom level.</param>
+        /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The tile x-value.</param>
         /// <param name="Y">The tile y-value.</param>
         /// <returns>A stream containing the tile.</returns>
-        public virtual Stream GetTile(UInt32 Zoom, UInt32 X, UInt32 Y)
+        public virtual Byte[] GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
         {
             
-            var XCache = TileCache[Zoom];
+            var XCache = TileCache[ZoomLevel];
             if (XCache == null)
             {
-                XCache          = new Byte[(Int32) Math.Pow(2, Zoom)][][];
-                TileCache[Zoom] = XCache;
+                XCache               = new Byte[(Int32) Math.Pow(2, ZoomLevel)][][];
+                TileCache[ZoomLevel] = XCache;
             }
 
             var YCache = XCache[X];
             if (YCache == null)
             {
-                YCache    = new Byte[(Int32) Math.Pow(2, Zoom)][];
+                YCache    = new Byte[(Int32) Math.Pow(2, ZoomLevel)][];
                 XCache[X] = YCache;
             }
 
@@ -235,22 +235,22 @@ namespace de.Vanaheimr.Aegir.Tiles
                 {
 
                     var _Url = ActualHost +
-                               UriPattern.Replace("{zoom}", Zoom.ToString()).
-                                          Replace("{x}",       X.ToString()).
-                                          Replace("{y}",       Y.ToString());
+                               UriPattern.Replace("{zoom}", ZoomLevel.ToString()).
+                                          Replace("{x}",            X.ToString()).
+                                          Replace("{y}",            Y.ToString());
 
-                    Debug.WriteLine("Fetching: " + _Url);
+                    //Debug.WriteLine("Fetching: " + _Url);
 
                     try
                     {
-                        var wc = new WebClient();
-                        wc.Proxy = null;
-                        YCache[Y] = wc.DownloadData(_Url);
+                        var WebClient = new WebClient();
+                        WebClient.Proxy = null;
+                        YCache[Y] = WebClient.DownloadData(_Url);
                     }
                     catch (Exception e)
                     {
-                        
-                        Debug.WriteLine("AMapProvider: " + e);
+
+                        Debug.WriteLine("AMapProvider Exception: " + e);
                         
                         // Try next host...
                         continue;
@@ -264,11 +264,28 @@ namespace de.Vanaheimr.Aegir.Tiles
 
             }
 
-            return new MemoryStream(YCache[Y]);
+            return YCache[Y];
 
         }
 
         #endregion
+
+        #region (virtual) GetTileStream(ZoomLevel, X, Y)
+
+        /// <summary>
+        /// Return the tile for the given ZoomLevel, X and Y coordinates.
+        /// </summary>
+        /// <param name="ZoomLevel">The zoom level.</param>
+        /// <param name="X">The tile x-value.</param>
+        /// <param name="Y">The tile y-value.</param>
+        /// <returns>A stream containing the tile.</returns>
+        public virtual Stream GetTileStream(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
+        {
+            return new MemoryStream(GetTile(ZoomLevel, X, Y));
+        }
+
+        #endregion
+
 
     }
 

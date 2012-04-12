@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 using de.Vanaheimr.Aegir.Tiles;
+using de.ahzf.Vanaheimr.Aegir;
 
 #endregion
 
@@ -311,7 +312,7 @@ namespace de.Vanaheimr.Aegir
 
                     #endregion
 
-                    #region Run in background
+                    #region Paint new map as background task
 
                     Task.Factory.StartNew(() => {
 
@@ -336,7 +337,7 @@ namespace de.Vanaheimr.Aegir
                                 _ActualYTile = (Int32) ((_y - ___y) % _NumberOfTiles);
                                 if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
 
-                                var _TileStream = TileServer.GetTile(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
+                                var _TileStream = TileServer.GetTileStream(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
 
                                 this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)((_TileStream2) =>
                                 {
@@ -370,7 +371,7 @@ namespace de.Vanaheimr.Aegir
                         this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
                             foreach (var Image in OldTilesToDelete)
                                 this.Children.Remove(Image);
-                                }));
+                            }));
 
                     });
 
@@ -425,9 +426,9 @@ namespace de.Vanaheimr.Aegir
 
                 if (GeoPositionChanged != null)
                 {
-                    GeoPositionChanged(this, MouseToWorldPosition(MousePosition.X - DrawingOffsetX,
-                                                                  MousePosition.Y - DrawingOffsetY,
-                                                                  ZoomLevel));
+                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - DrawingOffsetX,
+                                                                                  MousePosition.Y - DrawingOffsetY,
+                                                                                  ZoomLevel));
                 }
 
                 #endregion
@@ -481,50 +482,7 @@ namespace de.Vanaheimr.Aegir
         #endregion
 
 
-        #region Map Area
-
-        public Tuple<Double, Double> WorldCoordinates_2_Tile(Double lat, Double lon, Int32 zoom)
-        {
-            return new Tuple<Double, Double>(Math.Floor(((lon + 180.0) / 360.0) * (1 << zoom)),
-                                     Math.Floor((1.0 - Math.Log(
-                                                              Math.Tan(lat * Math.PI / 180.0) +
-                                                              1.0 / Math.Cos(lat * Math.PI / 180.0)
-                                                          ) / Math.PI)
-                                                    / 2.0 * (1 << zoom))
-                                    );
-        }
-
-        public Tuple<Double, Double> TileToWorldPos(Double tile_x, Double tile_y, UInt32 zoom)
-        {
-
-            double n = Math.PI - ((2.0 * Math.PI * tile_y) / Math.Pow(2.0, zoom));
-
-            return new Tuple<Double, Double>(((tile_x / Math.Pow(2.0, zoom) * 360.0) - 180.0),
-                                     (180.0 / Math.PI * Math.Atan(Math.Sinh(n))));
-
-        }
-
-        public Tuple<Double, Double> MouseToWorldPosition(Double MouseX, Double MouseY, UInt32 zoom)
-        {
-
-            var AllSize = Math.Pow(2.0, zoom) * 256;
-
-
-            double n = Math.PI - ((2.0 * Math.PI * MouseY) / AllSize);
-
-            return new Tuple<Double, Double>(((MouseX / AllSize * 360.0) - 180.0),
-                                     (180.0 / Math.PI * Math.Atan(Math.Sinh(n))));
-
-        }
-
-        ////Usage:
-        //var point = LatLonToPoint(51.51202,0.02435,17)
-        //var tile = point.toTile
-        //// ==> Tile(65544,43582,17)
-        //var uri = tile.toURI
-        //// ==> http://tile.openstreetmap.org/17/65544/43582.png
-
-        #endregion
+        
 
     }
 

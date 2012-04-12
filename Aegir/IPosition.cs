@@ -30,15 +30,18 @@ namespace de.ahzf.Vanaheimr.Aegir
     public interface IPosition
     {
 
-        /// <summary>
-        /// The longitude of something.
-        /// </summary>
-        Double  Longitude   { get; set; }
+        // Latitude, Longitude of Jena, DE
+        // 50.929054, 11.584074
 
         /// <summary>
         /// The latitude of something.
         /// </summary>
         Double  Latitude    { get; set; }
+
+        /// <summary>
+        /// The longitude of something.
+        /// </summary>
+        Double  Longitude   { get; set; }
 
         /// <summary>
         /// The altitude of something.
