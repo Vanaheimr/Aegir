@@ -105,6 +105,75 @@ namespace de.Vanaheimr.Aegir.Controls
 
         #endregion
 
+        #region ZoomLevelChanged
+
+        /// <summary>
+        /// An event getting fired whenever the zoomlevel
+        /// of the map changes.
+        /// </summary>
+        public event AegirMapCanvas.ZoomLevelChangedEventHandler ZoomLevelChanged
+        {
+
+            add
+            {
+                this.MapCanvas1.ZoomLevelChanged += value;
+            }
+
+            remove
+            {
+                this.MapCanvas1.ZoomLevelChanged -= value;
+            }
+
+        }
+
+        #endregion
+
+        #region MapProviderChanged
+
+        /// <summary>
+        /// An event getting fired whenever the map provider
+        /// of the map changed.
+        /// </summary>
+        public event AegirMapCanvas.MapProviderChangedEventHandler MapProviderChanged
+        {
+
+            add
+            {
+                this.MapCanvas1.MapProviderChanged += value;
+            }
+
+            remove
+            {
+                this.MapCanvas1.MapProviderChanged -= value;
+            }
+
+        }
+
+        #endregion
+
+        #region MapMoved
+
+        /// <summary>
+        /// An event getting fired whenever the zoomlevel
+        /// of the map changes.
+        /// </summary>
+        public event AegirMapCanvas.MapMovedEventHandler MapMoved
+        {
+
+            add
+            {
+                this.MapCanvas1.MapMoved += value;
+            }
+
+            remove
+            {
+                this.MapCanvas1.MapMoved -= value;
+            }
+
+        }
+
+        #endregion
+
         #endregion
 
         #region MapControl()
@@ -174,7 +243,7 @@ namespace de.Vanaheimr.Aegir.Controls
         /// <param name="MouseButtonEventArgs">The mouse button event arguments.</param>
         private void MapCanvas_MouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
-            MapCanvas1.canvas1_MouseLeftButtonDown(Sender, MouseButtonEventArgs);
+            MapCanvas1.AegirMapCanvas_MouseLeftButtonDown(Sender, MouseButtonEventArgs);
         }
 
         #endregion
@@ -238,10 +307,10 @@ namespace de.Vanaheimr.Aegir.Controls
         private void ChangeMapProvider(String MapProviderName)
         {
 
+            var OldMapProvider = MapCanvas1.MapProvider;
+
             if (MapProviderName != null && MapProviderName != "")
             {
-
-                MapCanvas1.MapProvider = MapProviderName;
 
                 foreach (var item in this.ContextMenu.Items)
                 {
@@ -249,26 +318,14 @@ namespace de.Vanaheimr.Aegir.Controls
                     CurrentMenuItem.IsChecked = (CurrentMenuItem.HeaderStringFormat == MapProviderName);
                 }
 
+                MapCanvas1.MapProvider = MapProviderName;
+
             }
 
         }
 
         #endregion
 
-
-        #region (private) MappingCanvas_SizeChanged(Sender, SizeChangedEventArgs)
-
-        /// <summary>
-        /// The size of the mapping canvas has changed.
-        /// </summary>
-        /// <param name="Sender">The sender of the event.</param>
-        /// <param name="SizeChangedEventArgs">The size changed event arguments.</param>
-        private void MappingCanvas_SizeChanged(Object Sender, SizeChangedEventArgs SizeChangedEventArgs)
-        {
-            MapCanvas1.SizeChangedEvent(Sender, SizeChangedEventArgs);
-        }
-
-        #endregion
 
     }
 

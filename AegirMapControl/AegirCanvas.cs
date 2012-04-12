@@ -19,8 +19,10 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Collections.Concurrent;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -29,8 +31,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 using de.Vanaheimr.Aegir.Tiles;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 #endregion
 
@@ -43,23 +43,25 @@ namespace de.Vanaheimr.Aegir
     public class AegirMapCanvas : Canvas
     {
 
-        public delegate void GeoPositionChangedEventHandler(object sender, Tuple<Double, Double> GeoPosition);
-
         #region Data
 
-        //private Point  Mousy;
+        private UInt32 MapMoves;
 
-        private Int32 DrawingOffsetX;
-        private Int32 DrawingOffsetY;
+        private Int32  DrawingOffsetX;
+        private Int32  DrawingOffsetY;
+        private Int32  DrawingOffset_AtMovementStart_X;
+        private Int32  DrawingOffset_AtMovementStart_Y;
 
-        private Tuple<Double, Double> lastClick;
-        private Int32 DrawingOffset_AtMovementStart_X;
-        private Int32 DrawingOffset_AtMovementStart_Y;
+        private Double LastClickPositionX;
+        private Double LastClickPositionY;
         private Double LastMousePositionDuringMovementX;
         private Double LastMousePositionDuringMovementY;
 
-        private const UInt32 MinZoomLevel =  2;
-        private const UInt32 MaxZoomLevel = 23;
+        private const    UInt32  MinZoomLevel =  1;
+        private const    UInt32  MaxZoomLevel = 23;
+
+        private readonly ConcurrentStack<Image> TilesOnMap;
+        private volatile Boolean                IsCurrentlyPainting;
 
         #endregion
 
@@ -67,6 +69,10 @@ namespace de.Vanaheimr.Aegir
 
         #region TileServer
 
+        /// <summary>
+        /// The TileServer to use for fetching the
+        /// map tiles from the image providers.
+        /// </summary>
         public TileServer TileServer { get; set; }
 
         #endregion
@@ -88,11 +94,21 @@ namespace de.Vanaheimr.Aegir
 
             set
             {
+
                 if (value != null && value != "")
                 {
+
+                    var OldMapProvider = _MapProvider;
+
                     _MapProvider = value;
-                    Paint();
+
+                    PaintMap();
+
+                    if (MapProviderChanged != null)
+                        MapProviderChanged(this, OldMapProvider, _MapProvider);
+
                 }
+
             }
 
         }
@@ -112,11 +128,69 @@ namespace de.Vanaheimr.Aegir
 
         #region Events
 
+        #region GeoPositionChanged
+
+        /// <summary>
+        /// An event handler getting fired whenever the position
+        /// of the mouse on the map changed.
+        /// </summary>
+        public delegate void GeoPositionChangedEventHandler(AegirMapCanvas Sender, Tuple<Double, Double> GeoPosition);
+
         /// <summary>
         /// An event getting fired whenever the position of the mouse
-        /// on the map changes.
+        /// on the map changed.
         /// </summary>
         public event GeoPositionChangedEventHandler GeoPositionChanged;
+
+        #endregion
+
+        #region ZoomLevelChanged
+
+        /// <summary>
+        /// An event handler getting fired whenever the
+        /// zoomlevel of the map changed.
+        /// </summary>
+        public delegate void ZoomLevelChangedEventHandler(AegirMapCanvas Sender, UInt32 OldZoomLevel, UInt32 NewZoomLevel);
+
+        /// <summary>
+        /// An event getting fired whenever the zoomlevel
+        /// of the map changed.
+        /// </summary>
+        public event ZoomLevelChangedEventHandler ZoomLevelChanged;
+
+        #endregion
+
+        #region MapProviderChanged
+
+        /// <summary>
+        /// An event handler getting fired whenever the
+        /// map provider of the map changed.
+        /// </summary>
+        public delegate void MapProviderChangedEventHandler(AegirMapCanvas Sender, String OldMapProvider, String NewMapProvider);
+
+        /// <summary>
+        /// An event getting fired whenever the map provider
+        /// of the map changed.
+        /// </summary>
+        public event MapProviderChangedEventHandler MapProviderChanged;
+
+        #endregion
+
+        #region MapMoved
+
+        /// <summary>
+        /// An event handler getting fired whenever the
+        /// map provider of the map changed.
+        /// </summary>
+        public delegate void MapMovedEventHandler(AegirMapCanvas Sender, UInt32 Movements);
+
+        /// <summary>
+        /// An event getting fired whenever the map provider
+        /// of the map changed.
+        /// </summary>
+        public event MapMovedEventHandler MapMoved;
+
+        #endregion
 
         #endregion
 
@@ -134,11 +208,30 @@ namespace de.Vanaheimr.Aegir
             this.DrawingOffsetY = 0;
             this.Background     = new SolidColorBrush(Colors.Transparent);
             this._MapProvider   = de.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
-            this.ZoomLevel      = MinZoomLevel;            
+            this.ZoomLevel      = MinZoomLevel;
+
+            this.SizeChanged   += ProcessMapSizeChangedEvent;
+            this.TilesOnMap     = new ConcurrentStack<Image>();
 
         }
 
         #endregion
+
+        #endregion
+
+
+        #region (private) ProcessMapSizeChangedEvent(Sender, SizeChangedEventArgs)
+
+        /// <summary>
+        /// Whenever the size of the map canvas was changed
+        /// this method will be called.
+        /// </summary>
+        /// <param name="Sender">The sender of the event.</param>
+        /// <param name="SizeChangedEventArgs">The event arguments.</param>
+        private void ProcessMapSizeChangedEvent(Object Sender, SizeChangedEventArgs SizeChangedEventArgs)
+        {
+            PaintMap();
+        }
 
         #endregion
 
@@ -151,12 +244,17 @@ namespace de.Vanaheimr.Aegir
         public void ZoomIn()
         {
             
-            ZoomLevel++;
+            if (ZoomLevel < MaxZoomLevel)
+            {
 
-            if (ZoomLevel > MaxZoomLevel)
-                ZoomLevel = MaxZoomLevel;
+                ZoomLevel++;
 
-            Paint();
+                PaintMap();
+
+                if (ZoomLevelChanged != null)
+                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
+
+            }
 
         }
 
@@ -170,94 +268,15 @@ namespace de.Vanaheimr.Aegir
         public void ZoomOut()
         {
 
-            ZoomLevel--;
-
-            if (ZoomLevel < MinZoomLevel)
-                ZoomLevel = MinZoomLevel;
-
-            Paint();
-
-        }
-
-        #endregion
-
-
-        #region Paint()
-
-        public void Paint()
-        {
-
-            if (!DesignerProperties.GetIsInDesignMode(this))
+            if (ZoomLevel > MinZoomLevel)
             {
 
-                if (this.TileServer == null)
-                    this.TileServer = new TileServer();
+                ZoomLevel--;
 
-                var _ToDelete = new List<Image>();
+                PaintMap();
 
-                foreach (var Child in this.Children)
-                {
-                    if (Child is Image)
-                        _ToDelete.Add((Image) Child);
-                }
-
-                foreach (var Image in _ToDelete)
-                    this.Children.Remove(Image);
-
-                Task.Factory.StartNew(() => {
-
-                    var _NumberOfXTiles = (Int32) Math.Floor(base.ActualWidth  / 256);
-                    var _NumberOfYTiles = (Int32) Math.Floor(base.ActualHeight / 256);
-                    var _NumberOfTiles  = (Int32) Math.Pow(2, ZoomLevel);
-                    var ___x = (Int32) DrawingOffsetX % (_NumberOfTiles * 256) / 256;
-                    var ___y = (Int32) DrawingOffsetY % (_NumberOfTiles * 256) / 256;
-
-                    Int32 _ActualXTile;
-                    Int32 _ActualYTile;
-
-                    for (var _x = -1; _x <= _NumberOfXTiles + 1; _x++)
-                    {
-
-                        _ActualXTile = ((_x - ___x) % _NumberOfTiles);
-                        if (_ActualXTile < 0) _ActualXTile += _NumberOfTiles;
-
-                        for (var _y = -1; _y <= _NumberOfYTiles + 1; _y++)
-                        {
-
-                            _ActualYTile = (Int32) ((_y - ___y) % _NumberOfTiles);
-                            if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
-
-                            var _TileStream = TileServer.GetTile(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
-
-                            this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action<Object>)((_TileStream2) =>
-                            {
-
-                                var _BitmapImage = new BitmapImage();
-                                _BitmapImage.BeginInit();
-                                _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
-                                _BitmapImage.StreamSource = (Stream) _TileStream;
-                                _BitmapImage.EndInit();
-                                _BitmapImage.Freeze();
-
-                                var _Image = new Image()
-                                {
-                                    Stretch = Stretch.Uniform,
-                                    Source  = _BitmapImage,
-                                    Width   = _BitmapImage.PixelWidth
-                                };
-
-                                this.Children.Add(_Image);
-                            
-                                Canvas.SetLeft(_Image, DrawingOffsetX % 256 + _x * 256);
-                                Canvas.SetTop (_Image, DrawingOffsetY % 256 + _y * 256);
-
-                            }), _TileStream);
-
-                        }
-
-                    }
-
-                });
+                if (ZoomLevelChanged != null)
+                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
 
             }
 
@@ -265,32 +284,122 @@ namespace de.Vanaheimr.Aegir
 
         #endregion
 
+        #region PaintMap()
 
-        public void MapCanvas1_MouseDown(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Paints the map.
+        /// </summary>
+        /// <returns>True if the map was repainted; false otherwise.</returns>
+        public Boolean PaintMap()
         {
-         //   Paint();
-        }
 
+            if (!IsCurrentlyPainting)
+            {
 
-        #region SizeChangedEvent
+                IsCurrentlyPainting = true;
 
-        public void SizeChangedEvent(object sender, SizeChangedEventArgs e)
-        {
-            Paint();
+                if (!DesignerProperties.GetIsInDesignMode(this))
+                {
+
+                    if (this.TileServer == null)
+                        this.TileServer = new TileServer();
+
+                    #region Collect old tiles for deletion
+
+                    var OldTilesToDelete = TilesOnMap.ToArray();
+                    TilesOnMap.Clear();
+
+                    #endregion
+
+                    #region Run in background
+
+                    Task.Factory.StartNew(() => {
+
+                        var _NumberOfXTiles = (Int32) Math.Floor(base.ActualWidth  / 256);
+                        var _NumberOfYTiles = (Int32) Math.Floor(base.ActualHeight / 256);
+                        var _NumberOfTiles  = (Int32) Math.Pow(2, ZoomLevel);
+                        var ___x = (Int32) DrawingOffsetX % (_NumberOfTiles * 256) / 256;
+                        var ___y = (Int32) DrawingOffsetY % (_NumberOfTiles * 256) / 256;
+
+                        Parallel.For(-1, _NumberOfXTiles + 2, _x =>
+                        {
+
+                            Int32 _ActualXTile;
+                            Int32 _ActualYTile;
+
+                            _ActualXTile = ((_x - ___x) % _NumberOfTiles);
+                            if (_ActualXTile < 0) _ActualXTile += _NumberOfTiles;
+
+                            Parallel.For(-1, _NumberOfYTiles + 2, _y => 
+                            {
+
+                                _ActualYTile = (Int32) ((_y - ___y) % _NumberOfTiles);
+                                if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
+
+                                var _TileStream = TileServer.GetTile(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
+
+                                this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)((_TileStream2) =>
+                                {
+
+                                    var _BitmapImage = new BitmapImage();
+                                    _BitmapImage.BeginInit();
+                                    _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
+                                    _BitmapImage.StreamSource = (Stream) _TileStream;
+                                    _BitmapImage.EndInit();
+                                    _BitmapImage.Freeze();
+
+                                    var _Image = new Image()
+                                    {
+                                        Stretch = Stretch.Uniform,
+                                        Source  = _BitmapImage,
+                                        Width   = _BitmapImage.PixelWidth
+                                    };
+
+                                    this.Children.Add(_Image);
+                                    TilesOnMap.Push(_Image);
+                            
+                                    Canvas.SetLeft(_Image, DrawingOffsetX % 256 + _x * 256);
+                                    Canvas.SetTop (_Image, DrawingOffsetY % 256 + _y * 256);
+
+                                }), _TileStream);
+
+                            });
+
+                        });
+
+                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
+                            foreach (var Image in OldTilesToDelete)
+                                this.Children.Remove(Image);
+                                }));
+
+                    });
+
+                    #endregion
+
+                }
+
+                IsCurrentlyPainting = false;
+
+                return true;
+
+            }
+
+            return false;
+
         }
 
         #endregion
 
 
+        #region AegirMapCanvas_MouseLeftButtonDown
 
-        #region canvas1_MouseLeftButtonDown
-
-        public void canvas1_MouseLeftButtonDown(object sender, MouseButtonEventArgs eventArgs)
+        public void AegirMapCanvas_MouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
 
             // We'll need this for when the Form starts to move
-            var MousePosition = eventArgs.GetPosition(this);
-            lastClick = new Tuple<Double, Double>(MousePosition.X, MousePosition.Y);
+            var MousePosition = MouseButtonEventArgs.GetPosition(this);
+            LastClickPositionX = MousePosition.X;
+            LastClickPositionY = MousePosition.Y;
 
             DrawingOffset_AtMovementStart_X = DrawingOffsetX;
             DrawingOffset_AtMovementStart_Y = DrawingOffsetY;
@@ -301,55 +410,66 @@ namespace de.Vanaheimr.Aegir
 
         #region AllCanvas_MouseMove
 
-        public void AllCanvas_MouseMove(Object sender, MouseEventArgs eventArgs)
+        public void AllCanvas_MouseMove(Object Sender, MouseEventArgs MouseEventArgs)
         {
 
-            var MousePosition = eventArgs.GetPosition(this);
+            Int32 MapSizeAtZoomlevel;
+
+            var MousePosition = MouseEventArgs.GetPosition(this);
 
             if (LastMousePositionDuringMovementX != MousePosition.X ||
                 LastMousePositionDuringMovementY != MousePosition.Y)
             {
 
-                var ___x = Math.Floor(MousePosition.X / 256);
-                var ___y = Math.Floor(MousePosition.Y / 256);
-
-                //var _TilePos  = TileToWorldPos((Double)___x, (Double)___y, Zoom);
-                //PositionTextBlock.Text = ToGeo(MouseToWorldPos(MousePosition.X - DrawingOffsetX,
-                //                                               MousePosition.Y - DrawingOffsetY,
-                //                                               Zoom));
+                #region Send GeoPositionChanged event
 
                 if (GeoPositionChanged != null)
                 {
-                    GeoPositionChanged(this, MouseToWorldPos(MousePosition.X - DrawingOffsetX,
-                                                               MousePosition.Y - DrawingOffsetY,
-                                                               ZoomLevel));
+                    GeoPositionChanged(this, MouseToWorldPosition(MousePosition.X - DrawingOffsetX,
+                                                                  MousePosition.Y - DrawingOffsetY,
+                                                                  ZoomLevel));
                 }
 
+                #endregion
 
-                if (eventArgs.LeftButton == MouseButtonState.Pressed)
+                #region The left mouse button is still pressed => dragging the map!
+
+                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed)
                 {
 
-                    var pos = eventArgs.GetPosition(this);
+                    MapSizeAtZoomlevel              = (Int32) (Math.Pow(2, ZoomLevel) * 256);
 
-                    var _MapSizeAtZoomlevel = (Int32)(Math.Pow(2, ZoomLevel) * 256);
+                    DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % MapSizeAtZoomlevel;
+                    DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
 
-                    DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % _MapSizeAtZoomlevel;
-                    DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % _MapSizeAtZoomlevel;
+                    DrawingOffsetX                  = (Int32) (Math.Round(DrawingOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
+                    DrawingOffsetY                  = (Int32) (Math.Round(DrawingOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
 
-                    DrawingOffsetX = (Int32)(Math.Round(DrawingOffset_AtMovementStart_X + pos.X - lastClick.Item1) % _MapSizeAtZoomlevel);
-                    DrawingOffsetY = (Int32)(Math.Round(DrawingOffset_AtMovementStart_Y + pos.Y - lastClick.Item2) % _MapSizeAtZoomlevel);
+                    #region Avoid endless vertical scrolling
 
-                    if (DrawingOffsetY < -_MapSizeAtZoomlevel + this.ActualHeight + 1)
-                        DrawingOffsetY = -_MapSizeAtZoomlevel + (Int32)this.ActualHeight + 1;
+                    var MapVerticalStart = (Int32) (-MapSizeAtZoomlevel + this.ActualHeight + 1);
+
+                    if (DrawingOffsetY < MapVerticalStart)
+                        DrawingOffsetY = MapVerticalStart;
 
                     if (DrawingOffsetY > 0)
                         DrawingOffsetY = 0;
 
-                    //Moves++;
+                    #endregion
 
-                    Paint();
+                    if (PaintMap())
+                    {
+
+                        MapMoves++;
+
+                        if (MapMoved != null)
+                            MapMoved(this, MapMoves);
+
+                    }
 
                 }
+
+                #endregion
 
                 LastMousePositionDuringMovementX = MousePosition.X;
                 LastMousePositionDuringMovementY = MousePosition.Y;
@@ -359,11 +479,6 @@ namespace de.Vanaheimr.Aegir
         }
 
         #endregion
-
-
-
-
-
 
 
         #region Map Area
@@ -389,7 +504,7 @@ namespace de.Vanaheimr.Aegir
 
         }
 
-        public Tuple<Double, Double> MouseToWorldPos(Double MouseX, Double MouseY, UInt32 zoom)
+        public Tuple<Double, Double> MouseToWorldPosition(Double MouseX, Double MouseY, UInt32 zoom)
         {
 
             var AllSize = Math.Pow(2.0, zoom) * 256;
