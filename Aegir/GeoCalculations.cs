@@ -104,6 +104,33 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #endregion
 
+        #region WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel)
+
+        /// <summary>
+        /// Converts the given world coordinates and zoom level to the X and Y number of map tiles.
+        /// </summary>
+        /// <param name="Latitude">The latitude.</param>
+        /// <param name="Longitude">The longitude.</param>
+        /// <param name="ZoomLevel">The ZoomLevel.</param>
+        /// <returns>The TileX and TileY number as a tuple.</returns>
+        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Screen(Double Latitude, Double Longitude, Int32 ZoomLevel)
+        {
+
+            var MapSize = Math.Pow(2.0, ZoomLevel) * 256;
+
+            return new Tuple<UInt32, UInt32>(
+                (UInt32) (((Longitude + 180.0) / 360.0) * MapSize),
+                (UInt32) (((1.0 - Math.Log (
+                                                              Math.Tan(Latitude * Math.PI / 180.0) +
+                                                        1.0 / Math.Cos(Latitude * Math.PI / 180.0)
+                                                    ) / Math.PI)
+                                    / 2.0) * MapSize)
+            );
+
+        }
+
+        #endregion
+
     }
 
 }

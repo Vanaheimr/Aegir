@@ -9,12 +9,14 @@
     <Grid>
         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
             <Grid>
-                <my:AegirMapCanvas x:Name="MapCanvas1" Background="Transparent" ClipToBounds="True" SnapsToDevicePixels="True">
-                </my:AegirMapCanvas>
-                <Canvas Name="ButtonCanvas" Background="Transparent" MouseLeftButtonDown="MapCanvas_MouseLeftButtonDown" MouseMove="AllCanvas_MouseMove">
+                <my:TilesCanvas   x:Name="TilesCanvas"   Background="Transparent" ClipToBounds="True" SnapsToDevicePixels="True"></my:TilesCanvas>
+                <my:HeatmapCanvas x:Name="HeatmapCanvas" Background="Transparent" ClipToBounds="True" SnapsToDevicePixels="True"></my:HeatmapCanvas>
+                <my:FeatureCanvas x:Name="FeatureCanvas" Background="Transparent" ClipToBounds="True" SnapsToDevicePixels="True"
+                                  MouseMove           = "ProcessMouseMove"
+                                  MouseLeftButtonDown = "ProcessMouseLeftButtonDown">
                     <Button Name="ZoomInButton"  Height="23" Width="23" Content="+" Canvas.Left="5" Canvas.Top="5"  Canvas.ZIndex="99" Click="ZoomInButton_Click"  />
                     <Button Name="ZoomOutButton" Height="23" Width="23" Content="-" Canvas.Left="5" Canvas.Top="33" Canvas.ZIndex="99" Click="ZoomOutButton_Click" />
-                </Canvas>
+                </my:FeatureCanvas>
             </Grid>
         </Border>
         

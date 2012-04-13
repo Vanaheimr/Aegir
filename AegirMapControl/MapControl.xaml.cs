@@ -32,6 +32,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using de.ahzf.Illias.Commons;
 using de.Vanaheimr.Aegir.Tiles;
+using de.ahzf.Vanaheimr.Aegir;
 
 #endregion
 
@@ -51,9 +52,47 @@ namespace de.Vanaheimr.Aegir.Controls
         /// </summary>
         private AutoDiscovery<IMapProvider> MapProviders;
 
+        private Int32 DrawingOffsetX;
+        private Int32 DrawingOffsetY;
+        private Int32 DrawingOffset_AtMovementStart_X;
+        private Int32 DrawingOffset_AtMovementStart_Y;
+
+        private Double LastClickPositionX;
+        private Double LastClickPositionY;
+
+        private Double LastMousePositionDuringMovementX;
+        private Double LastMousePositionDuringMovementY;
+
+        public const UInt32 MinZoomLevel = 1;
+        public const UInt32 MaxZoomLevel = 23;
+
         #endregion
 
         #region Properties
+
+        #region ZoomLevel
+
+        /// <summary>
+        /// The zoom level of the map.
+        /// </summary>
+        public UInt32 ZoomLevel
+        {
+            
+            get
+            {
+                return TilesCanvas.ZoomLevel;
+            }
+
+            set
+            {
+                TilesCanvas.ZoomLevel   = value;
+                HeatmapCanvas.ZoomLevel = value;
+                FeatureCanvas.ZoomLevel = value;
+            }
+
+        }
+
+        #endregion
 
         #region MapProvider
 
@@ -65,13 +104,13 @@ namespace de.Vanaheimr.Aegir.Controls
             
             get
             {
-                return MapCanvas1.MapProvider;
+                return TilesCanvas.MapProvider;
             }
 
             set
             {
                 if (value != null && value != "")
-                    MapCanvas1.MapProvider = value;
+                    TilesCanvas.MapProvider = value;
             }
 
         }
@@ -85,46 +124,32 @@ namespace de.Vanaheimr.Aegir.Controls
         #region GeoPositionChanged
 
         /// <summary>
-        /// An event getting fired whenever the position of the mouse
-        /// on the map changes.
+        /// An event handler getting fired whenever the position
+        /// of the mouse on the map changed.
         /// </summary>
-        public event AegirMapCanvas.GeoPositionChangedEventHandler GeoPositionChanged
-        {
+        public delegate void GeoPositionChangedEventHandler(MapControl Sender, Tuple<Double, Double> GeoPosition);
 
-            add
-            {
-                this.MapCanvas1.GeoPositionChanged += value;
-            }
-
-            remove
-            {
-                this.MapCanvas1.GeoPositionChanged -= value;
-            }
-
-        }
+        /// <summary>
+        /// An event getting fired whenever the position of the mouse
+        /// on the map changed.
+        /// </summary>
+        public event GeoPositionChangedEventHandler GeoPositionChanged;
 
         #endregion
 
         #region ZoomLevelChanged
 
         /// <summary>
-        /// An event getting fired whenever the zoomlevel
-        /// of the map changes.
+        /// An event handler getting fired whenever the
+        /// zoomlevel of the map changed.
         /// </summary>
-        public event AegirMapCanvas.ZoomLevelChangedEventHandler ZoomLevelChanged
-        {
+        public delegate void ZoomLevelChangedEventHandler(MapControl Sender, UInt32 OldZoomLevel, UInt32 NewZoomLevel);
 
-            add
-            {
-                this.MapCanvas1.ZoomLevelChanged += value;
-            }
-
-            remove
-            {
-                this.MapCanvas1.ZoomLevelChanged -= value;
-            }
-
-        }
+        /// <summary>
+        /// An event getting fired whenever the zoomlevel
+        /// of the map changed.
+        /// </summary>
+        public event ZoomLevelChangedEventHandler ZoomLevelChanged;
 
         #endregion
 
@@ -134,17 +159,17 @@ namespace de.Vanaheimr.Aegir.Controls
         /// An event getting fired whenever the map provider
         /// of the map changed.
         /// </summary>
-        public event AegirMapCanvas.MapProviderChangedEventHandler MapProviderChanged
+        public event TilesCanvas.MapProviderChangedEventHandler MapProviderChanged
         {
 
             add
             {
-                this.MapCanvas1.MapProviderChanged += value;
+                this.TilesCanvas.MapProviderChanged += value;
             }
 
             remove
             {
-                this.MapCanvas1.MapProviderChanged -= value;
+                this.TilesCanvas.MapProviderChanged -= value;
             }
 
         }
@@ -157,17 +182,17 @@ namespace de.Vanaheimr.Aegir.Controls
         /// An event getting fired whenever the zoomlevel
         /// of the map changes.
         /// </summary>
-        public event AegirMapCanvas.MapMovedEventHandler MapMoved
+        public event TilesCanvas.MapMovedEventHandler MapMoved
         {
 
             add
             {
-                this.MapCanvas1.MapMoved += value;
+                this.TilesCanvas.MapMoved += value;
             }
 
             remove
             {
-                this.MapCanvas1.MapMoved -= value;
+                this.TilesCanvas.MapMoved -= value;
             }
 
         }
@@ -183,9 +208,13 @@ namespace de.Vanaheimr.Aegir.Controls
         /// </summary>
         public MapControl()
         {
+
             InitializeComponent();
             AddMapCanvasContextMenu();
-            ChangeMapProvider(MapCanvas1.MapProvider);
+            ChangeMapProvider(TilesCanvas.MapProvider);
+
+            this.ZoomLevel = MinZoomLevel;
+
         }
 
         #endregion
@@ -200,7 +229,21 @@ namespace de.Vanaheimr.Aegir.Controls
         /// <param name="RoutedEventArgs">The event arguments.</param>
         private void ZoomInButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-            MapCanvas1.ZoomIn();
+
+            if (ZoomLevel < MaxZoomLevel)
+            {
+
+                ZoomLevel++;
+
+                TilesCanvas.ZoomLevel   = ZoomLevel;
+                HeatmapCanvas.ZoomLevel = ZoomLevel;
+                FeatureCanvas.ZoomLevel = ZoomLevel;
+
+                if (ZoomLevelChanged != null)
+                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
+
+            }
+
         }
 
         #endregion
@@ -214,36 +257,117 @@ namespace de.Vanaheimr.Aegir.Controls
         /// <param name="RoutedEventArgs">The event arguments.</param>
         private void ZoomOutButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-            MapCanvas1.ZoomOut();
+
+            if (ZoomLevel > MinZoomLevel)
+            {
+
+                ZoomLevel--;
+
+                TilesCanvas.ZoomLevel   = ZoomLevel;
+                HeatmapCanvas.ZoomLevel = ZoomLevel;
+                FeatureCanvas.ZoomLevel = ZoomLevel;
+
+                if (ZoomLevelChanged != null)
+                    ZoomLevelChanged(this, ZoomLevel + 1, ZoomLevel);
+
+            }
+
         }
 
         #endregion
 
 
-        #region (private) AllCanvas_MouseMove(Sender, MouseEventArgs)
+        #region (private) ProcessMouseMove(Sender, MouseEventArgs)
 
         /// <summary>
         /// The mouse was moved above all canvas.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="MouseEventArgs">The mouse event arguments.</param>
-        private void AllCanvas_MouseMove(Object Sender, MouseEventArgs MouseEventArgs)
+        private void ProcessMouseMove(Object Sender, MouseEventArgs MouseEventArgs)
         {
-            MapCanvas1.AllCanvas_MouseMove(Sender, MouseEventArgs);
+
+            Int32 MapSizeAtZoomlevel;
+            var MousePosition = MouseEventArgs.GetPosition(this);
+
+            if (LastMousePositionDuringMovementX != MousePosition.X ||
+                LastMousePositionDuringMovementY != MousePosition.Y)
+            {
+
+                #region Send GeoPositionChanged event
+
+                if (GeoPositionChanged != null)
+                {
+                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - DrawingOffsetX,
+                                                                                      MousePosition.Y - DrawingOffsetY,
+                                                                                      ZoomLevel));
+                }
+
+                #endregion
+
+                #region The left mouse button is still pressed => dragging the map!
+
+                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed)
+                {
+
+                    MapSizeAtZoomlevel = (Int32)(Math.Pow(2, ZoomLevel) * 256);
+
+                    DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % MapSizeAtZoomlevel;
+                    DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
+
+                    DrawingOffsetX = (Int32)(Math.Round(DrawingOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
+                    DrawingOffsetY = (Int32)(Math.Round(DrawingOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
+
+                    #region Avoid endless vertical scrolling
+
+                    var MapVerticalStart = (Int32)(-MapSizeAtZoomlevel + this.ActualHeight + 1);
+
+                    if (DrawingOffsetY < MapVerticalStart)
+                        DrawingOffsetY = MapVerticalStart;
+
+                    if (DrawingOffsetY > 0)
+                        DrawingOffsetY = 0;
+
+                    #endregion
+
+                    TilesCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
+                    HeatmapCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
+                    FeatureCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
+
+                }
+
+                #endregion
+
+                LastMousePositionDuringMovementX = MousePosition.X;
+                LastMousePositionDuringMovementY = MousePosition.Y;
+
+            }
+
         }
 
         #endregion
 
-        #region (private) MapCanvas_MouseLeftButtonDown
+        #region (private) ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs)
 
         /// <summary>
         /// The mouse was moced above all canvas.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="MouseButtonEventArgs">The mouse button event arguments.</param>
-        private void MapCanvas_MouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
+        private void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
-            MapCanvas1.AegirMapCanvas_MouseLeftButtonDown(Sender, MouseButtonEventArgs);
+
+            // We'll need this for when the Form starts to move
+            var MousePosition = MouseButtonEventArgs.GetPosition(this);
+            LastClickPositionX = MousePosition.X;
+            LastClickPositionY = MousePosition.Y;
+
+            DrawingOffset_AtMovementStart_X = DrawingOffsetX;
+            DrawingOffset_AtMovementStart_Y = DrawingOffsetY;
+
+            HeatmapCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
+            FeatureCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
+
         }
 
         #endregion
@@ -307,7 +431,7 @@ namespace de.Vanaheimr.Aegir.Controls
         private void ChangeMapProvider(String MapProviderName)
         {
 
-            var OldMapProvider = MapCanvas1.MapProvider;
+            var OldMapProvider = TilesCanvas.MapProvider;
 
             if (MapProviderName != null && MapProviderName != "")
             {
@@ -318,7 +442,7 @@ namespace de.Vanaheimr.Aegir.Controls
                     CurrentMenuItem.IsChecked = (CurrentMenuItem.HeaderStringFormat == MapProviderName);
                 }
 
-                MapCanvas1.MapProvider = MapProviderName;
+                TilesCanvas.MapProvider = MapProviderName;
 
             }
 
@@ -326,6 +450,15 @@ namespace de.Vanaheimr.Aegir.Controls
 
         #endregion
 
+
+        #region AddFeature
+
+        public Feature AddFeature(String Name, Double Latitude, Double Longitude, Double width, Double height, Color StrokeColor)
+        {
+            return FeatureCanvas.AddFeature(Name, Latitude, Longitude, width, height, StrokeColor);
+        }
+
+        #endregion
 
     }
 

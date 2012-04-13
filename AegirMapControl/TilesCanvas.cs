@@ -39,9 +39,9 @@ namespace de.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A canvas for visualizing a map.
+    /// A canvas for visualizing a map based of tiles.
     /// </summary>
-    public class AegirMapCanvas : Canvas
+    public class TilesCanvas : Canvas
     {
 
         #region Data
@@ -50,16 +50,6 @@ namespace de.Vanaheimr.Aegir
 
         private Int32  DrawingOffsetX;
         private Int32  DrawingOffsetY;
-        private Int32  DrawingOffset_AtMovementStart_X;
-        private Int32  DrawingOffset_AtMovementStart_Y;
-
-        private Double LastClickPositionX;
-        private Double LastClickPositionY;
-        private Double LastMousePositionDuringMovementX;
-        private Double LastMousePositionDuringMovementY;
-
-        private const    UInt32  MinZoomLevel =  1;
-        private const    UInt32  MaxZoomLevel = 23;
 
         private readonly ConcurrentStack<Image> TilesOnMap;
         private volatile Boolean                IsCurrentlyPainting;
@@ -118,10 +108,26 @@ namespace de.Vanaheimr.Aegir
 
         #region ZoomLevel
 
+        private UInt32 _ZoomLevel;
+
         /// <summary>
         /// The zoom level of the map.
         /// </summary>
-        public UInt32 ZoomLevel { get; set; }
+        public UInt32 ZoomLevel
+        {
+
+            get
+            {
+                return _ZoomLevel;
+            }
+
+            set
+            {
+                _ZoomLevel = value;
+                PaintMap();
+            }
+
+        }
 
         #endregion
 
@@ -129,45 +135,13 @@ namespace de.Vanaheimr.Aegir
 
         #region Events
 
-        #region GeoPositionChanged
-
-        /// <summary>
-        /// An event handler getting fired whenever the position
-        /// of the mouse on the map changed.
-        /// </summary>
-        public delegate void GeoPositionChangedEventHandler(AegirMapCanvas Sender, Tuple<Double, Double> GeoPosition);
-
-        /// <summary>
-        /// An event getting fired whenever the position of the mouse
-        /// on the map changed.
-        /// </summary>
-        public event GeoPositionChangedEventHandler GeoPositionChanged;
-
-        #endregion
-
-        #region ZoomLevelChanged
-
-        /// <summary>
-        /// An event handler getting fired whenever the
-        /// zoomlevel of the map changed.
-        /// </summary>
-        public delegate void ZoomLevelChangedEventHandler(AegirMapCanvas Sender, UInt32 OldZoomLevel, UInt32 NewZoomLevel);
-
-        /// <summary>
-        /// An event getting fired whenever the zoomlevel
-        /// of the map changed.
-        /// </summary>
-        public event ZoomLevelChangedEventHandler ZoomLevelChanged;
-
-        #endregion
-
         #region MapProviderChanged
 
         /// <summary>
         /// An event handler getting fired whenever the
         /// map provider of the map changed.
         /// </summary>
-        public delegate void MapProviderChangedEventHandler(AegirMapCanvas Sender, String OldMapProvider, String NewMapProvider);
+        public delegate void MapProviderChangedEventHandler(TilesCanvas Sender, String OldMapProvider, String NewMapProvider);
 
         /// <summary>
         /// An event getting fired whenever the map provider
@@ -183,7 +157,7 @@ namespace de.Vanaheimr.Aegir
         /// An event handler getting fired whenever the
         /// map provider of the map changed.
         /// </summary>
-        public delegate void MapMovedEventHandler(AegirMapCanvas Sender, UInt32 Movements);
+        public delegate void MapMovedEventHandler(TilesCanvas Sender, UInt32 Movements);
 
         /// <summary>
         /// An event getting fired whenever the map provider
@@ -197,23 +171,19 @@ namespace de.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region AegirMapCanvas()
+        #region TilesCanvas()
 
         /// <summary>
-        /// Creates a new canvas for visualizing a map.
+        /// Creates a new canvas for visualizing a map based of tiles.
         /// </summary>
-        public AegirMapCanvas()
+        public TilesCanvas()
         {
-
             this.DrawingOffsetX = 0;
             this.DrawingOffsetY = 0;
             this.Background     = new SolidColorBrush(Colors.Transparent);
             this._MapProvider   = de.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
-            this.ZoomLevel      = MinZoomLevel;
-
             this.SizeChanged   += ProcessMapSizeChangedEvent;
             this.TilesOnMap     = new ConcurrentStack<Image>();
-
         }
 
         #endregion
@@ -237,47 +207,21 @@ namespace de.Vanaheimr.Aegir
         #endregion
 
 
-        #region ZoomIn()
+        #region SetDisplayOffset(OffsetX, OffsetY)
 
-        /// <summary>
-        /// Zoom into the map.
-        /// </summary>
-        public void ZoomIn()
-        {
-            
-            if (ZoomLevel < MaxZoomLevel)
-            {
-
-                ZoomLevel++;
-
-                PaintMap();
-
-                if (ZoomLevelChanged != null)
-                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
-
-            }
-
-        }
-
-        #endregion
-
-        #region ZoomOut()
-
-        /// <summary>
-        /// Zoom out of the map.
-        /// </summary>
-        public void ZoomOut()
+        public void SetDisplayOffset(Int32 OffsetX, Int32 OffsetY)
         {
 
-            if (ZoomLevel > MinZoomLevel)
+            DrawingOffsetX = OffsetX;
+            DrawingOffsetY = OffsetY;
+
+            if (PaintMap())
             {
 
-                ZoomLevel--;
+                MapMoves++;
 
-                PaintMap();
-
-                if (ZoomLevelChanged != null)
-                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
+                if (MapMoved != null)
+                    MapMoved(this, MapMoves);
 
             }
 
@@ -391,98 +335,6 @@ namespace de.Vanaheimr.Aegir
 
         #endregion
 
-
-        #region AegirMapCanvas_MouseLeftButtonDown
-
-        public void AegirMapCanvas_MouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
-        {
-
-            // We'll need this for when the Form starts to move
-            var MousePosition = MouseButtonEventArgs.GetPosition(this);
-            LastClickPositionX = MousePosition.X;
-            LastClickPositionY = MousePosition.Y;
-
-            DrawingOffset_AtMovementStart_X = DrawingOffsetX;
-            DrawingOffset_AtMovementStart_Y = DrawingOffsetY;
-
-        }
-
-        #endregion
-
-        #region AllCanvas_MouseMove
-
-        public void AllCanvas_MouseMove(Object Sender, MouseEventArgs MouseEventArgs)
-        {
-
-            Int32 MapSizeAtZoomlevel;
-
-            var MousePosition = MouseEventArgs.GetPosition(this);
-
-            if (LastMousePositionDuringMovementX != MousePosition.X ||
-                LastMousePositionDuringMovementY != MousePosition.Y)
-            {
-
-                #region Send GeoPositionChanged event
-
-                if (GeoPositionChanged != null)
-                {
-                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - DrawingOffsetX,
-                                                                                  MousePosition.Y - DrawingOffsetY,
-                                                                                  ZoomLevel));
-                }
-
-                #endregion
-
-                #region The left mouse button is still pressed => dragging the map!
-
-                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed)
-                {
-
-                    MapSizeAtZoomlevel              = (Int32) (Math.Pow(2, ZoomLevel) * 256);
-
-                    DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % MapSizeAtZoomlevel;
-                    DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
-
-                    DrawingOffsetX                  = (Int32) (Math.Round(DrawingOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
-                    DrawingOffsetY                  = (Int32) (Math.Round(DrawingOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
-
-                    #region Avoid endless vertical scrolling
-
-                    var MapVerticalStart = (Int32) (-MapSizeAtZoomlevel + this.ActualHeight + 1);
-
-                    if (DrawingOffsetY < MapVerticalStart)
-                        DrawingOffsetY = MapVerticalStart;
-
-                    if (DrawingOffsetY > 0)
-                        DrawingOffsetY = 0;
-
-                    #endregion
-
-                    if (PaintMap())
-                    {
-
-                        MapMoves++;
-
-                        if (MapMoved != null)
-                            MapMoved(this, MapMoves);
-
-                    }
-
-                }
-
-                #endregion
-
-                LastMousePositionDuringMovementX = MousePosition.X;
-                LastMousePositionDuringMovementY = MousePosition.Y;
-
-            }
-
-        }
-
-        #endregion
-
-
-        
 
     }
 
