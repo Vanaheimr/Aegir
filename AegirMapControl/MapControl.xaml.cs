@@ -378,7 +378,7 @@ namespace de.Vanaheimr.Aegir.Controls
         #region (private) ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs)
 
         /// <summary>
-        /// The mouse was moced above all canvas.
+        /// The mouse was moved.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="MouseButtonEventArgs">The mouse button event arguments.</param>
@@ -395,6 +395,31 @@ namespace de.Vanaheimr.Aegir.Controls
 
             HeatmapCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
             FeatureCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
+
+        }
+
+        #endregion
+
+        #region (private) ProcessMouseLeftDoubleClick(Sender, MouseButtonEventArgs)
+
+        /// <summary>
+        /// The left mouse button was double clicked (from: PreviewMouseLeftButtonDown).
+        /// </summary>
+        /// <param name="Sender">The sender of the event.</param>
+        /// <param name="MouseButtonEventArgs">The mouse button event arguments.</param>
+        private void ProcessMouseLeftDoubleClick(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
+        {
+
+            if (MouseButtonEventArgs.ClickCount > 1)
+            {
+
+                // Zoom in/out at the given mouse position
+                var MousePosition = MouseButtonEventArgs.GetPosition(this);
+                ZoomIn(MousePosition.X, MousePosition.Y);
+
+                MouseButtonEventArgs.Handled = true;
+
+            }
 
         }
 
@@ -591,6 +616,7 @@ namespace de.Vanaheimr.Aegir.Controls
         }
 
         #endregion
+
 
     }
 
