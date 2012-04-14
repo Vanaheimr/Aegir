@@ -153,6 +153,22 @@ namespace de.Vanaheimr.Aegir.Controls
 
         #endregion
 
+        #region DisplayOffsetChanged
+
+        /// <summary>
+        /// An event handler getting fired whenever the
+        /// display offset of the map changed.
+        /// </summary>
+        public delegate void DisplayOffsetChangedEventHandler(MapControl Sender, Int32 X, Int32 Y);
+
+        /// <summary>
+        /// An event getting fired whenever the display offset
+        /// of the map changed.
+        /// </summary>
+        public event DisplayOffsetChangedEventHandler DisplayOffsetChanged;
+
+        #endregion
+
         #region MapProviderChanged
 
         /// <summary>
@@ -213,7 +229,44 @@ namespace de.Vanaheimr.Aegir.Controls
             AddMapCanvasContextMenu();
             ChangeMapProvider(TilesCanvas.MapProvider);
 
-            this.ZoomLevel = MinZoomLevel;
+            this.ZoomLevel               = MinZoomLevel;
+            this.ZoomOutButton.IsEnabled = false;
+
+        }
+
+        #endregion
+
+
+        #region (private) AddMapCanvasContextMenu()
+
+        /// <summary>
+        /// Add a context menu to the mapping canvas.
+        /// </summary>
+        private void AddMapCanvasContextMenu()
+        {
+
+            this.ContextMenu = new ContextMenu();
+
+            // Find map providers via reflection
+            MapProviders = new AutoDiscovery<IMapProvider>(Autostart:         true,
+                                                           IdentificatorFunc: (MapProviderClass) => MapProviderClass.Name);
+
+            // Add all map providers to the mapping canvas context menu
+            foreach (var _MapProvider in MapProviders.RegisteredNames)
+            {
+
+                var _MapProviderMenuItem = new MenuItem()
+                {
+                    Header             = _MapProvider,
+                    HeaderStringFormat = _MapProvider,
+                    IsCheckable        = true
+                };
+
+                _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
+
+                this.ContextMenu.Items.Add(_MapProviderMenuItem);
+
+            }
 
         }
 
@@ -223,27 +276,13 @@ namespace de.Vanaheimr.Aegir.Controls
         #region (private) ZoomInButton_Click(Sender, RoutedEventArgs)
 
         /// <summary>
-        /// Zoom into the map.
+        /// Zoom into the map at the current center of the map.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="RoutedEventArgs">The event arguments.</param>
         private void ZoomInButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-
-            if (ZoomLevel < MaxZoomLevel)
-            {
-
-                ZoomLevel++;
-
-                TilesCanvas.ZoomLevel   = ZoomLevel;
-                HeatmapCanvas.ZoomLevel = ZoomLevel;
-                FeatureCanvas.ZoomLevel = ZoomLevel;
-
-                if (ZoomLevelChanged != null)
-                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
-
-            }
-
+            ZoomIn(this.ActualWidth / 2, this.ActualHeight / 2);
         }
 
         #endregion
@@ -251,27 +290,13 @@ namespace de.Vanaheimr.Aegir.Controls
         #region (private) ZoomOutButton_Click(Sender, RoutedEventArgs)
 
         /// <summary>
-        /// Zoom out of the map.
+        /// Zoom out of the map at the current center of the map.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="RoutedEventArgs">The event arguments.</param>
         private void ZoomOutButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-
-            if (ZoomLevel > MinZoomLevel)
-            {
-
-                ZoomLevel--;
-
-                TilesCanvas.ZoomLevel   = ZoomLevel;
-                HeatmapCanvas.ZoomLevel = ZoomLevel;
-                FeatureCanvas.ZoomLevel = ZoomLevel;
-
-                if (ZoomLevelChanged != null)
-                    ZoomLevelChanged(this, ZoomLevel + 1, ZoomLevel);
-
-            }
-
+            ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
         }
 
         #endregion
@@ -315,8 +340,8 @@ namespace de.Vanaheimr.Aegir.Controls
                     DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % MapSizeAtZoomlevel;
                     DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
 
-                    DrawingOffsetX = (Int32)(Math.Round(DrawingOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
-                    DrawingOffsetY = (Int32)(Math.Round(DrawingOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
+                    DrawingOffsetX = (Int32) (Math.Round(DrawingOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
+                    DrawingOffsetY = (Int32) (Math.Round(DrawingOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
 
                     #region Avoid endless vertical scrolling
 
@@ -330,7 +355,10 @@ namespace de.Vanaheimr.Aegir.Controls
 
                     #endregion
 
-                    TilesCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
+                    if (DisplayOffsetChanged != null)
+                        DisplayOffsetChanged(this, DrawingOffsetX, DrawingOffsetY);
+
+                    TilesCanvas.  SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
                     HeatmapCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
                     FeatureCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
 
@@ -372,41 +400,136 @@ namespace de.Vanaheimr.Aegir.Controls
 
         #endregion
 
-
-        #region (private) AddMapCanvasContextMenu()
+        #region (private) ProcessMouseWheel(Sender, MouseWheelEventArgs)
 
         /// <summary>
-        /// Add a context menu to the mapping canvas.
+        /// The mouse wheel was moved.
         /// </summary>
-        private void AddMapCanvasContextMenu()
+        /// <param name="Sender">The sender of the event.</param>
+        /// <param name="MouseWheelEventArgs">The mouse wheel event arguments.</param>
+        private void ProcessMouseWheel(Object Sender, MouseWheelEventArgs MouseWheelEventArgs)
         {
 
-            this.ContextMenu = new ContextMenu();
+            // Zoom in/out at the given mouse position
+            var MousePosition = MouseWheelEventArgs.GetPosition(this);
 
-            // Find map providers via reflection
-            MapProviders = new AutoDiscovery<IMapProvider>(Autostart:         true,
-                                                           IdentificatorFunc: (MapProvider) => MapProvider.Name);
+            if (MouseWheelEventArgs.Delta < 0)
+                ZoomOut(MousePosition.X, MousePosition.Y);
 
-            // Add all map providers to the mapping canvas context menu
-            foreach (var _MapProvider in MapProviders.RegisteredNames)
+            else if (MouseWheelEventArgs.Delta > 0)
+                ZoomIn (MousePosition.X, MousePosition.Y);
+
+        }
+
+        #endregion
+
+
+        #region ZoomTo(Latitude, Longitude, ZoomLevel)
+
+        /// <summary>
+        /// Zoom into the map onto a given zoom level.
+        /// </summary>
+        /// <param name="Latitude">The latitude of the zoom center on the map.</param>
+        /// <param name="Longitude">The longitude of the zoom center on the map.</param>
+        /// <param name="ZoomLevel">The desired zoom level.</param>
+        public void ZoomTo(Double Latitude, Double Longitude, UInt32 ZoomLevel)
+        {
+
+            #region Initial checks
+
+            if (ZoomLevel < MinZoomLevel || ZoomLevel > MaxZoomLevel)
+                throw new ArgumentException("Invalid zoom level!");
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region ZoomIn(ScreenX, ScreenY)
+
+        /// <summary>
+        /// Zoom into the map.
+        /// </summary>
+        /// <param name="ScreenX">The x-coordinate of the zoom center on the map.</param>
+        /// <param name="ScreenY">The y-coordinate of the zoom center on the map.</param>
+        public void ZoomIn(Double ScreenX, Double ScreenY)
+        {
+
+            if (ZoomLevel < MaxZoomLevel)
             {
 
-                var _MapProviderMenuItem = new MenuItem()
-                {
-                    Header             = _MapProvider,
-                    HeaderStringFormat = _MapProvider,
-                    IsCheckable        = true
-                };
+                ZoomLevel++;
 
-                _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
+                var _Kuerzung = (Int32) (Math.Pow(2, ZoomLevel) * 256);
 
-                this.ContextMenu.Items.Add(_MapProviderMenuItem);
+                DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % _Kuerzung;
+                DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % _Kuerzung;
+
+                DrawingOffsetX = DrawingOffsetX % _Kuerzung;
+                DrawingOffsetY = DrawingOffsetY % _Kuerzung;
+
+                TilesCanvas.ZoomLevel   = ZoomLevel;
+                HeatmapCanvas.ZoomLevel = ZoomLevel;
+                FeatureCanvas.ZoomLevel = ZoomLevel;
+
+                if (ZoomLevelChanged != null)
+                    ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
+
+                if (ZoomLevel == MaxZoomLevel)
+                    ZoomInButton.IsEnabled = false;
+
+                if (ZoomLevel > MinZoomLevel)
+                    ZoomOutButton.IsEnabled = true;
 
             }
 
         }
 
         #endregion
+
+        #region ZoomOut(ScreenX, ScreenY)
+
+        /// <summary>
+        /// Zoom out of the map.
+        /// </summary>
+        /// <param name="ScreenX">The x-coordinate of the zoom center on the map.</param>
+        /// <param name="ScreenY">The y-coordinate of the zoom center on the map.</param>
+        public void ZoomOut(Double ScreenX, Double ScreenY)
+        {
+
+            if (ZoomLevel > MinZoomLevel)
+            {
+
+                ZoomLevel--;
+
+                var _Kuerzung = (Int32) (Math.Pow(2, ZoomLevel) * 256);
+
+                DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % _Kuerzung;
+                DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % _Kuerzung;
+
+                DrawingOffsetX = DrawingOffsetX % _Kuerzung;
+                DrawingOffsetY = DrawingOffsetY % _Kuerzung;
+
+                TilesCanvas.ZoomLevel   = ZoomLevel;
+                HeatmapCanvas.ZoomLevel = ZoomLevel;
+                FeatureCanvas.ZoomLevel = ZoomLevel;
+
+                if (ZoomLevelChanged != null)
+                    ZoomLevelChanged(this, ZoomLevel + 1, ZoomLevel);
+
+                if (ZoomLevel == MinZoomLevel)
+                    ZoomOutButton.IsEnabled = false;
+
+                if (ZoomLevel < MaxZoomLevel)
+                    ZoomInButton.IsEnabled = true;
+
+            }
+
+        }
+
+        #endregion
+
 
         #region (private) ChangeMapProvider(Sender, RoutedEventArgs)
 
@@ -417,7 +540,12 @@ namespace de.Vanaheimr.Aegir.Controls
         /// <param name="RoutedEventArgs">The event arguments.</param>
         private void ChangeMapProvider(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-            ChangeMapProvider((Sender as MenuItem).HeaderStringFormat);
+
+            var MenuItem = Sender as MenuItem;
+
+            if (MenuItem != null)
+                ChangeMapProvider(MenuItem.HeaderStringFormat);
+
         }
 
         #endregion
@@ -436,10 +564,14 @@ namespace de.Vanaheimr.Aegir.Controls
             if (MapProviderName != null && MapProviderName != "")
             {
 
-                foreach (var item in this.ContextMenu.Items)
+                foreach (var Item in this.ContextMenu.Items)
                 {
-                    var CurrentMenuItem = item as MenuItem;
-                    CurrentMenuItem.IsChecked = (CurrentMenuItem.HeaderStringFormat == MapProviderName);
+                    
+                    var MenuItem = Item as MenuItem;
+
+                    if (MenuItem != null)
+                        MenuItem.IsChecked = (MenuItem.HeaderStringFormat == MapProviderName);
+
                 }
 
                 TilesCanvas.MapProvider = MapProviderName;
@@ -451,11 +583,11 @@ namespace de.Vanaheimr.Aegir.Controls
         #endregion
 
 
-        #region AddFeature
+        #region AddFeature(Name, Latitude, Longitude, width, height, Color)
 
-        public Feature AddFeature(String Name, Double Latitude, Double Longitude, Double width, Double height, Color StrokeColor)
+        public Feature AddFeature(String Name, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
         {
-            return FeatureCanvas.AddFeature(Name, Latitude, Longitude, width, height, StrokeColor);
+            return FeatureCanvas.AddFeature(Name, Latitude, Longitude, Width, Height, Color);
         }
 
         #endregion
