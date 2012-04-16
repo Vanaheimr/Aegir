@@ -39,20 +39,14 @@ namespace de.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A canvas for visualizing a map based of tiles.
+    /// A feature layer for visualizing a map based of tiles.
     /// </summary>
-    public class TilesCanvas : Canvas
+    public class TilesLayer : AFeatureLayer
     {
 
         #region Data
 
-        private UInt32 MapMoves;
-
-        private Int32  DrawingOffsetX;
-        private Int32  DrawingOffsetY;
-
         private readonly ConcurrentStack<Image> TilesOnMap;
-        private volatile Boolean                IsCurrentlyPainting;
 
         #endregion
 
@@ -93,38 +87,13 @@ namespace de.Vanaheimr.Aegir
 
                     _MapProvider = value;
 
-                    PaintMap();
+                    Redraw();
 
                     if (MapProviderChanged != null)
                         MapProviderChanged(this, OldMapProvider, _MapProvider);
 
                 }
 
-            }
-
-        }
-
-        #endregion
-
-        #region ZoomLevel
-
-        private UInt32 _ZoomLevel;
-
-        /// <summary>
-        /// The zoom level of the map.
-        /// </summary>
-        public UInt32 ZoomLevel
-        {
-
-            get
-            {
-                return _ZoomLevel;
-            }
-
-            set
-            {
-                _ZoomLevel = value;
-                PaintMap();
             }
 
         }
@@ -141,7 +110,7 @@ namespace de.Vanaheimr.Aegir
         /// An event handler getting fired whenever the
         /// map provider of the map changed.
         /// </summary>
-        public delegate void MapProviderChangedEventHandler(TilesCanvas Sender, String OldMapProvider, String NewMapProvider);
+        public delegate void MapProviderChangedEventHandler(TilesLayer Sender, String OldMapProvider, String NewMapProvider);
 
         /// <summary>
         /// An event getting fired whenever the map provider
@@ -151,35 +120,17 @@ namespace de.Vanaheimr.Aegir
 
         #endregion
 
-        #region MapMoved
-
-        /// <summary>
-        /// An event handler getting fired whenever the
-        /// map provider of the map changed.
-        /// </summary>
-        public delegate void MapMovedEventHandler(TilesCanvas Sender, UInt32 Movements);
-
-        /// <summary>
-        /// An event getting fired whenever the map provider
-        /// of the map changed.
-        /// </summary>
-        public event MapMovedEventHandler MapMoved;
-
-        #endregion
-
         #endregion
 
         #region Constructor(s)
 
-        #region TilesCanvas()
+        #region TilesLayer()
 
         /// <summary>
-        /// Creates a new canvas for visualizing a map based of tiles.
+        /// Creates a new feature layer for visualizing a map based of tiles.
         /// </summary>
-        public TilesCanvas()
+        public TilesLayer()
         {
-            this.DrawingOffsetX = 0;
-            this.DrawingOffsetY = 0;
             this.Background     = new SolidColorBrush(Colors.Transparent);
             this._MapProvider   = de.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
             this.SizeChanged   += ProcessMapSizeChangedEvent;
@@ -201,41 +152,19 @@ namespace de.Vanaheimr.Aegir
         /// <param name="SizeChangedEventArgs">The event arguments.</param>
         private void ProcessMapSizeChangedEvent(Object Sender, SizeChangedEventArgs SizeChangedEventArgs)
         {
-            PaintMap();
+            Redraw();
         }
 
         #endregion
 
 
-        #region SetDisplayOffset(OffsetX, OffsetY)
-
-        public void SetDisplayOffset(Int32 OffsetX, Int32 OffsetY)
-        {
-
-            DrawingOffsetX = OffsetX;
-            DrawingOffsetY = OffsetY;
-
-            if (PaintMap())
-            {
-
-                MapMoves++;
-
-                if (MapMoved != null)
-                    MapMoved(this, MapMoves);
-
-            }
-
-        }
-
-        #endregion
-
-        #region PaintMap()
+        #region RedrawLayer()
 
         /// <summary>
         /// Paints the map.
         /// </summary>
         /// <returns>True if the map was repainted; false otherwise.</returns>
-        public Boolean PaintMap()
+        public override Boolean Redraw()
         {
 
             if (!IsCurrentlyPainting)
@@ -263,8 +192,8 @@ namespace de.Vanaheimr.Aegir
                         var _NumberOfXTiles = (Int32) Math.Floor(base.ActualWidth  / 256);
                         var _NumberOfYTiles = (Int32) Math.Floor(base.ActualHeight / 256);
                         var _NumberOfTiles  = (Int32) Math.Pow(2, ZoomLevel);
-                        var ___x = (Int32) DrawingOffsetX % (_NumberOfTiles * 256) / 256;
-                        var ___y = (Int32) DrawingOffsetY % (_NumberOfTiles * 256) / 256;
+                        var ___x = (Int32) ScreenOffsetX % (_NumberOfTiles * 256) / 256;
+                        var ___y = (Int32) ScreenOffsetY % (_NumberOfTiles * 256) / 256;
 
                         Parallel.For(-1, _NumberOfXTiles + 2, _x =>
                         {
@@ -303,8 +232,8 @@ namespace de.Vanaheimr.Aegir
                                     this.Children.Add(_Image);
                                     TilesOnMap.Push(_Image);
                             
-                                    Canvas.SetLeft(_Image, DrawingOffsetX % 256 + _x * 256);
-                                    Canvas.SetTop (_Image, DrawingOffsetY % 256 + _y * 256);
+                                    Canvas.SetLeft(_Image, ScreenOffsetX % 256 + _x * 256);
+                                    Canvas.SetTop (_Image, ScreenOffsetY % 256 + _y * 256);
 
                                 }), _TileStream);
 
@@ -335,6 +264,32 @@ namespace de.Vanaheimr.Aegir
 
         #endregion
 
+
+
+
+        #region ProcessMouseLeftButtonDown
+
+        public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
+        {
+
+            // We'll need this for when the Form starts to move
+            var MousePosition = MouseButtonEventArgs.GetPosition(this);
+            //LastClickPositionX = MousePosition.X;
+            //LastClickPositionY = MousePosition.Y;
+
+            //DrawingOffset_AtMovementStart_X = DrawingOffsetX;
+            //DrawingOffset_AtMovementStart_Y = DrawingOffsetY;
+
+        }
+
+        #endregion
+
+
+
+        public override Feature AddFeature(string Name, double Latitude, double Longitude, double Width, double Height, Color Color)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 

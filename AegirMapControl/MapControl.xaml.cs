@@ -33,6 +33,7 @@ using System.Windows.Shapes;
 using de.ahzf.Illias.Commons;
 using de.Vanaheimr.Aegir.Tiles;
 using de.ahzf.Vanaheimr.Aegir;
+using System.Reflection;
 
 #endregion
 
@@ -47,15 +48,19 @@ namespace de.Vanaheimr.Aegir.Controls
 
         #region Data
 
+        protected UInt64 MapMoves;
+
+        private StackPanel FeatureLayerPanel;
+
         /// <summary>
         /// An internal collection of all reflected map providers.
         /// </summary>
         private AutoDiscovery<IMapProvider> MapProviders;
 
-        private Int32 DrawingOffsetX;
-        private Int32 DrawingOffsetY;
-        private Int32 DrawingOffset_AtMovementStart_X;
-        private Int32 DrawingOffset_AtMovementStart_Y;
+        private Int32 ScreenOffsetX;
+        private Int32 ScreenOffsetY;
+        private Int32 ScreenOffset_AtMovementStart_X;
+        private Int32 ScreenOffset_AtMovementStart_Y;
 
         private Double LastClickPositionX;
         private Double LastClickPositionY;
@@ -65,6 +70,8 @@ namespace de.Vanaheimr.Aegir.Controls
 
         public const UInt32 MinZoomLevel = 1;
         public const UInt32 MaxZoomLevel = 23;
+
+        private readonly Dictionary<String, IFeatureLayer> AllFeatureCanvas;
 
         #endregion
 
@@ -85,9 +92,8 @@ namespace de.Vanaheimr.Aegir.Controls
 
             set
             {
-                TilesCanvas.ZoomLevel   = value;
-                HeatmapCanvas.ZoomLevel = value;
-                FeatureCanvas.ZoomLevel = value;
+                TilesCanvas.SetZoomLevel(value);
+                AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetZoomLevel(value));
             }
 
         }
@@ -175,7 +181,7 @@ namespace de.Vanaheimr.Aegir.Controls
         /// An event getting fired whenever the map provider
         /// of the map changed.
         /// </summary>
-        public event TilesCanvas.MapProviderChangedEventHandler MapProviderChanged
+        public event TilesLayer.MapProviderChangedEventHandler MapProviderChanged
         {
 
             add
@@ -195,23 +201,16 @@ namespace de.Vanaheimr.Aegir.Controls
         #region MapMoved
 
         /// <summary>
-        /// An event getting fired whenever the zoomlevel
-        /// of the map changes.
+        /// An event handler getting fired whenever the
+        /// map provider of the map changed.
         /// </summary>
-        public event TilesCanvas.MapMovedEventHandler MapMoved
-        {
+        public delegate void MapMovedEventHandler(MapControl Sender, UInt64 Movements);
 
-            add
-            {
-                this.TilesCanvas.MapMoved += value;
-            }
-
-            remove
-            {
-                this.TilesCanvas.MapMoved -= value;
-            }
-
-        }
+        /// <summary>
+        /// An event getting fired whenever the map provider
+        /// of the map changed.
+        /// </summary>
+        public event MapMovedEventHandler MapMoved;
 
         #endregion
 
@@ -226,23 +225,38 @@ namespace de.Vanaheimr.Aegir.Controls
         {
 
             InitializeComponent();
-            AddMapCanvasContextMenu();
-            ChangeMapProvider(TilesCanvas.MapProvider);
 
-            this.ZoomLevel               = MinZoomLevel;
+            this.AllFeatureCanvas        = new Dictionary<String, IFeatureLayer>();
             this.ZoomOutButton.IsEnabled = false;
+            this.ZoomLevel               = MinZoomLevel;
+
+            #region Create and add the feature layer panel
+
+            this.FeatureLayerPanel = new StackPanel() {
+                Background = new SolidColorBrush(Colors.Gray),
+                Opacity    = 0.75
+            };
+
+            NavigationLayer.Children.Add(FeatureLayerPanel);
+            Canvas.SetRight(FeatureLayerPanel, 10);
+            Canvas.SetTop  (FeatureLayerPanel, 10);
+
+            #endregion
+
+            AddTilesCanvasContextMenu();
+            ChangeMapProvider(TilesCanvas.MapProvider);
 
         }
 
         #endregion
 
 
-        #region (private) AddMapCanvasContextMenu()
+        #region (private) AddTilesCanvasContextMenu()
 
         /// <summary>
         /// Add a context menu to the mapping canvas.
         /// </summary>
-        private void AddMapCanvasContextMenu()
+        private void AddTilesCanvasContextMenu()
         {
 
             this.ContextMenu = new ContextMenu();
@@ -323,8 +337,8 @@ namespace de.Vanaheimr.Aegir.Controls
 
                 if (GeoPositionChanged != null)
                 {
-                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - DrawingOffsetX,
-                                                                                      MousePosition.Y - DrawingOffsetY,
+                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - ScreenOffsetX,
+                                                                                      MousePosition.Y - ScreenOffsetY,
                                                                                       ZoomLevel));
                 }
 
@@ -337,30 +351,34 @@ namespace de.Vanaheimr.Aegir.Controls
 
                     MapSizeAtZoomlevel = (Int32)(Math.Pow(2, ZoomLevel) * 256);
 
-                    DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % MapSizeAtZoomlevel;
-                    DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
+                    ScreenOffset_AtMovementStart_X = ScreenOffset_AtMovementStart_X % MapSizeAtZoomlevel;
+                    ScreenOffset_AtMovementStart_Y = ScreenOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
 
-                    DrawingOffsetX = (Int32) (Math.Round(DrawingOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
-                    DrawingOffsetY = (Int32) (Math.Round(DrawingOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
+                    ScreenOffsetX = (Int32) (Math.Round(ScreenOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
+                    ScreenOffsetY = (Int32) (Math.Round(ScreenOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
 
                     #region Avoid endless vertical scrolling
 
                     var MapVerticalStart = (Int32)(-MapSizeAtZoomlevel + this.ActualHeight + 1);
 
-                    if (DrawingOffsetY < MapVerticalStart)
-                        DrawingOffsetY = MapVerticalStart;
+                    if (ScreenOffsetY < MapVerticalStart)
+                        ScreenOffsetY = MapVerticalStart;
 
-                    if (DrawingOffsetY > 0)
-                        DrawingOffsetY = 0;
+                    if (ScreenOffsetY > 0)
+                        ScreenOffsetY = 0;
 
                     #endregion
 
                     if (DisplayOffsetChanged != null)
-                        DisplayOffsetChanged(this, DrawingOffsetX, DrawingOffsetY);
+                        DisplayOffsetChanged(this, ScreenOffsetX, ScreenOffsetY);
 
-                    TilesCanvas.  SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
-                    HeatmapCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
-                    FeatureCanvas.SetDisplayOffset(DrawingOffsetX, DrawingOffsetY);
+                    MapMoves++;
+
+                    if (MapMoved != null)
+                        MapMoved(this, MapMoves);
+
+                    TilesCanvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY);
+                    AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY));
 
                 }
 
@@ -390,11 +408,12 @@ namespace de.Vanaheimr.Aegir.Controls
             LastClickPositionX = MousePosition.X;
             LastClickPositionY = MousePosition.Y;
 
-            DrawingOffset_AtMovementStart_X = DrawingOffsetX;
-            DrawingOffset_AtMovementStart_Y = DrawingOffsetY;
+            ScreenOffset_AtMovementStart_X = ScreenOffsetX;
+            ScreenOffset_AtMovementStart_Y = ScreenOffsetY;
 
-            HeatmapCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
-            FeatureCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
+            //FeatureCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
+            AllFeatureCanvas.Values.ForEach(Canvas => Canvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs));
+            TilesCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
 
         }
 
@@ -488,15 +507,14 @@ namespace de.Vanaheimr.Aegir.Controls
 
                 var _Kuerzung = (Int32) (Math.Pow(2, ZoomLevel) * 256);
 
-                DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % _Kuerzung;
-                DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % _Kuerzung;
+                ScreenOffset_AtMovementStart_X = ScreenOffset_AtMovementStart_X % _Kuerzung;
+                ScreenOffset_AtMovementStart_Y = ScreenOffset_AtMovementStart_Y % _Kuerzung;
 
-                DrawingOffsetX = DrawingOffsetX % _Kuerzung;
-                DrawingOffsetY = DrawingOffsetY % _Kuerzung;
+                ScreenOffsetX = ScreenOffsetX % _Kuerzung;
+                ScreenOffsetY = ScreenOffsetY % _Kuerzung;
 
-                TilesCanvas.ZoomLevel   = ZoomLevel;
-                HeatmapCanvas.ZoomLevel = ZoomLevel;
-                FeatureCanvas.ZoomLevel = ZoomLevel;
+                TilesCanvas.ZoomLevel = ZoomLevel;
+                AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetZoomLevel(ZoomLevel));
 
                 if (ZoomLevelChanged != null)
                     ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
@@ -530,15 +548,14 @@ namespace de.Vanaheimr.Aegir.Controls
 
                 var _Kuerzung = (Int32) (Math.Pow(2, ZoomLevel) * 256);
 
-                DrawingOffset_AtMovementStart_X = DrawingOffset_AtMovementStart_X % _Kuerzung;
-                DrawingOffset_AtMovementStart_Y = DrawingOffset_AtMovementStart_Y % _Kuerzung;
+                ScreenOffset_AtMovementStart_X = ScreenOffset_AtMovementStart_X % _Kuerzung;
+                ScreenOffset_AtMovementStart_Y = ScreenOffset_AtMovementStart_Y % _Kuerzung;
 
-                DrawingOffsetX = DrawingOffsetX % _Kuerzung;
-                DrawingOffsetY = DrawingOffsetY % _Kuerzung;
+                ScreenOffsetX = ScreenOffsetX % _Kuerzung;
+                ScreenOffsetY = ScreenOffsetY % _Kuerzung;
 
-                TilesCanvas.ZoomLevel   = ZoomLevel;
-                HeatmapCanvas.ZoomLevel = ZoomLevel;
-                FeatureCanvas.ZoomLevel = ZoomLevel;
+                TilesCanvas.ZoomLevel = ZoomLevel;
+                AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetZoomLevel(ZoomLevel));
 
                 if (ZoomLevelChanged != null)
                     ZoomLevelChanged(this, ZoomLevel + 1, ZoomLevel);
@@ -608,11 +625,173 @@ namespace de.Vanaheimr.Aegir.Controls
         #endregion
 
 
-        #region AddFeature(Name, Latitude, Longitude, width, height, Color)
 
-        public Feature AddFeature(String Name, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
+        #region AddFeatureLayers
+
+        #region AddFeatureLayer(Id, ZIndex, AddToPanel = true)
+
+        /// <summary>
+        /// Create a new feature layer and add it to the map control.
+        /// </summary>
+        /// <param name="Id">The identification of the feature layer.</param>
+        /// <param name="ZIndex">The z-index of the feature layer.</param>
+        /// <param name="AddToPanel">Wether to add this feature layer to the layer panel or not.</param>
+        public IFeatureLayer AddFeatureLayer(String Id, Int32 ZIndex, Boolean AddToPanel = true)
         {
-            return FeatureCanvas.AddFeature(Name, Latitude, Longitude, Width, Height, Color);
+            return AddFeatureLayer(new FeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex), AddToPanel);
+        }
+
+        #endregion
+
+        #region AddFeatureLayer<T>(Id, ZIndex, AddToPanel = true)
+
+        /// <summary>
+        /// Create a new feature layer of the given type and add it to the map control.
+        /// </summary>
+        /// <typeparam name="T">The class of the feature layer to create.</typeparam>
+        /// <param name="Id">The identification of the feature layer.</param>
+        /// <param name="ZIndex">The z-index of the feature layer.</param>
+        /// <param name="AddToPanel">Wether to add this feature layer to the layer panel or not.</param>
+        public T AddFeatureLayer<T>(String Id, Int32 ZIndex, Boolean AddToPanel = true)
+            where T : class, IFeatureLayer
+        {
+
+            // Find the constructor of the feature layer
+            var _ConstructorInfo = typeof(T).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                                                            null,
+                                                            new Type[] {
+                                                                typeof(String),
+                                                                typeof(UInt32),
+                                                                typeof(Int32),
+                                                                typeof(Int32),
+                                                                typeof(MapControl),
+                                                                typeof(Int32)
+                                                            },
+                                                            null);
+
+            if (_ConstructorInfo == null)
+                throw new ArgumentException("A appropriate constructor for type '" + typeof(T).Name + "' could not be found!");
+
+            // Invoke the constructor of the feature layer
+            var _FeatureLayer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IFeatureLayer;
+
+            if (_FeatureLayer != null)
+                AddFeatureLayer(_FeatureLayer, AddToPanel);
+
+            return _FeatureLayer as T;
+
+        }
+
+        #endregion
+
+        #region AddFeatureLayer(FeatureLayer, AddToPanel = true)
+
+        /// <summary>
+        /// Add the given feature layer to this map control.
+        /// </summary>
+        /// <param name="FeatureLayer">A feature layer.</param>
+        /// <param name="AddToPanel">Wether to add this feature layer to the layer panel or not.</param>
+        public IFeatureLayer AddFeatureLayer(IFeatureLayer FeatureLayer, Boolean AddToPanel = true)
+        {
+
+            #region Initial checks
+
+            if (FeatureLayer == null)
+                throw new ApplicationException("The parameter 'FeatureLayer' must not be null!");
+
+            var FeatureCanvas = FeatureLayer as Canvas;
+
+            if (FeatureCanvas == null)
+                throw new ApplicationException("The parameter 'FeatureLayer' must inherit from Canvas!");
+
+            if (FeatureLayer.Id == null)
+                throw new ApplicationException("The identification of the 'FeatureLayer' must be set!");
+
+            if (FeatureLayer.MapControl == null)
+                throw new ApplicationException("The MapControl of the 'FeatureLayer' must be set!");
+
+            #endregion
+
+            #region Add the given feature layer
+
+            LayerGrid.Children.Add(FeatureCanvas);
+            AllFeatureCanvas.Add(FeatureLayer.Id, FeatureLayer);
+
+            FeatureCanvas.SetValue(Canvas.ZIndexProperty, FeatureLayer.ZIndex);
+
+            #endregion
+
+            // Set important properties
+            FeatureCanvas.MouseWheel += ProcessMouseWheel;
+            FeatureCanvas.Background = null;
+
+            #region Add a checkbox entry to the feature layer panel
+
+            if (AddToPanel)
+            {
+
+                var Checkbox = new CheckBox();
+                Checkbox.Content   = FeatureLayer.Id;
+                Checkbox.IsChecked = true;
+
+                Checkbox.MouseEnter += (o, e) =>
+                    {
+                        var _CheckBox = o as CheckBox;
+                        _CheckBox.Foreground = new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
+                        _CheckBox.Background = new SolidColorBrush(Colors.White);
+                    };
+
+                Checkbox.MouseLeave += (o, e) =>
+                    {
+                        var _CheckBox = o as CheckBox;
+                        _CheckBox.Foreground = new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
+                        _CheckBox.Background = new SolidColorBrush(Colors.Gray);
+                    };
+
+                Checkbox.Click += (o, e) =>
+                    {
+
+                        var _CheckBox = o as CheckBox;
+
+                        if (_CheckBox.IsChecked.Value)
+                        {
+                            FeatureCanvas.Visibility = Visibility.Visible;
+                            FeatureLayer.Redraw();
+                        }
+                        else
+                            FeatureCanvas.Visibility = Visibility.Hidden;
+
+                    };
+
+                FeatureLayerPanel.Children.Add(Checkbox);
+            
+            }
+
+            #endregion
+
+            return FeatureLayer;
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region AddFeature(FeatureLayer, Id, Latitude, Longitude, width, height, Color)
+
+        public Feature AddFeature(String FeatureLayer, String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
+        {
+
+            if (FeatureLayer == null || FeatureLayer == "")
+                return null;
+
+            IFeatureLayer _FeatureLayer = null;
+            if (AllFeatureCanvas.TryGetValue(FeatureLayer, out _FeatureLayer))
+                return _FeatureLayer.AddFeature(Id, Latitude, Longitude, Width, Height, Color);
+
+            return null;
+
         }
 
         #endregion
