@@ -31,12 +31,12 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// The common interface for all feature layers.
+    /// The common interface for all map layers.
     /// </summary>
-    public interface IFeatureLayer : IIdentifier<String>,
-                                     IEquatable<IFeatureLayer>,
-                                     IComparable<IFeatureLayer>,
-                                     IComparable
+    public interface ILayer : IIdentifier<String>,
+                              IEquatable<ILayer>,
+                              IComparable<ILayer>,
+                              IComparable
     {
 
         #region Properties
@@ -68,14 +68,14 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Set the zoom level of this feature layer.
         /// </summary>
         /// <param name="ZoomLevel">The desired zoom level.</param>
-        IFeatureLayer SetZoomLevel(UInt32 ZoomLevel);
+        ILayer SetZoomLevel(UInt32 ZoomLevel);
 
         /// <summary>
         /// Sets this feature layer to the given screen offset.
         /// </summary>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        IFeatureLayer SetDisplayOffset(Int32 OffsetX, Int32 OffsetY);
+        ILayer SetDisplayOffset(Int32 OffsetX, Int32 OffsetY);
 
         /// <summary>
         /// Redraws this feature layer.

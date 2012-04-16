@@ -44,12 +44,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         protected UInt64 MapMoves;
 
-        private StackPanel FeatureLayerPanel;
-
-        /// <summary>
-        /// An internal collection of all reflected map providers.
-        /// </summary>
-        private AutoDiscovery<IMapProvider> MapProviders;
+        private StackPanel LayerPanel;
 
         private Int32 ScreenOffsetX;
         private Int32 ScreenOffsetY;
@@ -65,7 +60,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         public const UInt32 MinZoomLevel = 1;
         public const UInt32 MaxZoomLevel = 23;
 
-        private readonly Dictionary<String, IFeatureLayer> AllFeatureCanvas;
+        private readonly Dictionary<String, ILayer> MapLayers;
 
         #endregion
 
@@ -87,7 +82,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             set
             {
                 TilesCanvas.SetZoomLevel(value);
-                AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetZoomLevel(value));
+                MapLayers.Values.ForEach(Canvas => Canvas.SetZoomLevel(value));
             }
 
         }
@@ -220,61 +215,22 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
             InitializeComponent();
 
-            this.AllFeatureCanvas        = new Dictionary<String, IFeatureLayer>();
+            this.MapLayers        = new Dictionary<String, ILayer>();
             this.ZoomOutButton.IsEnabled = false;
             this.ZoomLevel               = MinZoomLevel;
 
             #region Create and add the feature layer panel
 
-            this.FeatureLayerPanel = new StackPanel() {
+            this.LayerPanel = new StackPanel() {
                 Background = new SolidColorBrush(Colors.Gray),
                 Opacity    = 0.75
             };
 
-            NavigationLayer.Children.Add(FeatureLayerPanel);
-            Canvas.SetRight(FeatureLayerPanel, 10);
-            Canvas.SetTop  (FeatureLayerPanel, 10);
+            NavigationLayer.Children.Add(LayerPanel);
+            Canvas.SetRight(LayerPanel, 10);
+            Canvas.SetTop  (LayerPanel, 10);
 
             #endregion
-
-            AddTilesCanvasContextMenu();
-            ChangeMapProvider(TilesCanvas.MapProvider);
-
-        }
-
-        #endregion
-
-
-        #region (private) AddTilesCanvasContextMenu()
-
-        /// <summary>
-        /// Add a context menu to the mapping canvas.
-        /// </summary>
-        private void AddTilesCanvasContextMenu()
-        {
-
-            this.ContextMenu = new ContextMenu();
-
-            // Find map providers via reflection
-            MapProviders = new AutoDiscovery<IMapProvider>(Autostart:         true,
-                                                           IdentificatorFunc: (MapProviderClass) => MapProviderClass.Name);
-
-            // Add all map providers to the mapping canvas context menu
-            foreach (var _MapProvider in MapProviders.RegisteredNames)
-            {
-
-                var _MapProviderMenuItem = new MenuItem()
-                {
-                    Header             = _MapProvider,
-                    HeaderStringFormat = _MapProvider,
-                    IsCheckable        = true
-                };
-
-                _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
-
-                this.ContextMenu.Items.Add(_MapProviderMenuItem);
-
-            }
 
         }
 
@@ -372,7 +328,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                         MapMoved(this, MapMoves);
 
                     TilesCanvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY);
-                    AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY));
+                    MapLayers.Values.ForEach(Canvas => Canvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY));
 
                 }
 
@@ -406,7 +362,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             ScreenOffset_AtMovementStart_Y = ScreenOffsetY;
 
             //FeatureCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
-            AllFeatureCanvas.Values.ForEach(Canvas => Canvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs));
+            MapLayers.Values.ForEach(Canvas => Canvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs));
             TilesCanvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs);
 
         }
@@ -508,7 +464,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 ScreenOffsetY = ScreenOffsetY % _Kuerzung;
 
                 TilesCanvas.ZoomLevel = ZoomLevel;
-                AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetZoomLevel(ZoomLevel));
+                MapLayers.Values.ForEach(Canvas => Canvas.SetZoomLevel(ZoomLevel));
 
                 if (ZoomLevelChanged != null)
                     ZoomLevelChanged(this, ZoomLevel - 1, ZoomLevel);
@@ -549,7 +505,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 ScreenOffsetY = ScreenOffsetY % _Kuerzung;
 
                 TilesCanvas.ZoomLevel = ZoomLevel;
-                AllFeatureCanvas.Values.ForEach(Canvas => Canvas.SetZoomLevel(ZoomLevel));
+                MapLayers.Values.ForEach(Canvas => Canvas.SetZoomLevel(ZoomLevel));
 
                 if (ZoomLevelChanged != null)
                     ZoomLevelChanged(this, ZoomLevel + 1, ZoomLevel);
@@ -567,59 +523,6 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #endregion
 
 
-        #region (private) ChangeMapProvider(Sender, RoutedEventArgs)
-
-        /// <summary>
-        /// Changes the current map provider.
-        /// </summary>
-        /// <param name="Sender">The sender of the event.</param>
-        /// <param name="RoutedEventArgs">The event arguments.</param>
-        private void ChangeMapProvider(Object Sender, RoutedEventArgs RoutedEventArgs)
-        {
-
-            var MenuItem = Sender as MenuItem;
-
-            if (MenuItem != null)
-                ChangeMapProvider(MenuItem.HeaderStringFormat);
-
-        }
-
-        #endregion
-
-        #region (private) ChangeMapProvider(MapProviderName)
-
-        /// <summary>
-        /// Changes the current map provider.
-        /// </summary>
-        /// <param name="MapProviderName">The well-known name of the map provider.</param>
-        private void ChangeMapProvider(String MapProviderName)
-        {
-
-            var OldMapProvider = TilesCanvas.MapProvider;
-
-            if (MapProviderName != null && MapProviderName != "")
-            {
-
-                foreach (var Item in this.ContextMenu.Items)
-                {
-                    
-                    var MenuItem = Item as MenuItem;
-
-                    if (MenuItem != null)
-                        MenuItem.IsChecked = (MenuItem.HeaderStringFormat == MapProviderName);
-
-                }
-
-                TilesCanvas.MapProvider = MapProviderName;
-
-            }
-
-        }
-
-        #endregion
-
-
-
         #region AddFeatureLayers
 
         #region AddFeatureLayer(Id, ZIndex, AddToPanel = true)
@@ -630,7 +533,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="Id">The identification of the feature layer.</param>
         /// <param name="ZIndex">The z-index of the feature layer.</param>
         /// <param name="AddToPanel">Wether to add this feature layer to the layer panel or not.</param>
-        public IFeatureLayer AddFeatureLayer(String Id, Int32 ZIndex, Boolean AddToPanel = true)
+        public ILayer AddFeatureLayer(String Id, Int32 ZIndex, Boolean AddToPanel = true)
         {
             return AddFeatureLayer(new FeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex), AddToPanel);
         }
@@ -647,7 +550,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="ZIndex">The z-index of the feature layer.</param>
         /// <param name="AddToPanel">Wether to add this feature layer to the layer panel or not.</param>
         public T AddFeatureLayer<T>(String Id, Int32 ZIndex, Boolean AddToPanel = true)
-            where T : class, IFeatureLayer
+            where T : class, ILayer
         {
 
             // Find the constructor of the feature layer
@@ -667,7 +570,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 throw new ArgumentException("A appropriate constructor for type '" + typeof(T).Name + "' could not be found!");
 
             // Invoke the constructor of the feature layer
-            var _FeatureLayer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IFeatureLayer;
+            var _FeatureLayer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as ILayer;
 
             if (_FeatureLayer != null)
                 AddFeatureLayer(_FeatureLayer, AddToPanel);
@@ -685,7 +588,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// </summary>
         /// <param name="FeatureLayer">A feature layer.</param>
         /// <param name="AddToPanel">Wether to add this feature layer to the layer panel or not.</param>
-        public IFeatureLayer AddFeatureLayer(IFeatureLayer FeatureLayer, Boolean AddToPanel = true)
+        public ILayer AddFeatureLayer(ILayer FeatureLayer, Boolean AddToPanel = true)
         {
 
             #region Initial checks
@@ -709,7 +612,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             #region Add the given feature layer
 
             LayerGrid.Children.Add(FeatureCanvas);
-            AllFeatureCanvas.Add(FeatureLayer.Id, FeatureLayer);
+            MapLayers.Add(FeatureLayer.Id, FeatureLayer);
 
             FeatureCanvas.SetValue(Canvas.ZIndexProperty, FeatureLayer.ZIndex);
 
@@ -757,7 +660,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
                     };
 
-                FeatureLayerPanel.Children.Add(Checkbox);
+                LayerPanel.Children.Add(Checkbox);
             
             }
 
@@ -780,8 +683,8 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             if (FeatureLayer == null || FeatureLayer == "")
                 return null;
 
-            IFeatureLayer _FeatureLayer = null;
-            if (AllFeatureCanvas.TryGetValue(FeatureLayer, out _FeatureLayer))
+            ILayer _FeatureLayer = null;
+            if (MapLayers.TryGetValue(FeatureLayer, out _FeatureLayer))
                 return _FeatureLayer.AddFeature(Id, Latitude, Longitude, Width, Height, Color);
 
             return null;

@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 using de.ahzf.Vanaheimr.Aegir.Tiles;
+using de.ahzf.Illias.Commons;
 
 
 #endregion
@@ -41,10 +42,15 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for visualizing a map based of tiles.
     /// </summary>
-    public class TilesLayer : AFeatureLayer
+    public class TilesLayer : ALayer
     {
 
         #region Data
+
+        /// <summary>
+        /// An internal collection of all reflected map providers.
+        /// </summary>
+        private AutoDiscovery<IMapProvider> MapProviders;
 
         private readonly ConcurrentStack<Image> TilesOnMap;
 
@@ -131,13 +137,92 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         public TilesLayer()
         {
+
             this.Background     = new SolidColorBrush(Colors.Transparent);
             this._MapProvider   = de.ahzf.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
             this.SizeChanged   += ProcessMapSizeChangedEvent;
             this.TilesOnMap     = new ConcurrentStack<Image>();
+
+            this.ContextMenu = new ContextMenu();
+
+            // Find map providers via reflection
+            MapProviders = new AutoDiscovery<IMapProvider>(Autostart: true,
+                                                           IdentificatorFunc: (MapProviderClass) => MapProviderClass.Name);
+
+            // Add all map providers to the mapping canvas context menu
+            foreach (var _MapProvider in MapProviders.RegisteredNames)
+            {
+
+                var _MapProviderMenuItem = new MenuItem()
+                {
+                    Header = _MapProvider,
+                    HeaderStringFormat = _MapProvider,
+                    IsCheckable = true
+                };
+
+                _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
+
+                this.ContextMenu.Items.Add(_MapProviderMenuItem);
+
+            }
+
+            ChangeMapProvider(MapProvider);
+
         }
 
         #endregion
+
+        #endregion
+
+
+        #region (private) ChangeMapProvider(Sender, RoutedEventArgs)
+
+        /// <summary>
+        /// Changes the current map provider.
+        /// </summary>
+        /// <param name="Sender">The sender of the event.</param>
+        /// <param name="RoutedEventArgs">The event arguments.</param>
+        private void ChangeMapProvider(Object Sender, RoutedEventArgs RoutedEventArgs)
+        {
+
+            var MenuItem = Sender as MenuItem;
+
+            if (MenuItem != null)
+                ChangeMapProvider(MenuItem.HeaderStringFormat);
+
+        }
+
+        #endregion
+
+        #region (private) ChangeMapProvider(MapProviderName)
+
+        /// <summary>
+        /// Changes the current map provider.
+        /// </summary>
+        /// <param name="MapProviderName">The well-known name of the map provider.</param>
+        private void ChangeMapProvider(String MapProviderName)
+        {
+
+            var OldMapProvider = MapProvider;
+
+            if (MapProviderName != null && MapProviderName != "")
+            {
+
+                foreach (var Item in this.ContextMenu.Items)
+                {
+
+                    var MenuItem = Item as MenuItem;
+
+                    if (MenuItem != null)
+                        MenuItem.IsChecked = (MenuItem.HeaderStringFormat == MapProviderName);
+
+                }
+
+                MapProvider = MapProviderName;
+
+            }
+
+        }
 
         #endregion
 

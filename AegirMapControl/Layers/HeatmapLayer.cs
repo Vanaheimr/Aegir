@@ -23,6 +23,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using de.ahzf.Vanaheimr.Aegir.Controls;
+using System.Windows.Markup;
+using System.Windows.Shapes;
 
 #endregion
 
@@ -32,7 +34,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for visualizing a heatmap.
     /// </summary>
-    public class HeatmapLayer : AFeatureLayer
+    public class HeatmapLayer : ALayer
     {
 
         #region Constructor(s)
@@ -107,7 +109,6 @@ namespace de.ahzf.Vanaheimr.Aegir
         }
 
         #endregion
-
 
     }
 

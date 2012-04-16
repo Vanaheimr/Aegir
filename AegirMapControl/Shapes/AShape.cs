@@ -33,7 +33,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature on an Aegir map.
     /// </summary>
-    public class Feature : Shape, IFeature
+    public abstract class AShape : Shape, IShape
     {
 
         #region Properties
@@ -43,6 +43,8 @@ namespace de.ahzf.Vanaheimr.Aegir
         public Double Latitude  { get; set; }
         public Double Longitude { get; set; }
         public Double Altitude  { get; set; }
+
+        public UInt32 ZoomLevel { get; set; }
 
         #region Geometry
 
@@ -63,18 +65,18 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region Feature()
+        #region Shape()
 
-        public Feature()
+        public AShape()
         {
             this.Geometry = new EllipseGeometry();
         }
 
         #endregion
 
-        #region Feature(Geometry)
+        #region AShape(Geometry)
 
-        public Feature(Geometry Geometry)
+        public AShape(Geometry Geometry)
         {
             this.Geometry = Geometry;
         }
@@ -224,6 +226,16 @@ namespace de.ahzf.Vanaheimr.Aegir
         }
 
         #endregion
+
+
+        //public Geometry Geo { get; set; }
+
+  //      public DrawingBrush DrawingBrush { get; set; }
+
+        public Double GeoWidth  { get; set; }
+        public Double GeoHeight { get; set; }
+
+        public Rect Bounds { get; set; }
 
     }
 

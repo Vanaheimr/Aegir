@@ -23,6 +23,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using de.ahzf.Vanaheimr.Aegir.Controls;
+using System.Windows.Shapes;
+using System.Windows;
 
 #endregion
 
@@ -32,7 +34,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for visualizing map features.
     /// </summary>
-    public class FeatureLayer : AFeatureLayer
+    public class FeatureLayer : ALayer
     {
 
         #region Constructor(s)
@@ -81,8 +83,6 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         public override Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
         {
-
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, (Int32) ZoomLevel);
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;

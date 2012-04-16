@@ -33,9 +33,9 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// The base functionality of all feature layers.
+    /// The base functionality of all map layers.
     /// </summary>
-    public abstract class AFeatureLayer : Canvas, IFeatureLayer
+    public abstract class ALayer : Canvas, ILayer
     {
 
         #region Data
@@ -95,7 +95,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// Creates a new feature layer for visualizing map features.
         /// </summary>
-        public AFeatureLayer()
+        public ALayer()
         {
             this.SizeChanged += ProcessMapSizeChangedEvent;
         }
@@ -113,7 +113,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The hosting map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public AFeatureLayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public ALayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : this()
         {
             this.Id            = Id;
@@ -171,7 +171,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Set the zoom level of this feature layer.
         /// </summary>
         /// <param name="ZoomLevel">The desired zoom level.</param>
-        public IFeatureLayer SetZoomLevel(UInt32 ZoomLevel)
+        public ILayer SetZoomLevel(UInt32 ZoomLevel)
         {
             this.ZoomLevel = ZoomLevel;
             Redraw();
@@ -187,7 +187,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        public IFeatureLayer SetDisplayOffset(Int32 ScreenOffsetX, Int32 ScreenOffsetY)
+        public ILayer SetDisplayOffset(Int32 ScreenOffsetX, Int32 ScreenOffsetY)
         {
             this.ScreenOffsetX = ScreenOffsetX;
             this.ScreenOffsetY = ScreenOffsetY;
@@ -224,9 +224,15 @@ namespace de.ahzf.Vanaheimr.Aegir
 
                         if (Feature != null)
                         {
+                            
                             XY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, (Int32) ZoomLevel);
+                            
                             Canvas.SetLeft(Feature, ScreenOffsetX + XY.Item1);
                             Canvas.SetTop(Feature, ScreenOffsetY + XY.Item2);
+
+                            //if (Feature.GeoWidth != 0)
+                            //    Feature.Width = 
+
                         }
 
                     }
@@ -268,7 +274,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 throw new ArgumentNullException("The given object must not be null!");
 
             // Check if the given object is a feature layer identifier.
-            var FeatureLayer = Object as IFeatureLayer;
+            var FeatureLayer = Object as ILayer;
             if ((Object) FeatureLayer == null)
                 throw new ArgumentException("The given object is not an IFeatureLayer!");
 
@@ -302,7 +308,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Identifier">An object to compare with.</param>
-        public Int32 CompareTo(IFeatureLayer FeatureLayer)
+        public Int32 CompareTo(ILayer FeatureLayer)
         {
 
             if ((Object) FeatureLayer == null)
@@ -332,7 +338,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 return false;
 
             // Check if the given object is a feature layer.
-            var FeatureLayer = Object as IFeatureLayer;
+            var FeatureLayer = Object as ILayer;
             if ((Object)FeatureLayer == null)
                 return false;
 
@@ -368,7 +374,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         /// <param name="FeatureLayer">A feature layer to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(IFeatureLayer FeatureLayer)
+        public Boolean Equals(ILayer FeatureLayer)
         {
 
             if ((Object) FeatureLayer == null)

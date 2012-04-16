@@ -31,11 +31,31 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The common interface for all features on an Aegir map.
     /// </summary>
-    public interface IFeature : IIdentifier<String>,
-                                IPosition,
-                                IEquatable<IFeature>,
-                                IComparable<IFeature>,
-                                IComparable
-    { }
+    public interface IShape : IIdentifier<String>,
+                              IPosition,
+                              IEquatable<IFeature>,
+                              IComparable<IFeature>,
+                              IComparable
+    {
+
+        /// <summary>
+        /// The width of something.
+        /// </summary>
+        Double GeoWidth { get; set; }
+
+        /// <summary>
+        /// The height of something.
+        /// </summary>
+        Double GeoHeight { get; set; }
+
+        //Geometry Geo { get; }
+        
+        //DrawingBrush DrawingBrush { get; }
+
+        Rect Bounds { get; }
+
+        UInt32 ZoomLevel { get; set; }
+
+    }
 
 }
