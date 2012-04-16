@@ -20,13 +20,12 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir.Tiles
+namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>

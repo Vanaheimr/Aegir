@@ -26,7 +26,7 @@ using de.ahzf.Illias.Commons;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir
+namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>

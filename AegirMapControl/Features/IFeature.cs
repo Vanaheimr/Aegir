@@ -18,17 +18,12 @@
 #region Usings
 
 using System;
-using System.Windows.Media;
-using System.Windows.Input;
-using System.Windows.Controls;
 
 using de.ahzf.Illias.Commons;
-using de.Vanaheimr.Aegir.Controls;
-using de.ahzf.Vanaheimr.Aegir;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir
+namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
@@ -39,8 +34,6 @@ namespace de.Vanaheimr.Aegir
                                 IEquatable<IFeature>,
                                 IComparable<IFeature>,
                                 IComparable
-    {
-
-    }
+    { }
 
 }

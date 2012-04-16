@@ -1,5 +1,5 @@
-﻿<UserControl xmlns:my="clr-namespace:de.Vanaheimr.Aegir"
-             x:Class="de.Vanaheimr.Aegir.Controls.MapControl"
+﻿<UserControl xmlns:my="clr-namespace:de.ahzf.Vanaheimr.Aegir"
+             x:Class="de.ahzf.Vanaheimr.Aegir.Controls.MapControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

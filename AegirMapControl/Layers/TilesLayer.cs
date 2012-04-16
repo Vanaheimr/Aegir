@@ -30,12 +30,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-using de.Vanaheimr.Aegir.Tiles;
-using de.ahzf.Vanaheimr.Aegir;
+using de.ahzf.Vanaheimr.Aegir.Tiles;
+
 
 #endregion
 
-namespace de.Vanaheimr.Aegir
+namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
@@ -132,7 +132,7 @@ namespace de.Vanaheimr.Aegir
         public TilesLayer()
         {
             this.Background     = new SolidColorBrush(Colors.Transparent);
-            this._MapProvider   = de.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
+            this._MapProvider   = de.ahzf.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
             this.SizeChanged   += ProcessMapSizeChangedEvent;
             this.TilesOnMap     = new ConcurrentStack<Image>();
         }

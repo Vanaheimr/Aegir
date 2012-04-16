@@ -18,7 +18,6 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -28,7 +27,7 @@ using de.ahzf.Illias.Commons;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir.Tiles
+namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>

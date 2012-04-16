@@ -18,40 +18,29 @@
 #region Usings
 
 using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Collections.Concurrent;
 
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
-using de.Vanaheimr.Aegir.Tiles;
-using de.ahzf.Vanaheimr.Aegir;
-using System.Windows.Shapes;
-using de.Vanaheimr.Aegir.Controls;
+using de.ahzf.Vanaheimr.Aegir.Controls;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir
+namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A feature layer for visualizing a heatmap.
+    /// A feature layer for visualizing map features.
     /// </summary>
-    public class HeatmapLayer : AFeatureLayer
+    public class FeatureLayer : AFeatureLayer
     {
 
         #region Constructor(s)
 
-        #region HeatmapLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region FeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
 
         /// <summary>
-        /// Creates a new feature layer for visualizing a heatmap.
+        /// Creates a new feature layer for visualizing map features.
         /// </summary>
         /// <param name="Name">The identification string of this feature layer.</param>
         /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
@@ -59,14 +48,13 @@ namespace de.Vanaheimr.Aegir
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public HeatmapLayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public FeatureLayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
         { }
 
         #endregion
 
         #endregion
-
 
 
         #region ProcessMouseLeftButtonDown
@@ -82,6 +70,8 @@ namespace de.Vanaheimr.Aegir
             DrawingOffset_AtMovementStart_X = ScreenOffsetX;
             DrawingOffset_AtMovementStart_Y = ScreenOffsetY;
 
+            MouseButtonEventArgs.Handled = false;
+
         }
 
         #endregion
@@ -92,22 +82,17 @@ namespace de.Vanaheimr.Aegir
         public override Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
         {
 
-            var radialBrush = new RadialGradientBrush();
-            var ColorHigh = Color; ColorHigh.A = 0xFF;
-            var ColorLow  = Color; ColorLow.A  = 0x00;
-
-            radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
-            radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
-
             var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, (Int32) ZoomLevel);
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;
             Feature.Latitude         = Latitude;
             Feature.Longitude        = Longitude;
+            Feature.Stroke           = new SolidColorBrush(Colors.Black);
+            Feature.StrokeThickness  = 1;
             Feature.Width            = Width;
             Feature.Height           = Height;
-            Feature.Fill             = radialBrush;
+            Feature.Fill             = new SolidColorBrush(Color);
             Feature.ToolTip          = Id;
 
             // The position on the map will be set within the PaintMap() method!
@@ -118,7 +103,6 @@ namespace de.Vanaheimr.Aegir
         }
 
         #endregion
-
 
     }
 

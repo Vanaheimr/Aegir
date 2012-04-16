@@ -18,26 +18,18 @@
 #region Usings
 
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Collections.Concurrent;
 
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using System.Windows.Controls;
 
-using de.Vanaheimr.Aegir.Tiles;
-using de.ahzf.Vanaheimr.Aegir;
-using System.Windows.Shapes;
-using de.Vanaheimr.Aegir.Controls;
+using de.ahzf.Vanaheimr.Aegir.Controls;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir
+namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>

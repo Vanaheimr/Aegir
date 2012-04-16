@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace de.Vanaheimr.Aegir.Tiles
+namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     #region ITileClientExtentions

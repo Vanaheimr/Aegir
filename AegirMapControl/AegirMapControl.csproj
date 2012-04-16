@@ -54,19 +54,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="AFeatureLayer.cs" />
-    <Compile Include="IFeature.cs" />
-    <Compile Include="FeatureLayer.cs" />
-    <Compile Include="Feature.cs" />
-    <Compile Include="HeatmapLayer.cs" />
-    <Compile Include="IFeatureLayer.cs" />
+    <Compile Include="Layers\AFeatureLayer.cs" />
+    <Compile Include="Features\IFeature.cs" />
+    <Compile Include="Layers\FeatureLayer.cs" />
+    <Compile Include="Features\Feature.cs" />
+    <Compile Include="Layers\HeatmapLayer.cs" />
+    <Compile Include="Layers\IFeatureLayer.cs" />
     <Compile Include="MapControl.xaml.cs">
       <DependentUpon>MapControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TilesLayer.cs" />
+    <Compile Include="Layers\TilesLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
