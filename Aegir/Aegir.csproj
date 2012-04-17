@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AegirExtentionMethods.cs" />
+    <Compile Include="IReadonlyPosition.cs" />
     <Compile Include="GeoCalculations.cs" />
     <Compile Include="GeoJSON.cs" />
     <Compile Include="IPosition.cs" />

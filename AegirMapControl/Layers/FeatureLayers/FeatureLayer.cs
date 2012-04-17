@@ -23,8 +23,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using de.ahzf.Vanaheimr.Aegir.Controls;
-using System.Windows.Markup;
 using System.Windows.Shapes;
+using System.Windows;
 
 #endregion
 
@@ -32,17 +32,17 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A feature layer for visualizing a heatmap.
+    /// A feature layer for visualizing map features.
     /// </summary>
-    public class HeatmapLayer : ALayer
+    public class FeatureLayer : ALayer
     {
 
         #region Constructor(s)
 
-        #region HeatmapLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region FeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
 
         /// <summary>
-        /// Creates a new feature layer for visualizing a heatmap.
+        /// Creates a new feature layer for visualizing map features.
         /// </summary>
         /// <param name="Name">The identification string of this feature layer.</param>
         /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
@@ -50,55 +50,40 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public HeatmapLayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public FeatureLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
-        { }
-
-        #endregion
-
-        #endregion
-
-
-
-        #region ProcessMouseLeftButtonDown
-
-        public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
 
-            // We'll need this for when the Form starts to move
-            var MousePosition = MouseButtonEventArgs.GetPosition(this);
-            LastClickPositionX = MousePosition.X;
-            LastClickPositionY = MousePosition.Y;
+            #region Register mouse events
 
-            DrawingOffset_AtMovementStart_X = ScreenOffsetX;
-            DrawingOffset_AtMovementStart_Y = ScreenOffsetY;
+            this.PreviewMouseMove           += MapControl.ProcessMouseMove;
+            this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
+            this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
+            this.MouseWheel                 += MapControl.ProcessMouseWheel;
+
+            #endregion
 
         }
+
+        #endregion
 
         #endregion
 
 
         #region AddFeature
 
-        public override Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
+        public Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
         {
-
-            var radialBrush = new RadialGradientBrush();
-            var ColorHigh = Color; ColorHigh.A = 0xFF;
-            var ColorLow  = Color; ColorLow.A  = 0x00;
-
-            radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
-            radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
-
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, (Int32) ZoomLevel);
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;
             Feature.Latitude         = Latitude;
             Feature.Longitude        = Longitude;
+            Feature.Stroke           = new SolidColorBrush(Colors.Black);
+            Feature.StrokeThickness  = 1;
             Feature.Width            = Width;
             Feature.Height           = Height;
-            Feature.Fill             = radialBrush;
+            Feature.Fill             = new SolidColorBrush(Color);
             Feature.ToolTip          = Id;
 
             // The position on the map will be set within the PaintMap() method!

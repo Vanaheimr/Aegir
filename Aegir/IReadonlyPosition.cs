@@ -19,40 +19,36 @@
 
 using System;
 
-using de.ahzf.Illias.Commons;
-using System.Windows.Media;
-using System.Windows;
-
 #endregion
 
 namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// The common interface for all features on an Aegir map.
+    /// The interface for anything having a position.
     /// </summary>
-    public interface IShape : IIdentifier<String>,
-                              IReadonlyPosition,
-                              IEquatable<IFeature>,
-                              IComparable<IFeature>,
-                              IComparable
+    public interface IReadonlyPosition
     {
 
-        /// <summary>
-        /// The geographical width of something.
-        /// </summary>
-        Double GeoWidth { get; }
+        // Latitude, Longitude of Jena, DE
+        // 50.929054, 11.584074
 
         /// <summary>
-        /// The geographical height of something.
+        /// The latitude of something.
         /// </summary>
-        Double GeoHeight { get; }
+        Double  Latitude       { get; }
 
+        /// <summary>
+        /// The longitude of something.
+        /// </summary>
+        Double  Longitude      { get; }
 
-        Rect Bounds { get; }
-
-        UInt32 ZoomLevel { get; set; }
+        /// <summary>
+        /// The altitude of something.
+        /// </summary>
+        Double  Altitude       { get; }
 
     }
 
 }
+

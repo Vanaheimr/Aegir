@@ -50,6 +50,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Layers\TilesLayers\ITilesLayer.cs" />
+    <Compile Include="Layers\ShapesLayers\IShapeLayer.cs" />
+    <Compile Include="Layers\HeatmapLayers\IHeatmapLayer.cs" />
+    <Compile Include="Layers\FeatureLayers\IFeatureLayer.cs" />
+    <Compile Include="Shapes\Germany\Bayern.cs" />
     <Compile Include="Shapes\IShape.cs" />
     <Page Include="MapControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -59,10 +64,10 @@
     <Compile Include="Shapes\Germany\Germany.cs" />
     <Compile Include="Layers\ALayer.cs" />
     <Compile Include="Features\IFeature.cs" />
-    <Compile Include="Layers\ShapeLayer.cs" />
-    <Compile Include="Layers\FeatureLayer.cs" />
+    <Compile Include="Layers\ShapesLayers\ShapeLayer.cs" />
+    <Compile Include="Layers\FeatureLayers\FeatureLayer.cs" />
     <Compile Include="Features\Feature.cs" />
-    <Compile Include="Layers\HeatmapLayer.cs" />
+    <Compile Include="Layers\HeatmapLayers\HeatmapLayer.cs" />
     <Compile Include="Layers\ILayer.cs" />
     <Compile Include="MapControl.xaml.cs">
       <DependentUpon>MapControl.xaml</DependentUpon>
@@ -70,7 +75,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Layers\TilesLayer.cs" />
+    <Compile Include="Layers\TilesLayers\TilesLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -9,15 +9,20 @@
     <Grid>
         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
             <Grid Name="LayerGrid">
-                <my:TilesLayer   x:Name="TilesCanvas"   Background="Transparent" ClipToBounds="True" SnapsToDevicePixels="True" Panel.ZIndex="0"
+                <Canvas Name="BackgroundLayer" ClipToBounds="True" SnapsToDevicePixels="True" Panel.ZIndex="-100" Background="Transparent"
                                   PreviewMouseMove           = "ProcessMouseMove"
                                   MouseLeftButtonDown        = "ProcessMouseLeftButtonDown"
                                   PreviewMouseLeftButtonDown = "ProcessMouseLeftDoubleClick"
                                   MouseWheel                 = "ProcessMouseWheel">
-                </my:TilesLayer>
-                <Canvas Name="NavigationLayer" ClipToBounds="True" SnapsToDevicePixels="True" Panel.ZIndex="100">
+                </Canvas>
+                <Canvas Name="ForegroundLayer" ClipToBounds="True" SnapsToDevicePixels="True" Panel.ZIndex="100"
+                                  PreviewMouseMove           = "ProcessMouseMove"
+                                  MouseLeftButtonDown        = "ProcessMouseLeftButtonDown"
+                                  PreviewMouseLeftButtonDown = "ProcessMouseLeftDoubleClick"
+                                  MouseWheel                 = "ProcessMouseWheel">
                     <Button Name="ZoomInButton"  Height="23" Width="23" Content="+" Canvas.Left="5" Canvas.Top="5"  Canvas.ZIndex="99" Click="ZoomInButton_Click"  />
                     <Button Name="ZoomOutButton" Height="23" Width="23" Content="-" Canvas.Left="5" Canvas.Top="33" Canvas.ZIndex="99" Click="ZoomOutButton_Click" />
+                    
                 </Canvas>
             </Grid>
         </Border>

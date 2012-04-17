@@ -65,17 +65,19 @@ namespace de.ahzf.Vanaheimr.Aegir
         #region Interaction methods
 
         /// <summary>
-        /// Set the zoom level of this feature layer.
+        /// Set the zoom level and screen offset of this map layer.
         /// </summary>
         /// <param name="ZoomLevel">The desired zoom level.</param>
-        ILayer SetZoomLevel(UInt32 ZoomLevel);
+        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
+        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
+        ILayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY);
 
         /// <summary>
-        /// Sets this feature layer to the given screen offset.
+        /// Set the screen offset of this map layer.
         /// </summary>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        ILayer SetDisplayOffset(Int32 OffsetX, Int32 OffsetY);
+        ILayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY);
 
         /// <summary>
         /// Redraws this feature layer.
@@ -84,14 +86,6 @@ namespace de.ahzf.Vanaheimr.Aegir
         Boolean Redraw();
 
         #endregion
-
-        #region Map features
-
-        Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color);
-
-        #endregion
-
-        void ProcessMouseLeftButtonDown(object Sender, MouseButtonEventArgs MouseButtonEventArgs);
 
     }
 

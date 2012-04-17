@@ -52,59 +52,22 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public ShapeLayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public ShapeLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
-        { }
-
-        #endregion
-
-        #endregion
-
-
-        #region ProcessMouseLeftButtonDown
-
-        public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
 
-            // We'll need this for when the Form starts to move
-            var MousePosition = MouseButtonEventArgs.GetPosition(this);
-            LastClickPositionX = MousePosition.X;
-            LastClickPositionY = MousePosition.Y;
+            #region Register mouse events
 
-            DrawingOffset_AtMovementStart_X = ScreenOffsetX;
-            DrawingOffset_AtMovementStart_Y = ScreenOffsetY;
+            this.PreviewMouseMove           += MapControl.ProcessMouseMove;
+            this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
+            this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
+            this.MouseWheel                 += MapControl.ProcessMouseWheel;
 
-            MouseButtonEventArgs.Handled = false;
+            #endregion
 
         }
 
         #endregion
-
-
-        #region AddFeature
-
-        public override Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
-        {
-
-            return null;
-
-            //var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
-            //Feature.Id               = Id;
-            //Feature.Latitude         = Latitude;
-            //Feature.Longitude        = Longitude;
-            //Feature.Stroke           = new SolidColorBrush(Colors.Black);
-            //Feature.StrokeThickness  = 1;
-            //Feature.Width            = Width;
-            //Feature.Height           = Height;
-            //Feature.Fill             = new SolidColorBrush(Color);
-            //Feature.ToolTip          = Id;
-
-            //// The position on the map will be set within the PaintMap() method!
-            //this.Children.Add(Feature);
-            
-            //return Feature;
-
-        }
 
         #endregion
 
@@ -177,7 +140,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         public override Boolean Redraw()
         {
 
-            if (this.Visibility == Visibility.Visible && !IsCurrentlyPainting)
+            if (this.IsVisible && !IsCurrentlyPainting)
             {
 
                 IsCurrentlyPainting = true;

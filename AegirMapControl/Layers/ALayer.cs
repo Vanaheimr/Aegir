@@ -40,10 +40,10 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Data
 
-        protected Int32  ScreenOffsetX;
-        protected Int32  ScreenOffsetY;
-        protected Int32  DrawingOffset_AtMovementStart_X;
-        protected Int32  DrawingOffset_AtMovementStart_Y;
+        protected Int64  ScreenOffsetX;
+        protected Int64  ScreenOffsetY;
+        protected Int64  DrawingOffset_AtMovementStart_X;
+        protected Int64  DrawingOffset_AtMovementStart_Y;
 
         protected Double LastClickPositionX;
         protected Double LastClickPositionY;
@@ -113,7 +113,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The hosting map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public ALayer(String Id, UInt32 ZoomLevel, Int32 ScreenOffsetX, Int32 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public ALayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : this()
         {
             this.Id            = Id;
@@ -145,35 +145,39 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
-        #region ProcessMouseLeftButtonDown
+        //#region ProcessMouseLeftButtonDown
 
-        public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
-        {
+        //public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
+        //{
 
-            // We'll need this for when the Form starts to move
-            var MousePosition = MouseButtonEventArgs.GetPosition(this);
-            LastClickPositionX = MousePosition.X;
-            LastClickPositionY = MousePosition.Y;
+        //    // We'll need this for when the Form starts to move
+        //    var MousePosition = MouseButtonEventArgs.GetPosition(this);
+        //    LastClickPositionX = MousePosition.X;
+        //    LastClickPositionY = MousePosition.Y;
 
-            DrawingOffset_AtMovementStart_X = ScreenOffsetX;
-            DrawingOffset_AtMovementStart_Y = ScreenOffsetY;
+        //    DrawingOffset_AtMovementStart_X = ScreenOffsetX;
+        //    DrawingOffset_AtMovementStart_Y = ScreenOffsetY;
 
-            MouseButtonEventArgs.Handled = false;
+        //    MouseButtonEventArgs.Handled = false;
 
-        }
+        //}
 
-        #endregion
+        //#endregion
 
 
-        #region SetZoomLevel(ZoomLevel)
+        #region ZoomTo(ZoomLevel, ScreenOffsetX, ScreenOffsetY)
 
         /// <summary>
-        /// Set the zoom level of this feature layer.
+        /// Set the zoom level and screen offset of this map layer.
         /// </summary>
         /// <param name="ZoomLevel">The desired zoom level.</param>
-        public ILayer SetZoomLevel(UInt32 ZoomLevel)
+        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
+        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
+        public ILayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY)
         {
-            this.ZoomLevel = ZoomLevel;
+            this.ZoomLevel     = ZoomLevel;
+            this.ScreenOffsetX = ScreenOffsetX;
+            this.ScreenOffsetY = ScreenOffsetY;
             Redraw();
             return this;
         }
@@ -183,11 +187,11 @@ namespace de.ahzf.Vanaheimr.Aegir
         #region SetDisplayOffset(OffsetX, OffsetY)
 
         /// <summary>
-        /// Sets this feature layer to the given screen offset.
+        /// Set the screen offset of this map layer.
         /// </summary>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        public ILayer SetDisplayOffset(Int32 ScreenOffsetX, Int32 ScreenOffsetY)
+        public ILayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
         {
             this.ScreenOffsetX = ScreenOffsetX;
             this.ScreenOffsetY = ScreenOffsetY;
@@ -206,7 +210,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         public virtual Boolean Redraw()
         {
 
-            if (this.Visibility == Visibility.Visible && !IsCurrentlyPainting)
+            if (this.IsVisible && !IsCurrentlyPainting)
             {
 
                 IsCurrentlyPainting = true;
@@ -248,13 +252,6 @@ namespace de.ahzf.Vanaheimr.Aegir
             return false;
 
         }
-
-        #endregion
-
-
-        #region AddFeature
-
-        public abstract Feature AddFeature(String Name, Double Latitude, Double Longitude, Double Width, Double Height, Color Color);
 
         #endregion
 

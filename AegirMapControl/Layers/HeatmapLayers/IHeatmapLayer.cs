@@ -18,10 +18,12 @@
 #region Usings
 
 using System;
+using System.Windows.Media;
+using System.Windows.Input;
+using System.Windows.Controls;
 
 using de.ahzf.Illias.Commons;
-using System.Windows.Media;
-using System.Windows;
+using de.ahzf.Vanaheimr.Aegir.Controls;
 
 #endregion
 
@@ -29,29 +31,11 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// The common interface for all features on an Aegir map.
+    /// The common interface for all heatmap layers.
     /// </summary>
-    public interface IShape : IIdentifier<String>,
-                              IReadonlyPosition,
-                              IEquatable<IFeature>,
-                              IComparable<IFeature>,
-                              IComparable
+    public interface IHeatmapLayer: ILayer
     {
 
-        /// <summary>
-        /// The geographical width of something.
-        /// </summary>
-        Double GeoWidth { get; }
-
-        /// <summary>
-        /// The geographical height of something.
-        /// </summary>
-        Double GeoHeight { get; }
-
-
-        Rect Bounds { get; }
-
-        UInt32 ZoomLevel { get; set; }
 
     }
 

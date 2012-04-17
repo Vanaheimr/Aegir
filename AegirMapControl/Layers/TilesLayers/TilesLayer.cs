@@ -32,6 +32,7 @@ using System.Windows.Threading;
 
 using de.ahzf.Vanaheimr.Aegir.Tiles;
 using de.ahzf.Illias.Commons;
+using de.ahzf.Vanaheimr.Aegir.Controls;
 
 
 #endregion
@@ -58,19 +59,19 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Properties
 
-        #region TileServer
+        #region TileClient
 
         /// <summary>
-        /// The TileServer to use for fetching the
+        /// The TileClient to use for fetching the
         /// map tiles from the image providers.
         /// </summary>
-        public TileServer TileServer { get; set; }
+        public ITileClient TileClient { get; set; }
 
         #endregion
 
         #region MapProvider
 
-        private String _MapProvider;
+        private String CurrentMapProvider;
 
         /// <summary>
         /// The map tiles provider for this map.
@@ -80,7 +81,7 @@ namespace de.ahzf.Vanaheimr.Aegir
             
             get
             {
-                return _MapProvider;
+                return CurrentMapProvider;
             }
 
             set
@@ -89,14 +90,14 @@ namespace de.ahzf.Vanaheimr.Aegir
                 if (value != null && value != "")
                 {
 
-                    var OldMapProvider = _MapProvider;
+                    var OldMapProvider = CurrentMapProvider;
 
-                    _MapProvider = value;
+                    CurrentMapProvider = value;
 
                     Redraw();
 
                     if (MapProviderChanged != null)
-                        MapProviderChanged(this, OldMapProvider, _MapProvider);
+                        MapProviderChanged(this, OldMapProvider, CurrentMapProvider);
 
                 }
 
@@ -130,18 +131,29 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region TilesLayer()
+        #region TilesLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing a map based of tiles.
         /// </summary>
-        public TilesLayer()
+        public TilesLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+            : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
         {
 
-            this.Background     = new SolidColorBrush(Colors.Transparent);
-            this._MapProvider   = de.ahzf.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
-            this.SizeChanged   += ProcessMapSizeChangedEvent;
-            this.TilesOnMap     = new ConcurrentStack<Image>();
+            this.Background         = new SolidColorBrush(Colors.Transparent);
+            this.TilesOnMap         = new ConcurrentStack<Image>();
+            this.CurrentMapProvider = de.ahzf.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
+
+            #region Register mouse events
+
+            this.PreviewMouseMove           += MapControl.ProcessMouseMove;
+            this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
+            this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
+            this.MouseWheel                 += MapControl.ProcessMouseWheel;
+
+            #endregion
+
+            #region Find map providers and add context menu
 
             this.ContextMenu = new ContextMenu();
 
@@ -167,6 +179,8 @@ namespace de.ahzf.Vanaheimr.Aegir
             }
 
             ChangeMapProvider(MapProvider);
+
+            #endregion
 
         }
 
@@ -227,22 +241,6 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
-        #region (private) ProcessMapSizeChangedEvent(Sender, SizeChangedEventArgs)
-
-        /// <summary>
-        /// Whenever the size of the map canvas was changed
-        /// this method will be called.
-        /// </summary>
-        /// <param name="Sender">The sender of the event.</param>
-        /// <param name="SizeChangedEventArgs">The event arguments.</param>
-        private void ProcessMapSizeChangedEvent(Object Sender, SizeChangedEventArgs SizeChangedEventArgs)
-        {
-            Redraw();
-        }
-
-        #endregion
-
-
         #region RedrawLayer()
 
         /// <summary>
@@ -252,7 +250,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         public override Boolean Redraw()
         {
 
-            if (!IsCurrentlyPainting)
+            if (this.IsVisible && !IsCurrentlyPainting)
             {
 
                 IsCurrentlyPainting = true;
@@ -260,8 +258,8 @@ namespace de.ahzf.Vanaheimr.Aegir
                 if (!DesignerProperties.GetIsInDesignMode(this))
                 {
 
-                    if (this.TileServer == null)
-                        this.TileServer = new TileServer();
+                    if (this.TileClient == null)
+                        this.TileClient = new TileServer();
 
                     #region Collect old tiles for deletion
 
@@ -295,7 +293,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                                 _ActualYTile = (Int32) ((_y - ___y) % _NumberOfTiles);
                                 if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
 
-                                var _TileStream = TileServer.GetTileStream(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
+                                var _TileStream = TileClient.GetTileStream(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
 
                                 this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)((_TileStream2) =>
                                 {
@@ -349,32 +347,6 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #endregion
 
-
-
-
-        #region ProcessMouseLeftButtonDown
-
-        public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
-        {
-
-            // We'll need this for when the Form starts to move
-            var MousePosition = MouseButtonEventArgs.GetPosition(this);
-            //LastClickPositionX = MousePosition.X;
-            //LastClickPositionY = MousePosition.Y;
-
-            //DrawingOffset_AtMovementStart_X = DrawingOffsetX;
-            //DrawingOffset_AtMovementStart_Y = DrawingOffsetY;
-
-        }
-
-        #endregion
-
-
-
-        public override Feature AddFeature(string Name, double Latitude, double Longitude, double Width, double Height, Color Color)
-        {
-            throw new NotImplementedException();
-        }
 
     }
 

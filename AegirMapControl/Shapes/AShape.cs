@@ -31,20 +31,49 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A feature on an Aegir map.
+    /// A shape on an Aegir map.
     /// </summary>
     public abstract class AShape : Shape, IShape
     {
 
         #region Properties
 
-        public String Id        { get; set; }
+        /// <summary>
+        /// The identification of this shape.
+        /// </summary>
+        public String Id         { get; private set; }
 
-        public Double Latitude  { get; set; }
-        public Double Longitude { get; set; }
-        public Double Altitude  { get; set; }
+        /// <summary>
+        /// The latitude of this shape.
+        /// </summary>
+        public Double Latitude   { get; private set; }
 
-        public UInt32 ZoomLevel { get; set; }
+        /// <summary>
+        /// The longitude of this shape.
+        /// </summary>
+        public Double Longitude  { get; private set; }
+
+        /// <summary>
+        /// The altitude of this shape.
+        /// </summary>
+        public Double Altitude   { get; private set; }
+
+        /// <summary>
+        /// The geographical width of thsi shape.
+        /// </summary>
+        public Double GeoWidth   { get; private set; }
+
+        /// <summary>
+        /// The geographical height of this shape.
+        /// </summary>
+        public Double GeoHeight  { get; private set; }
+
+
+
+        public UInt32 ZoomLevel  { get; set; }
+
+        public Rect   Bounds     { get; set; }
+
 
         #region Geometry
 
@@ -65,20 +94,25 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region Shape()
+        #region AShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
 
-        public AShape()
+        /// <summary>
+        /// Create a new abstract shape.
+        /// </summary>
+        /// <param name="Id">The Id of the shape.</param>
+        /// <param name="Latitude">The latitude of the shape center.</param>
+        /// <param name="Longitude">The longitude of the shape center.</param>
+        /// <param name="Altitude">The altitude of the shape center.</param>
+        /// <param name="GeoWidth">The geographical width of the shape center.</param>
+        /// <param name="GeoHeight">The geographical height of the shape center.</param>
+        public AShape(String Id, Double Latitude, Double Longitude, Double Altitude, Double GeoWidth, Double GeoHeight)
         {
-            this.Geometry = new EllipseGeometry();
-        }
-
-        #endregion
-
-        #region AShape(Geometry)
-
-        public AShape(Geometry Geometry)
-        {
-            this.Geometry = Geometry;
+            this.Id        = Id;
+            this.Latitude  = Latitude;
+            this.Longitude = Longitude;
+            this.Altitude  = Altitude;
+            this.GeoWidth  = GeoWidth;
+            this.GeoHeight = GeoHeight;
         }
 
         #endregion
@@ -226,16 +260,6 @@ namespace de.ahzf.Vanaheimr.Aegir
         }
 
         #endregion
-
-
-        //public Geometry Geo { get; set; }
-
-  //      public DrawingBrush DrawingBrush { get; set; }
-
-        public Double GeoWidth  { get; set; }
-        public Double GeoHeight { get; set; }
-
-        public Rect Bounds { get; set; }
 
     }
 
