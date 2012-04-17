@@ -15,22 +15,38 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
 namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// Exention methods for working with maps.
+    /// Geographical positions (e.g. for debugging).
     /// </summary>
-    public static class AegirExtentionMethods
+    public static class GeoPositions
     {
 
-        
+        /// <summary>
+        /// Geographical positions in Germany.
+        /// </summary>
+        public static class Germany
+        {
+
+            /// <summary>
+            /// The geographical position of Berlin, Germany.
+            /// </summary>
+            public static GeoPosition Berlin()
+            {
+                return new GeoPosition(52.500556, 13.398889);
+            }
+
+            /// <summary>
+            /// The geographical position of Jena, Germany.
+            /// </summary>
+            public static GeoPosition Jena()
+            {
+                return new GeoPosition(50.929054, 11.584074);
+            }
+
+        }
 
     }
 

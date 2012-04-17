@@ -30,6 +30,21 @@ namespace de.ahzf.Vanaheimr.Aegir
     public static class GeoCalculations
     {
 
+        #region WorldCoordinates_2_Tile(GeoPosition, ZoomLevel)
+
+        /// <summary>
+        /// Converts the given world coordinates and zoom level to the X and Y number of map tiles.
+        /// </summary>
+        /// <param name="GeoPosition">The geographical position on the map.</param>
+        /// <param name="ZoomLevel">The ZoomLevel.</param>
+        /// <returns>The TileX and TileY number as a tuple.</returns>
+        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Tile(GeoPosition GeoPosition, Int32 ZoomLevel)
+        {
+            return WorldCoordinates_2_Tile(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
+        }
+
+        #endregion
+
         #region WorldCoordinates_2_Tile(Latitude, Longitude, ZoomLevel)
 
         /// <summary>
@@ -64,12 +79,12 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="TileY">The tile Y number.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <returns>The latitude and longitude of the first upper level pixel of the given tile.</returns>
-        public static Tuple<Double, Double> Tile_2_WorldCoordinates(Double TileX, Double TileY, UInt32 ZoomLevel)
+        public static GeoPosition Tile_2_WorldCoordinates(Double TileX, Double TileY, UInt32 ZoomLevel)
         {
 
             var n = Math.PI - ((2.0 * Math.PI * TileY) / Math.Pow(2.0, ZoomLevel));
 
-            return new Tuple<Double, Double>(
+            return new GeoPosition(
                 ((TileX / Math.Pow(2.0, ZoomLevel) * 360.0) - 180.0),
                 (180.0 / Math.PI * Math.Atan(Math.Sinh(n)))
             );
@@ -88,18 +103,33 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="MouseY">The Y position of the mouse on the map.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <returns>The latitude and longitude of the first upper level pixel of the given tile.</returns>
-        public static Tuple<Double, Double> Mouse_2_WorldCoordinates(Double MouseX, Double MouseY, UInt32 ZoomLevel)
+        public static GeoPosition Mouse_2_WorldCoordinates(Double MouseX, Double MouseY, UInt32 ZoomLevel)
         {
 
             var MapSize = Math.Pow(2.0, ZoomLevel) * 256;
 
             var n = Math.PI - ((2.0 * Math.PI * MouseY) / MapSize);
 
-            return new Tuple<Double, Double>(
-                ((MouseX / MapSize * 360.0) - 180.0),
-                (180.0 / Math.PI * Math.Atan(Math.Sinh(n)))
+            return new GeoPosition(                
+                (180.0 / Math.PI * Math.Atan(Math.Sinh(n))),
+                ((MouseX / MapSize * 360.0) - 180.0)
             );
 
+        }
+
+        #endregion
+
+        #region WorldCoordinates_2_Screen(GeoPosition, ZoomLevel)
+
+        /// <summary>
+        /// Converts the given world coordinates and zoom level to the X and Y number of map tiles.
+        /// </summary>
+        /// <param name="GeoPosition">The geographical position on the map.</param>
+        /// <param name="ZoomLevel">The ZoomLevel.</param>
+        /// <returns>The TileX and TileY number as a tuple.</returns>
+        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Screen(GeoPosition GeoPosition, Int32 ZoomLevel)
+        {
+            return WorldCoordinates_2_Screen(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
         }
 
         #endregion

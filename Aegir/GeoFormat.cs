@@ -15,22 +15,26 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
 namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// Exention methods for working with maps.
+    /// Different representations of geographical coordinates/positions.
     /// </summary>
-    public static class AegirExtentionMethods
+    public enum GeoFormat
     {
 
-        
+        /// <summary>
+        /// A decimal (h ddd.dddddd°) representation of a geographical position using the World Geodetic System 84 (WGS 84),
+        /// e.g. 49.449030° N, 11.074880° E
+        /// </summary>
+        Decimal,
+
+        /// <summary>
+        /// A sexagesimal (h dd° mm' ss.s'' or degrees, minutes, secondes) representation of a geographical position,
+        /// e.g. 49° 26' 56.5'' N, 11° 4' 29.6'' E
+        /// </summary>
+        Sexagesimal
 
     }
 

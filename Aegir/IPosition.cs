@@ -30,9 +30,6 @@ namespace de.ahzf.Vanaheimr.Aegir
     public interface IPosition : IReadonlyPosition
     {
 
-        // Latitude, Longitude of Jena, DE
-        // 50.929054, 11.584074
-
         /// <summary>
         /// The latitude of something.
         /// </summary>

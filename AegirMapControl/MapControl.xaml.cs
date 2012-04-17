@@ -125,7 +125,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// An event handler getting fired whenever the position
         /// of the mouse on the map changed.
         /// </summary>
-        public delegate void GeoPositionChangedEventHandler(MapControl Sender, Tuple<Double, Double> GeoPosition);
+        public delegate void GeoPositionChangedEventHandler(MapControl Sender, GeoPosition GeoPosition);
 
         /// <summary>
         /// An event getting fired whenever the position of the mouse
@@ -302,7 +302,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                                                                             MousePosition.Y - ScreenOffsetY,
                                                                             _ZoomLevel);
 
-                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Item1, NewMapCenter.Item2, (Int32)_ZoomLevel);
+                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Latitude, NewMapCenter.Longitude, (Int32)_ZoomLevel);
 
 
                 #region The left mouse button is still pressed => dragging the map!
@@ -427,6 +427,20 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #endregion
 
 
+        #region ZoomTo(GeoPosition, ZoomLevel)
+
+        /// <summary>
+        /// Zoom into the map onto a given zoom level.
+        /// </summary>
+        /// <param name="GeoPosition">The geographical position on the map.</param>
+        /// <param name="ZoomLevel">The desired zoom level.</param>
+        public void ZoomTo(GeoPosition GeoPosition, UInt32 ZoomLevel)
+        {
+            ZoomTo(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
+        }
+
+        #endregion
+
         #region ZoomTo(Latitude, Longitude, ZoomLevel)
 
         /// <summary>
@@ -489,11 +503,9 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             if (ZoomLevel < MaxZoomLevel)
             {
 
-                var NewMapCenter = GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - ScreenOffsetX,
-                                                                            ScreenY - ScreenOffsetY,
-                                                                            _ZoomLevel);
-
-                ZoomTo(NewMapCenter.Item2, NewMapCenter.Item1, _ZoomLevel + 1);
+                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - ScreenOffsetX,
+                                                                ScreenY - ScreenOffsetY,
+                                                                _ZoomLevel), _ZoomLevel + 1);
 
             }
 
@@ -514,11 +526,9 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             if (ZoomLevel > MinZoomLevel)
             {
 
-                var NewMapCenter = GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - ScreenOffsetX,
-                                                                            ScreenY - ScreenOffsetY,
-                                                                            _ZoomLevel);
-
-                ZoomTo(NewMapCenter.Item2, NewMapCenter.Item1, _ZoomLevel - 1);
+                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - ScreenOffsetX,
+                                                                ScreenY - ScreenOffsetY,
+                                                                _ZoomLevel), _ZoomLevel - 1);
 
             }
 
