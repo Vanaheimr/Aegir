@@ -33,17 +33,17 @@ namespace de.ahzf.Vanaheimr.Aegir
             /// <summary>
             /// The geographical position of Berlin, Germany.
             /// </summary>
-            public static GeoPosition Berlin()
+            public static GeoCoordinate Berlin()
             {
-                return new GeoPosition(52.500556, 13.398889);
+                return new GeoCoordinate(52.500556, 13.398889);
             }
 
             /// <summary>
             /// The geographical position of Jena, Germany.
             /// </summary>
-            public static GeoPosition Jena()
+            public static GeoCoordinate Jena()
             {
-                return new GeoPosition(50.929054, 11.584074);
+                return new GeoCoordinate(50.929054, 11.584074);
             }
 
         }

@@ -55,6 +55,15 @@
     <Compile Include="Layers\HeatmapLayers\IHeatmapLayer.cs" />
     <Compile Include="Layers\FeatureLayers\IFeatureLayer.cs" />
     <Compile Include="Shapes\Germany\Bayern.cs" />
+    <Compile Include="Shapes\Germany\BadenWuerttemberg.cs" />
+    <Compile Include="Shapes\Germany\Berlin.cs" />
+    <Compile Include="Shapes\Germany\RheinlandPfalz.cs" />
+    <Compile Include="Shapes\Germany\NordrheinWestfalen.cs" />
+    <Compile Include="Shapes\Germany\SachsenAnhalt.cs" />
+    <Compile Include="Shapes\Germany\Sachsen.cs" />
+    <Compile Include="Shapes\Germany\Saarland.cs" />
+    <Compile Include="Shapes\Germany\Hessen.cs" />
+    <Compile Include="Shapes\Germany\Thueringen.cs" />
     <Compile Include="Shapes\IShape.cs" />
     <Page Include="MapControl.xaml">
       <Generator>MSBuild:Compile</Generator>

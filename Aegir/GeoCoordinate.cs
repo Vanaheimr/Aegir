@@ -29,11 +29,11 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A new geographical position on a map.
+    /// A geographical coordinate or position on a map.
     /// </summary>
-    public class GeoPosition : IEquatable<GeoPosition>,
-                               IComparable<GeoPosition>,
-                               IComparable
+    public class GeoCoordinate : IEquatable<GeoCoordinate>,
+                                 IComparable<GeoCoordinate>,
+                                 IComparable
     {
 
         #region (static) Regular expressions
@@ -51,27 +51,27 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// The regular expression init string for matching comma seperators.
         /// </summary>
-        public static String IsCommaSeperator_RegExprString           = "[\\s]*,[\\s]*";
+        public static String MayBeSeperator_RegExprString             = "[\\s,;]+";
 
         /// <summary>
         /// The regular expression init string for matching decimal geo positions/coordinates.
         /// </summary>
         public static String IsDecimalGeoPosition_RegExprString       = IsDecimal_RegExprString + "[°]?[\\s]+([SN]?)" +
-                                                                        IsCommaSeperator_RegExprString +
+                                                                        MayBeSeperator_RegExprString +
                                                                         IsDecimal_RegExprString + "[°]?[\\s]+([EWO]?)";
 
         /// <summary>
         /// The regular expression init string for matching signed decimal geo positions/coordinates.
         /// </summary>
         public static String IsSignedDecimalGeoPosition_RegExprString = IsSignedDecimal_RegExprString + "[°]?" +
-                                                                        IsCommaSeperator_RegExprString +
+                                                                        MayBeSeperator_RegExprString +
                                                                         IsSignedDecimal_RegExprString + "[°]?";
 
         /// <summary>
         /// The regular expression init string for matching sexagesimal geo positions/coordinates.
         /// </summary>
         public static String IsSexagesimalGeoPosition_RegExprString   = "([-]?[0-9])+°[\\s]+([0-9])+'[\\s]+([0-9]+[\\.\\,]?[0-9]*)''[\\s]+([SN]?)" +
-                                                                        IsCommaSeperator_RegExprString +
+                                                                        MayBeSeperator_RegExprString +
                                                                         "([-]?[0-9])+°[\\s]+([0-9])+'[\\s]+([0-9]+[\\.\\,]?[0-9]*)''[\\s]+([EWO]?)";
 
         /// <summary>
@@ -107,14 +107,14 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region GeoPosition(Latitude, Longitude)
+        #region GeoCoordinate(Latitude, Longitude)
 
         /// <summary>
-        /// Create a new geographical position on a map.
+        /// Create a new geographical coordinate or position on a map.
         /// </summary>
         /// <param name="Latitude"></param>
         /// <param name="Longitude"></param>
-        public GeoPosition(Double Latitude, Double Longitude)
+        public GeoCoordinate(Double Latitude, Double Longitude)
         {
             this.Latitude  = Latitude;
             this.Longitude = Longitude;
@@ -132,12 +132,12 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         /// <param name="GeoString">A string to parse.</param>
         /// <returns>A new geo position or null.</returns>
-        public static GeoPosition ParseString(String GeoString)
+        public static GeoCoordinate ParseString(String GeoString)
         {
 
-            GeoPosition GeoPosition;
+            GeoCoordinate GeoPosition;
 
-            if (GeoPosition.TryParseString(GeoString, out GeoPosition))
+            if (GeoCoordinate.TryParseString(GeoString, out GeoPosition))
                 return GeoPosition;
 
             return null;
@@ -153,7 +153,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         /// <param name="GeoString">A string to parse.</param>
         /// <returns>True if success, false otherwise</returns>
-        public static Boolean TryParseString(String GeoString, out GeoPosition GeoPosition)
+        public static Boolean TryParseString(String GeoString, out GeoCoordinate GeoPosition)
         {
 
             var Match = IsDecimalGeoPositionRegExpr.Match(GeoString);
@@ -171,7 +171,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 if (Match.Groups[4].Value == "W")
                     Longitude = -1 * Longitude;
 
-                GeoPosition = new GeoPosition(Latitude, Longitude);
+                GeoPosition = new GeoCoordinate(Latitude, Longitude);
                 return true;
 
             }
@@ -184,7 +184,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 var Latitude  = Double.Parse(Match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture);
                 var Longitude = Double.Parse(Match.Groups[2].Value, NumberStyles.Float, CultureInfo.InvariantCulture);
 
-                GeoPosition = new GeoPosition(Latitude, Longitude);
+                GeoPosition = new GeoCoordinate(Latitude, Longitude);
                 return true;
 
             }
@@ -197,12 +197,12 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
-        public bool Equals(GeoPosition other)
+        public bool Equals(GeoCoordinate other)
         {
             throw new NotImplementedException();
         }
 
-        public int CompareTo(GeoPosition other)
+        public int CompareTo(GeoCoordinate other)
         {
             throw new NotImplementedException();
         }

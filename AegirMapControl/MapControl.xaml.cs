@@ -125,7 +125,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// An event handler getting fired whenever the position
         /// of the mouse on the map changed.
         /// </summary>
-        public delegate void GeoPositionChangedEventHandler(MapControl Sender, GeoPosition GeoPosition);
+        public delegate void GeoPositionChangedEventHandler(MapControl Sender, GeoCoordinate GeoPosition);
 
         /// <summary>
         /// An event getting fired whenever the position of the mouse
@@ -434,7 +434,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// </summary>
         /// <param name="GeoPosition">The geographical position on the map.</param>
         /// <param name="ZoomLevel">The desired zoom level.</param>
-        public void ZoomTo(GeoPosition GeoPosition, UInt32 ZoomLevel)
+        public void ZoomTo(GeoCoordinate GeoPosition, UInt32 ZoomLevel)
         {
             ZoomTo(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
         }

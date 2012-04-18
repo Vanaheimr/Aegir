@@ -41,12 +41,12 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// The geographical width of something.
         /// </summary>
-        Double GeoWidth { get; }
+        Double Latitude2  { get; }
 
         /// <summary>
         /// The geographical height of something.
         /// </summary>
-        Double GeoHeight { get; }
+        Double Longitude2 { get; }
 
 
         Rect Bounds { get; }

@@ -61,12 +61,12 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// The geographical width of thsi shape.
         /// </summary>
-        public Double GeoWidth   { get; private set; }
+        public Double Latitude2  { get; private set; }
 
         /// <summary>
         /// The geographical height of this shape.
         /// </summary>
-        public Double GeoHeight  { get; private set; }
+        public Double Longitude2 { get; private set; }
 
 
 
@@ -79,11 +79,33 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         private readonly Geometry Geometry;
 
+        //protected override Geometry DefiningGeometry
+        //{
+        //    get
+        //    {
+        //        return Geometry;
+        //    }
+        //}
+
+        #endregion
+
+        #region Geometry
+
         protected override Geometry DefiningGeometry
         {
             get
             {
-                return Geometry;
+
+                var Starts = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  (Int32) ZoomLevel);
+                var Ends   = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, (Int32) ZoomLevel);
+                // Width:  7.788112
+                // Height: 9.175257
+
+                var w2 = Ends.Item1 - Starts.Item1;
+                var h2 = Ends.Item2 - Starts.Item2;
+
+                return new RectangleGeometry() { Rect = new Rect(new Size(w2, Bounds.Height / Bounds.Width * w2)) }; ;
+
             }
         }
 
@@ -105,14 +127,60 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public AShape(String Id, Double Latitude, Double Longitude, Double Altitude, Double GeoWidth, Double GeoHeight)
+        public AShape(String Id, Double Latitude, Double Longitude, Double Altitude, Double Latitude2, Double Longitude2)
         {
+
             this.Id        = Id;
             this.Latitude  = Latitude;
             this.Longitude = Longitude;
             this.Altitude  = Altitude;
-            this.GeoWidth  = GeoWidth;
-            this.GeoHeight = GeoHeight;
+            this.Latitude2 = Latitude2;
+            this.Longitude2 = Longitude2;
+
+        }
+
+        #endregion
+
+        #region AShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
+
+        /// <summary>
+        /// Create a new abstract shape.
+        /// </summary>
+        /// <param name="Id">The Id of the shape.</param>
+        /// <param name="Latitude">The latitude of the shape center.</param>
+        /// <param name="Longitude">The longitude of the shape center.</param>
+        /// <param name="Altitude">The altitude of the shape center.</param>
+        /// <param name="GeoWidth">The geographical width of the shape center.</param>
+        /// <param name="GeoHeight">The geographical height of the shape center.</param>
+        public AShape(String Id, Double Latitude, Double Longitude, Double Altitude, Double Latitude2, Double Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        {
+
+            this.Id        = Id;
+            this.Latitude  = Latitude;
+            this.Longitude = Longitude;
+            this.Altitude  = Altitude;
+            this.Latitude2 = Latitude2;
+            this.Longitude2 = Longitude2;
+
+            var PathGeometry16 = PathGeometry.Parse(Id);
+
+            var GD16 = new GeometryDrawing(new SolidColorBrush(FillColor), new Pen(new SolidColorBrush(StrokeColor), StrokeThickness), PathGeometry16);
+
+            var DrawingGroup = new DrawingGroup();
+            DrawingGroup.Children.Add(GD16);
+
+            this.Fill = new DrawingBrush()
+            {
+                Drawing = DrawingGroup,
+                //Viewport = new Rect(0, 0, 1, 1),
+                TileMode = TileMode.None,
+                Stretch = Stretch.UniformToFill
+            };
+
+            Bounds = DrawingGroup.Bounds;
+            var w = Bounds.Width;
+            var h = Bounds.Height;
+
         }
 
         #endregion

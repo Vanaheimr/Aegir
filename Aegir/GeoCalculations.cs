@@ -38,7 +38,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="GeoPosition">The geographical position on the map.</param>
         /// <param name="ZoomLevel">The ZoomLevel.</param>
         /// <returns>The TileX and TileY number as a tuple.</returns>
-        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Tile(GeoPosition GeoPosition, Int32 ZoomLevel)
+        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Tile(GeoCoordinate GeoPosition, Int32 ZoomLevel)
         {
             return WorldCoordinates_2_Tile(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
         }
@@ -79,12 +79,12 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="TileY">The tile Y number.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <returns>The latitude and longitude of the first upper level pixel of the given tile.</returns>
-        public static GeoPosition Tile_2_WorldCoordinates(Double TileX, Double TileY, UInt32 ZoomLevel)
+        public static GeoCoordinate Tile_2_WorldCoordinates(Double TileX, Double TileY, UInt32 ZoomLevel)
         {
 
             var n = Math.PI - ((2.0 * Math.PI * TileY) / Math.Pow(2.0, ZoomLevel));
 
-            return new GeoPosition(
+            return new GeoCoordinate(
                 ((TileX / Math.Pow(2.0, ZoomLevel) * 360.0) - 180.0),
                 (180.0 / Math.PI * Math.Atan(Math.Sinh(n)))
             );
@@ -103,14 +103,14 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="MouseY">The Y position of the mouse on the map.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <returns>The latitude and longitude of the first upper level pixel of the given tile.</returns>
-        public static GeoPosition Mouse_2_WorldCoordinates(Double MouseX, Double MouseY, UInt32 ZoomLevel)
+        public static GeoCoordinate Mouse_2_WorldCoordinates(Double MouseX, Double MouseY, UInt32 ZoomLevel)
         {
 
             var MapSize = Math.Pow(2.0, ZoomLevel) * 256;
 
             var n = Math.PI - ((2.0 * Math.PI * MouseY) / MapSize);
 
-            return new GeoPosition(                
+            return new GeoCoordinate(                
                 (180.0 / Math.PI * Math.Atan(Math.Sinh(n))),
                 ((MouseX / MapSize * 360.0) - 180.0)
             );
@@ -127,7 +127,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="GeoPosition">The geographical position on the map.</param>
         /// <param name="ZoomLevel">The ZoomLevel.</param>
         /// <returns>The TileX and TileY number as a tuple.</returns>
-        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Screen(GeoPosition GeoPosition, Int32 ZoomLevel)
+        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Screen(GeoCoordinate GeoPosition, Int32 ZoomLevel)
         {
             return WorldCoordinates_2_Screen(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
         }
