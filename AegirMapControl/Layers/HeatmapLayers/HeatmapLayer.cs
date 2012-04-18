@@ -82,7 +82,7 @@ namespace de.ahzf.Vanaheimr.Aegir
             radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
             radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, (Int32) ZoomLevel);
+            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;

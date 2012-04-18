@@ -50,10 +50,15 @@
     <Compile Include="GeoCalculations.cs" />
     <Compile Include="GeoJSON.cs" />
     <Compile Include="IPosition.cs" />
+    <Compile Include="Pipes\PolyReaderMetaPipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Pipes\" />
+    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
+      <Project>{3949790D-8591-4101-9E4D-CE7A758E7409}</Project>
+      <Name>Styx</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -219,7 +219,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 {
 
                     Feature Feature;
-                    Tuple<UInt32, UInt32> XY;
+                    Tuple<UInt64, UInt64> XY;
 
                     foreach (var Child in this.Children)
                     {
@@ -229,10 +229,10 @@ namespace de.ahzf.Vanaheimr.Aegir
                         if (Feature != null)
                         {
                             
-                            XY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, (Int32) ZoomLevel);
+                            XY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, ZoomLevel);
                             
-                            Canvas.SetLeft(Feature, ScreenOffsetX + XY.Item1);
-                            Canvas.SetTop(Feature, ScreenOffsetY + XY.Item2);
+                            Canvas.SetLeft(Feature, ScreenOffsetX + (Int64) XY.Item1);
+                            Canvas.SetTop (Feature, ScreenOffsetY + (Int64) XY.Item2);
 
                             //if (Feature.GeoWidth != 0)
                             //    Feature.Width = 

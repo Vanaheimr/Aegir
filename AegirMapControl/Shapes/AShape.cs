@@ -96,8 +96,8 @@ namespace de.ahzf.Vanaheimr.Aegir
             get
             {
 
-                var Starts = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  (Int32) ZoomLevel);
-                var Ends   = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, (Int32) ZoomLevel);
+                var Starts = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  ZoomLevel);
+                var Ends   = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, ZoomLevel);
                 // Width:  7.788112
                 // Height: 9.175257
 

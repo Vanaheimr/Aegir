@@ -38,7 +38,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="GeoPosition">The geographical position on the map.</param>
         /// <param name="ZoomLevel">The ZoomLevel.</param>
         /// <returns>The TileX and TileY number as a tuple.</returns>
-        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Tile(GeoCoordinate GeoPosition, Int32 ZoomLevel)
+        public static Tuple<UInt64, UInt64> WorldCoordinates_2_Tile(GeoCoordinate GeoPosition, UInt32 ZoomLevel)
         {
             return WorldCoordinates_2_Tile(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
         }
@@ -54,16 +54,16 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="Longitude">The longitude.</param>
         /// <param name="ZoomLevel">The ZoomLevel.</param>
         /// <returns>The TileX and TileY number as a tuple.</returns>
-        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Tile(Double Latitude, Double Longitude, Int32 ZoomLevel)
+        public static Tuple<UInt64, UInt64> WorldCoordinates_2_Tile(Double Latitude, Double Longitude, UInt32 ZoomLevel)
         {
 
-            return new Tuple<UInt32, UInt32>(
-                (UInt32) Math.Floor(((Longitude + 180.0) / 360.0) * (1 << ZoomLevel)),
-                (UInt32) Math.Floor((1.0 - Math.Log (
+            return new Tuple<UInt64, UInt64>(
+                (UInt64) Math.Floor(((Longitude + 180.0) / 360.0) * (1 << (Int32) ZoomLevel)),
+                (UInt64) Math.Floor((1.0 - Math.Log (
                                                               Math.Tan(Latitude * Math.PI / 180.0) +
                                                         1.0 / Math.Cos(Latitude * Math.PI / 180.0)
                                                     ) / Math.PI)
-                                    / 2.0 * (1 << ZoomLevel))
+                                    / 2.0 * (1 << (Int32) ZoomLevel))
             );
 
         }
@@ -127,7 +127,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="GeoPosition">The geographical position on the map.</param>
         /// <param name="ZoomLevel">The ZoomLevel.</param>
         /// <returns>The TileX and TileY number as a tuple.</returns>
-        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Screen(GeoCoordinate GeoPosition, Int32 ZoomLevel)
+        public static Tuple<UInt64, UInt64> WorldCoordinates_2_Screen(GeoCoordinate GeoPosition, UInt32 ZoomLevel)
         {
             return WorldCoordinates_2_Screen(GeoPosition.Latitude, GeoPosition.Longitude, ZoomLevel);
         }
@@ -143,14 +143,14 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="Longitude">The longitude.</param>
         /// <param name="ZoomLevel">The ZoomLevel.</param>
         /// <returns>The TileX and TileY number as a tuple.</returns>
-        public static Tuple<UInt32, UInt32> WorldCoordinates_2_Screen(Double Latitude, Double Longitude, Int32 ZoomLevel)
+        public static Tuple<UInt64, UInt64> WorldCoordinates_2_Screen(Double Latitude, Double Longitude, UInt32 ZoomLevel)
         {
 
             var MapSize = Math.Pow(2.0, ZoomLevel) * 256;
 
-            return new Tuple<UInt32, UInt32>(
-                (UInt32) (((Longitude + 180.0) / 360.0) * MapSize),
-                (UInt32) (((1.0 - Math.Log (
+            return new Tuple<UInt64, UInt64>(
+                (UInt64) (((Longitude + 180.0) / 360.0) * MapSize),
+                (UInt64) (((1.0 - Math.Log(
                                                               Math.Tan(Latitude * Math.PI / 180.0) +
                                                         1.0 / Math.Cos(Latitude * Math.PI / 180.0)
                                                     ) / Math.PI)

@@ -302,7 +302,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                                                                             MousePosition.Y - ScreenOffsetY,
                                                                             _ZoomLevel);
 
-                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Latitude, NewMapCenter.Longitude, (Int32)_ZoomLevel);
+                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Latitude, NewMapCenter.Longitude, _ZoomLevel);
 
 
                 #region The left mouse button is still pressed => dragging the map!
@@ -462,12 +462,12 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             var OldZoomLevel = _ZoomLevel;
             _ZoomLevel = ZoomLevel;
 
-            var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, (Int32) _ZoomLevel);
+            var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, _ZoomLevel);
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-            ScreenOffsetX = (Int64) (-NewOffset.Item1 + ForegroundLayer.ActualWidth  / 2);
-            ScreenOffsetY = (Int64) (-NewOffset.Item2 + ForegroundLayer.ActualHeight / 2);
+            ScreenOffsetX = (Int64) (-((Int64) NewOffset.Item1) + ForegroundLayer.ActualWidth  / 2);
+            ScreenOffsetY = (Int64) (-((Int64) NewOffset.Item2) + ForegroundLayer.ActualHeight / 2);
 
             ScreenOffsetX = ScreenOffsetX % MapSizeAtZoomLevel;
             ScreenOffsetY = ScreenOffsetY % MapSizeAtZoomLevel;

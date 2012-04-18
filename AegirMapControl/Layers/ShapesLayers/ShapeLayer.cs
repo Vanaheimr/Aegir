@@ -89,7 +89,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         public Feature AddPath(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
         {
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, (Int32)ZoomLevel);
+            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
 
             var PathGeometry1 = PathGeometry.Parse("M51,42c-5-4-11-7-19-7c-6,0-12,1-20,5l10-35c20-8,30-4,39,2l-10,35z");
             var PathGeometry2 = PathGeometry.Parse("M106,13c-21,9-31,4-40-2l-10,35c9,6,20,11,40,2l10-35z");
@@ -149,7 +149,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 {
 
                     AShape AShape;
-                    Tuple<UInt32, UInt32> XY, WH;
+                    Tuple<UInt64, UInt64> XY, WH;
 
                     foreach (var Child in this.Children)
                     {
@@ -159,12 +159,12 @@ namespace de.ahzf.Vanaheimr.Aegir
                         if (AShape != null)
                         {
 
-                            XY = GeoCalculations.WorldCoordinates_2_Screen(AShape.Latitude, AShape.Longitude, (Int32) ZoomLevel);
-                            Canvas.SetLeft(AShape, ScreenOffsetX + XY.Item1);
-                            Canvas.SetTop (AShape, ScreenOffsetY + XY.Item2);
+                            XY = GeoCalculations.WorldCoordinates_2_Screen(AShape.Latitude, AShape.Longitude, ZoomLevel);
+                            Canvas.SetLeft(AShape, ScreenOffsetX + (Int64) XY.Item1);
+                            Canvas.SetTop (AShape, ScreenOffsetY + (Int64) XY.Item2);
 
                             AShape.ZoomLevel = ZoomLevel;
-                            WH = GeoCalculations.WorldCoordinates_2_Screen(47.270203, 15.041656, (Int32) ZoomLevel);
+                            WH = GeoCalculations.WorldCoordinates_2_Screen(47.270203, 15.041656, ZoomLevel);
                             AShape.Width  = WH.Item1 - XY.Item1;
                             AShape.Height = WH.Item2 - XY.Item2;
 

@@ -57,6 +57,12 @@
     <Compile Include="Shapes\Germany\Bayern.cs" />
     <Compile Include="Shapes\Germany\BadenWuerttemberg.cs" />
     <Compile Include="Shapes\Germany\Berlin.cs" />
+    <Compile Include="Shapes\Germany\Bremen.cs" />
+    <Compile Include="Shapes\Germany\Brandenburg.cs" />
+    <Compile Include="Shapes\Germany\Niedersachsen.cs" />
+    <Compile Include="Shapes\Germany\MecklenburgVorpommern.cs" />
+    <Compile Include="Shapes\Germany\SchleswigHolstein.cs" />
+    <Compile Include="Shapes\Germany\Hamburg.cs" />
     <Compile Include="Shapes\Germany\RheinlandPfalz.cs" />
     <Compile Include="Shapes\Germany\NordrheinWestfalen.cs" />
     <Compile Include="Shapes\Germany\SachsenAnhalt.cs" />
