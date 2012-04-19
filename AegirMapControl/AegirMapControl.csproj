@@ -76,7 +76,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Shapes\AShape.cs" />
-    <Compile Include="Shapes\Germany\Germany.cs" />
     <Compile Include="Layers\ALayer.cs" />
     <Compile Include="Features\IFeature.cs" />
     <Compile Include="Layers\ShapesLayers\ShapeLayer.cs" />

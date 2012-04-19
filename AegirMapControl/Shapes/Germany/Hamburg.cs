@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Hamburg
         /// </summary>
         public Hamburg(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Hamburg[5], 53.748119, 09.723659, 0, 53.404578, 10.336769, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Hamburg, 53.748119, 09.723659, 0, 53.404578, 10.336769, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

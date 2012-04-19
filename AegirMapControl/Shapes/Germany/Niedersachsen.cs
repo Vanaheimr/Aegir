@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Niedersachsen
         /// </summary>
         public Niedersachsen(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Niedersachsen[5], 53.963197, 06.630277, 0, 51.300820, 11.601769, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Niedersachsen, 53.963197, 06.630277, 0, 51.300820, 11.601769, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

@@ -22,6 +22,7 @@ using System.IO;
 using System.Net;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 #endregion
 
@@ -212,58 +213,73 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <returns>A stream containing the tile.</returns>
         public virtual Byte[] GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
         {
-            
-            var XCache = TileCache[ZoomLevel];
+
+            Byte[][] YCache = null;
+            var ThreadZoomLevel = new ThreadLocal<UInt32>(() => ZoomLevel);
+            var ThreadX         = new ThreadLocal<UInt32>(() => X);
+            var ThreadY         = new ThreadLocal<UInt32>(() => Y);
+
+            var XCache = TileCache[ThreadZoomLevel.Value];
             if (XCache == null)
             {
-                XCache               = new Byte[(Int32) Math.Pow(2, ZoomLevel)][][];
-                TileCache[ZoomLevel] = XCache;
+                XCache                     = new Byte[(Int32) Math.Pow(2, ThreadZoomLevel.Value)][][];
+                TileCache[ThreadZoomLevel.Value] = XCache;
             }
 
-            var YCache = XCache[X];
-            if (YCache == null)
-            {
-                YCache    = new Byte[(Int32) Math.Pow(2, ZoomLevel)][];
-                XCache[X] = YCache;
-            }
-
-            if (YCache[Y] == null)
+            try
             {
 
-                foreach (var ActualHost in Hosts)
+                YCache = XCache[ThreadX.Value];
+
+                if (YCache == null)
+                {
+                    YCache                = new Byte[(Int32) Math.Pow(2, ThreadZoomLevel.Value)][];
+                    XCache[ThreadX.Value] = YCache;
+                }
+
+                if (YCache[ThreadY.Value] == null)
                 {
 
-                    var _Url = ActualHost +
-                               UriPattern.Replace("{zoom}", ZoomLevel.ToString()).
-                                          Replace("{x}",            X.ToString()).
-                                          Replace("{y}",            Y.ToString());
-
-                    //Debug.WriteLine("Fetching: " + _Url);
-
-                    try
-                    {
-                        var WebClient = new WebClient();
-                        WebClient.Proxy = null;
-                        YCache[Y] = WebClient.DownloadData(_Url);
-                    }
-                    catch (Exception e)
+                    foreach (var ActualHost in Hosts)
                     {
 
-                        Debug.WriteLine("AMapProvider Exception: " + e);
+                        var _Url = ActualHost +
+                                   UriPattern.Replace("{zoom}", ThreadZoomLevel.ToString()).
+                                              Replace("{x}",            ThreadX.ToString()).
+                                              Replace("{y}",            ThreadY.ToString());
+
+                        //Debug.WriteLine("Fetching: " + _Url);
+
+                        try
+                        {
+                            var WebClient = new WebClient();
+                            WebClient.Proxy = null;
+                            YCache[ThreadY.Value] = WebClient.DownloadData(_Url);
+                        }
+                        catch (Exception e)
+                        {
+
+                            Debug.WriteLine("AMapProvider Exception: " + e);
                         
-                        // Try next host...
-                        continue;
+                            // Try next host...
+                            continue;
+
+                        }
+
+                        Debug.WriteLine("Fetched: " + _Url);
+                        break;
 
                     }
-
-                    Debug.WriteLine("Fetched: " + _Url);
-                    break;
 
                 }
 
-            }
+                return YCache[ThreadY.Value];
 
-            return YCache[Y];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
 
         }
 

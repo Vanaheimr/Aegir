@@ -75,7 +75,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         public IShape AddShape(AShape AShape)
         {
 
-            AShape.ToolTip = "A shape";
+            AShape.ToolTip = AShape.GetType().Name;
 
             // The position and size on the map will be set within the PaintMap() method!
             this.Children.Add(AShape);

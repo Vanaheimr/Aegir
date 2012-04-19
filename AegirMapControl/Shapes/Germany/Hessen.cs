@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Hessen
         /// </summary>
         public Hessen(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Hessen[5], 51.657249, 07.784550, 0, 49.404091, 10.237089, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Hessen, 51.657249, 07.784550, 0, 49.404091, 10.237089, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

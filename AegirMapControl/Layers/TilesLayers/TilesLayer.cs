@@ -293,32 +293,47 @@ namespace de.ahzf.Vanaheimr.Aegir
                                 _ActualYTile = (Int32) ((_y - ___y) % _NumberOfTiles);
                                 if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
 
-                                var _TileStream = TileClient.GetTileStream(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
+                                var _Tile = TileClient.GetTile(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
 
-                                this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)((_TileStream2) =>
+                                if (_Tile != null)
                                 {
 
                                     var _BitmapImage = new BitmapImage();
                                     _BitmapImage.BeginInit();
                                     _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
-                                    _BitmapImage.StreamSource = (Stream) _TileStream;
+                                    _BitmapImage.StreamSource = new MemoryStream(_Tile);
                                     _BitmapImage.EndInit();
-                                    _BitmapImage.Freeze();
+                                    _BitmapImage.Freeze(); // To allow access from UI thread!
 
-                                    var _Image = new Image()
+                                    this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)((_ImageSource) =>
                                     {
-                                        Stretch = Stretch.Uniform,
-                                        Source  = _BitmapImage,
-                                        Width   = _BitmapImage.PixelWidth
-                                    };
 
-                                    this.Children.Add(_Image);
-                                    TilesOnMap.Push(_Image);
-                            
-                                    Canvas.SetLeft(_Image, ScreenOffsetX % 256 + _x * 256);
-                                    Canvas.SetTop (_Image, ScreenOffsetY % 256 + _y * 256);
+                                        try
+                                        {
 
-                                }), _TileStream);
+                                            var _Image = new Image()
+                                            {
+                                                Stretch = Stretch.Uniform,
+                                                Source = _ImageSource as ImageSource,
+                                                Width = (_ImageSource as BitmapImage).PixelWidth
+                                            };
+
+                                            //_Image
+
+                                            this.Children.Add(_Image);
+                                            TilesOnMap.Push(_Image);
+
+                                            Canvas.SetLeft(_Image, ScreenOffsetX % 256 + _x * 256);
+                                            Canvas.SetTop (_Image, ScreenOffsetY % 256 + _y * 256);
+
+                                        }
+                                        catch (NotSupportedException)
+                                        {
+                                        }
+
+                                    }), _BitmapImage as ImageSource);
+
+                                }
 
                             });
 

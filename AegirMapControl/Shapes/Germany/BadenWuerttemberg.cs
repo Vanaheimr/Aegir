@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Baden-Württemberg
         /// </summary>
         public BadenWuerttemberg(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.BadenWürttemberg[5], 49.787560, 07.510741, 0, 47.536522, 10.505070, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.BadenWürttemberg, 49.787560, 07.510741, 0, 47.536522, 10.505070, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

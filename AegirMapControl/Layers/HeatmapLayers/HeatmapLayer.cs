@@ -74,6 +74,11 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         public Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
         {
+            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
+        }
+
+        public Feature AddFeature(String Id, GeoCoordinate GeoCoordinate, Double Width, Double Height, Color Color)
+        {
 
             var radialBrush = new RadialGradientBrush();
             var ColorHigh = Color; ColorHigh.A = 0xFF;
@@ -82,12 +87,12 @@ namespace de.ahzf.Vanaheimr.Aegir
             radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
             radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
+            var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoordinate.Latitude, GeoCoordinate.Longitude, ZoomLevel);
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;
-            Feature.Latitude         = Latitude;
-            Feature.Longitude        = Longitude;
+            Feature.Latitude         = GeoCoordinate.Latitude;
+            Feature.Longitude        = GeoCoordinate.Longitude;
             Feature.Width            = Width;
             Feature.Height           = Height;
             Feature.Fill             = radialBrush;

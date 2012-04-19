@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Sachsen
         /// </summary>
         public Sachsen(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Sachsen[5], 51.680592, 11.878723, 0, 50.179321, 15.038113, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Sachsen, 51.680592, 11.878723, 0, 50.179321, 15.038113, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

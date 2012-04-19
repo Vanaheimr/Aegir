@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Nordrhein-Westfalen
         /// </summary>
         public NordrheinWestfalen(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.NordrheinWestfalen[5], 52.532508, 05.871619, 0, 50.321931, 09.465919, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.NordrheinWestfalen, 52.532508, 05.871619, 0, 50.321931, 09.465919, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

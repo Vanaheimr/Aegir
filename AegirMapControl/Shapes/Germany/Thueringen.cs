@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Thueringen
         /// </summary>
         public Thueringen(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Thueringen[5], 51.648921, 09.873109, 0, 50.199799, 12.666310, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Thueringen, 51.648921, 09.873109, 0, 50.199799, 12.666310, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

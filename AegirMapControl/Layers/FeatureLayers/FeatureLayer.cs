@@ -72,13 +72,19 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region AddFeature
 
+
         public Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
+        {
+            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
+        }
+
+        public Feature AddFeature(String Id, GeoCoordinate GeoCoordinate, Double Width, Double Height, Color Color)
         {
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;
-            Feature.Latitude         = Latitude;
-            Feature.Longitude        = Longitude;
+            Feature.Latitude         = GeoCoordinate.Latitude;
+            Feature.Longitude        = GeoCoordinate.Longitude;
             Feature.Stroke           = new SolidColorBrush(Colors.Black);
             Feature.StrokeThickness  = 1;
             Feature.Width            = Width;

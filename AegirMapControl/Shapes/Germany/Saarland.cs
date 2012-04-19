@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Saarland
         /// </summary>
         public Saarland(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Saarland[5], 49.646819, 06.359445, 0, 49.122921, 07.411569, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Saarland, 49.646819, 06.359445, 0, 49.122921, 07.411569, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

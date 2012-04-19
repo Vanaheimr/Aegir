@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Brandenburg
         /// </summary>
         public Brandenburg(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Brandenburg[5], 53.556289, 11.273380, 0, 51.361782, 14.746819, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Brandenburg, 53.556289, 11.273380, 0, 51.361782, 14.746819, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Schleswig-Holstein
         /// </summary>
         public SchleswigHolstein(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.SchleswigHolstein[5], 55.056525, 07.860277, 0, 53.369851, 11.313609, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.SchleswigHolstein, 55.056525, 07.860277, 0, 53.369851, 11.313609, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

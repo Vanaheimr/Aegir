@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Rheinland-Pfalz
         /// </summary>
         public RheinlandPfalz(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.RheinlandPfalz[5], 50.943020, 06.097789, 0, 48.967739, 08.508850, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.RheinlandPfalz, 50.943020, 06.097789, 0, 48.967739, 08.508850, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

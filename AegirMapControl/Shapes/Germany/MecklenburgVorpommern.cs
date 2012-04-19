@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Mecklenburg-Vorpommern
         /// </summary>
         public MecklenburgVorpommern(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.MecklenburgVorpommern[5], 54.684582, 10.597400, 0, 53.107632, 14.415766, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.MecklenburgVorpommern, 54.684582, 10.597400, 0, 53.107632, 14.415766, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

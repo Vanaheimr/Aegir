@@ -77,7 +77,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Bremen
         /// </summary>
         public Bremen(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Bremen[5], 53.232891, 08.486891, 0, 53.014889, 08.992989, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Bremen, 53.232891, 08.486891, 0, 53.014889, 08.992989, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

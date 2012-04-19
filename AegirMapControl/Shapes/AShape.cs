@@ -152,7 +152,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public AShape(String Id, Double Latitude, Double Longitude, Double Altitude, Double Latitude2, Double Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        public AShape(String[] Geometries, Double Latitude, Double Longitude, Double Altitude, Double Latitude2, Double Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
         {
 
             this.Id        = Id;
@@ -162,7 +162,7 @@ namespace de.ahzf.Vanaheimr.Aegir
             this.Latitude2 = Latitude2;
             this.Longitude2 = Longitude2;
 
-            var PathGeometry16 = PathGeometry.Parse(Id);
+            var PathGeometry16 = PathGeometry.Parse(Geometries[8]);
 
             var GD16 = new GeometryDrawing(new SolidColorBrush(FillColor), new Pen(new SolidColorBrush(StrokeColor), StrokeThickness), PathGeometry16);
 

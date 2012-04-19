@@ -76,7 +76,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Sachsen-Anhalt
         /// </summary>
         public SachsenAnhalt(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.SachsenAnhalt[5], 53.038791, 10.563370, 0, 50.945049, 13.199229, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.SachsenAnhalt, 53.038791, 10.563370, 0, 50.945049, 13.199229, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

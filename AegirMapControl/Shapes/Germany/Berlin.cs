@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Berlin
         /// </summary>
         public Berlin(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Berlin[5], 52.675022, 13.093819, 0, 52.338722, 13.768409, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Berlin, 52.675022, 13.093819, 0, 52.338722, 13.768409, StrokeColor, StrokeThickness, FillColor)
         { }
 
     }
