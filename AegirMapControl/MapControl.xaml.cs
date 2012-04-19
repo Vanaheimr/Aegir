@@ -427,12 +427,25 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #endregion
 
 
+        #region MoveTo(GeoPosition, ZoomLevel)
+
+        /// <summary>
+        /// Move to given position on the map.
+        /// </summary>
+        /// <param name="GeoPosition">The geographical coordinates to move to.</param>
+        public void MoveTo(GeoCoordinate GeoPosition)
+        {
+            ZoomTo(GeoPosition.Latitude, GeoPosition.Longitude, _ZoomLevel);
+        }
+
+        #endregion
+
         #region ZoomTo(GeoPosition, ZoomLevel)
 
         /// <summary>
-        /// Zoom into the map onto a given zoom level.
+        /// Zoom into the map onto the given coordinates and zoom level.
         /// </summary>
-        /// <param name="GeoPosition">The geographical position on the map.</param>
+        /// <param name="GeoPosition">The geographical coordinates to move to.</param>
         /// <param name="ZoomLevel">The desired zoom level.</param>
         public void ZoomTo(GeoCoordinate GeoPosition, UInt32 ZoomLevel)
         {
@@ -441,10 +454,24 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #endregion
 
+        #region MoveTo(Latitude, Longitude, ZoomLevel)
+
+        /// <summary>
+        /// Move to given position on the map.
+        /// </summary>
+        /// <param name="Latitude">The latitude of the zoom center on the map.</param>
+        /// <param name="Longitude">The longitude of the zoom center on the map.</param>
+        public void MoveTo(Double Latitude, Double Longitude)
+        {
+            ZoomTo(Latitude, Longitude, _ZoomLevel);
+        }
+
+        #endregion
+
         #region ZoomTo(Latitude, Longitude, ZoomLevel)
 
         /// <summary>
-        /// Zoom into the map onto a given zoom level.
+        /// Zoom into the map onto the given coordinates and zoom level.
         /// </summary>
         /// <param name="Latitude">The latitude of the zoom center on the map.</param>
         /// <param name="Longitude">The longitude of the zoom center on the map.</param>
