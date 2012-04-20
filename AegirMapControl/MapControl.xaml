@@ -58,7 +58,7 @@
 
                     <Button Name="ZoomInButton"  Height="23" Width="23" Content="+" Canvas.Left="5" Canvas.Top="10" Canvas.ZIndex="99" Click="ZoomInButton_Click"  Template="{StaticResource ZoomButtonTemplate}" />
                     <Button Name="ZoomOutButton" Height="23" Width="23" Content="-" Canvas.Left="5" Canvas.Top="38" Canvas.ZIndex="99" Click="ZoomOutButton_Click" Template="{StaticResource ZoomButtonTemplate}" />
-<!--<my1:InfoBox Title="Reports" Body="This is information about all the reports." Canvas.Left="178" Canvas.Top="62" />-->
+<my1:InfoBox Title="Reports" Body="This is information about all the reports." Canvas.Left="178" Canvas.Top="62" />
                 </Canvas>
 
             </Grid>

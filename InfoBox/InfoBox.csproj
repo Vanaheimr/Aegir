@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{17FC3955-9E9E-4358-A666-A3CD53CCDCE5}</ProjectGuid>
+    <ProjectGuid>{0503A69E-CA6F-49EC-8FA4-F6D95DC52C68}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AegirMapControl</RootNamespace>
-    <AssemblyName>AegirMapControl</AssemblyName>
+    <RootNamespace>InfoBox</RootNamespace>
+    <AssemblyName>InfoBox</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\InfoBox.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,48 +51,16 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Layers\EditFeatureLayers\EditFeatureLayer.cs" />
-    <Compile Include="Layers\EditFeatureLayers\IEditFeatureLayer.cs" />
-    <Compile Include="Layers\TilesLayers\ITilesLayer.cs" />
-    <Compile Include="Layers\ShapesLayers\IShapeLayer.cs" />
-    <Compile Include="Layers\HeatmapLayers\IHeatmapLayer.cs" />
-    <Compile Include="Layers\FeatureLayers\IFeatureLayer.cs" />
-    <Compile Include="Shapes\Germany\Bayern.cs" />
-    <Compile Include="Shapes\Germany\BadenWuerttemberg.cs" />
-    <Compile Include="Shapes\Germany\Berlin.cs" />
-    <Compile Include="Shapes\Germany\Bremen.cs" />
-    <Compile Include="Shapes\Germany\Brandenburg.cs" />
-    <Compile Include="Shapes\Germany\Niedersachsen.cs" />
-    <Compile Include="Shapes\Germany\MecklenburgVorpommern.cs" />
-    <Compile Include="Shapes\Germany\SchleswigHolstein.cs" />
-    <Compile Include="Shapes\Germany\Hamburg.cs" />
-    <Compile Include="Shapes\Germany\RheinlandPfalz.cs" />
-    <Compile Include="Shapes\Germany\NordrheinWestfalen.cs" />
-    <Compile Include="Shapes\Germany\SachsenAnhalt.cs" />
-    <Compile Include="Shapes\Germany\Sachsen.cs" />
-    <Compile Include="Shapes\Germany\Saarland.cs" />
-    <Compile Include="Shapes\Germany\Hessen.cs" />
-    <Compile Include="Shapes\Germany\Thueringen.cs" />
-    <Compile Include="Shapes\IShape.cs" />
-    <Page Include="MapControl.xaml">
+    <Page Include="InfoBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Shapes\AShape.cs" />
-    <Compile Include="Layers\AMapLayer.cs" />
-    <Compile Include="Features\IFeature.cs" />
-    <Compile Include="Layers\ShapesLayers\ShapeLayer.cs" />
-    <Compile Include="Layers\FeatureLayers\FeatureLayer.cs" />
-    <Compile Include="Features\Feature.cs" />
-    <Compile Include="Layers\HeatmapLayers\HeatmapLayer.cs" />
-    <Compile Include="Layers\IMapLayer.cs" />
-    <Compile Include="MapControl.xaml.cs">
-      <DependentUpon>MapControl.xaml</DependentUpon>
+    <Compile Include="InfoBox.xaml.cs">
+      <DependentUpon>InfoBox.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Layers\TilesLayers\TilesLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -114,28 +83,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
-      <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
-      <Name>Hermod</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">
-      <Project>{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}</Project>
-      <Name>Commons</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AegirTiles\AegirTiles.csproj">
-      <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
-      <Name>AegirTiles</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aegir\Aegir.csproj">
-      <Project>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</Project>
-      <Name>Aegir</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InfoBox\InfoBox.csproj">
-      <Project>{0503A69E-CA6F-49EC-8FA4-F6D95DC52C68}</Project>
-      <Name>InfoBox</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
