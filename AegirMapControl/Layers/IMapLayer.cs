@@ -22,6 +22,7 @@ using System.Windows.Controls;
 
 using de.ahzf.Illias.Commons;
 using de.ahzf.Vanaheimr.Aegir.Controls;
+using System.Windows;
 
 #endregion
 
@@ -48,6 +49,16 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// The z-index of this feature layer.
         /// </summary>
         Int32 ZIndex { get; }
+
+        /// <summary>
+        /// Wether the map layer is currently visible or not.
+        /// </summary>
+        Boolean IsVisible { get; }
+
+        /// <summary>
+        /// The current visibility of the map layer.
+        /// </summary>
+        Visibility Visibility { get; set; }
 
         /// <summary>
         /// The features of this feature layer.

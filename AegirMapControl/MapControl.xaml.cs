@@ -691,7 +691,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         // Map layer management
 
-        #region AddLayer<T>(Id, ZIndex, AddToPanel = true)
+        #region AddLayer<T>(Id, ZIndex, Visibility = Visibility.Visible, AddToPanel = true)
 
         /// <summary>
         /// Create a new map layer of the given type and add it to the map control.
@@ -699,8 +699,9 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <typeparam name="T">The class of the map layer to create.</typeparam>
         /// <param name="Id">The identification of the map layer.</param>
         /// <param name="ZIndex">The z-index of the map layer.</param>
+        /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
         /// <param name="AddToPanel">Wether to add this map layer to the layer panel or not.</param>
-        public T AddLayer<T>(String Id, Int32 ZIndex, Boolean AddToPanel = true)
+        public T AddLayer<T>(String Id, Int32 ZIndex, Visibility Visibility = Visibility.Visible, Boolean AddToPanel = true)
             where T : class, IMapLayer
         {
 
@@ -721,25 +722,26 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 throw new ArgumentException("A appropriate constructor for type '" + typeof(T).Name + "' could not be found!");
 
             // Invoke the constructor of the map layer
-            var _Layer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IMapLayer;
+            var _MapLayer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IMapLayer;
 
-            if (_Layer != null)
-                AddLayer(_Layer, AddToPanel);
+            if (_MapLayer != null)
+                AddLayer(_MapLayer, Visibility, AddToPanel);
 
-            return _Layer as T;
+            return _MapLayer as T;
 
         }
 
         #endregion
 
-        #region AddLayer(Layer, AddToPanel = true)
+        #region AddLayer(Layer, Visibility = Visibility.Visible, AddToPanel = true)
 
         /// <summary>
         /// Add the given map layer to this map control.
         /// </summary>
         /// <param name="Layer">A map layer.</param>
+        /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
         /// <param name="AddToPanel">Wether to add this map layer to the layer panel or not.</param>
-        public IMapLayer AddLayer(IMapLayer Layer, Boolean AddToPanel = true)
+        public IMapLayer AddLayer(IMapLayer Layer, Visibility Visibility = Visibility.Visible, Boolean AddToPanel = true)
         {
 
             #region Initial checks
@@ -776,7 +778,8 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
                 var Checkbox = new CheckBox();
                 Checkbox.Content   = Layer.Id;
-                Checkbox.IsChecked = true;
+                Checkbox.IsChecked = Visibility == Visibility.Visible;
+                Layer.Visibility   = Visibility;
 
                 Checkbox.MouseEnter += (o, e) =>
                     {

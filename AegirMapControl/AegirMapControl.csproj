@@ -50,6 +50,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Layers\EditFeatureLayers\EditFeatureLayer.cs" />
+    <Compile Include="Layers\EditFeatureLayers\IEditFeatureLayer.cs" />
     <Compile Include="Layers\TilesLayers\ITilesLayer.cs" />
     <Compile Include="Layers\ShapesLayers\IShapeLayer.cs" />
     <Compile Include="Layers\HeatmapLayers\IHeatmapLayer.cs" />
@@ -114,6 +116,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Bragi\InfoBox\InfoBox.csproj">
+      <Project>{0503A69E-CA6F-49EC-8FA4-F6D95DC52C68}</Project>
+      <Name>InfoBox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
       <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
       <Name>Hermod</Name>
