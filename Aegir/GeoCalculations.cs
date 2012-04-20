@@ -111,8 +111,8 @@ namespace de.ahzf.Vanaheimr.Aegir
             var n = Math.PI - ((2.0 * Math.PI * MouseY) / MapSize);
 
             return new GeoCoordinate(                
-                (180.0 / Math.PI * Math.Atan(Math.Sinh(n))),
-                ((MouseX / MapSize * 360.0) - 180.0)
+                (180.0 / Math.PI * Math.Atan(Math.Sinh(n))) % 90,
+                ((MouseX / MapSize * 360.0) - 180.0) % 90
             );
 
         }

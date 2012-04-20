@@ -193,34 +193,35 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         // Event processing
 
-        #region (private) ZoomInButton_Click(Sender, RoutedEventArgs)
+        #region ZoomInButton_Click(Sender, RoutedEventArgs)
 
         /// <summary>
-        /// Zoom into the map at the current center of the map.
+        /// The ZoomIn-button was pressed, so zoom into the map
+        /// at the current center of the map.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="RoutedEventArgs">The event arguments.</param>
-        private void ZoomInButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
+        public void ZoomInButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
             ZoomIn(this.ActualWidth / 2, this.ActualHeight / 2);
         }
 
         #endregion
 
-        #region (private) ZoomOutButton_Click(Sender, RoutedEventArgs)
+        #region ZoomOutButton_Click(Sender, RoutedEventArgs)
 
         /// <summary>
-        /// Zoom out of the map at the current center of the map.
+        /// The ZoomOut-button was pressed, so zoom out of the map
+        /// at the current center of the map.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="RoutedEventArgs">The event arguments.</param>
-        private void ZoomOutButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
+        public void ZoomOutButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
             ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
         }
 
         #endregion
-
 
         #region ProcessMouseMove(Sender, MouseEventArgs)
 
@@ -324,7 +325,8 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #region ProcessMouseLeftDoubleClick(Sender, MouseButtonEventArgs)
 
         /// <summary>
-        /// The left mouse button was double clicked (from: PreviewMouseLeftButtonDown).
+        /// The left mouse button was double clicked (from: PreviewMouseLeftButtonDown),
+        /// so zoom in/out at the given mouse position.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="MouseButtonEventArgs">The mouse button event arguments.</param>
@@ -349,21 +351,22 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #region ProcessMouseWheel(Sender, MouseWheelEventArgs)
 
         /// <summary>
-        /// The mouse wheel was moved.
+        /// The mouse wheel was moved so zoom in/out at
+        /// the current center of the map.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="MouseWheelEventArgs">The mouse wheel event arguments.</param>
         public void ProcessMouseWheel(Object Sender, MouseWheelEventArgs MouseWheelEventArgs)
         {
 
-            // Zoom in/out at the given mouse position
+            // Zoom in/out at the current center of the map.
             var MousePosition = MouseWheelEventArgs.GetPosition(this);
 
             if (MouseWheelEventArgs.Delta < 0)
-                ZoomOut(MousePosition.X, MousePosition.Y);
+                ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
 
             else if (MouseWheelEventArgs.Delta > 0)
-                ZoomIn (MousePosition.X, MousePosition.Y);
+                ZoomIn (this.ActualWidth / 2, this.ActualHeight / 2);
 
         }
 
