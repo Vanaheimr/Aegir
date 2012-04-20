@@ -43,7 +43,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for visualizing a map based of tiles.
     /// </summary>
-    public class TilesLayer : ALayer
+    public class TilesLayer : AMapLayer
     {
 
         #region Data

@@ -36,7 +36,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for visualizing map features.
     /// </summary>
-    public class ShapeLayer : ALayer
+    public class ShapeLayer : AMapLayer
     {
 
         #region Constructor(s)

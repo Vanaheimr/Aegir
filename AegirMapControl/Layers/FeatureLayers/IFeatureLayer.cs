@@ -33,7 +33,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The common interface for all feature map layers.
     /// </summary>
-    public interface IFeatureLayer: ILayer
+    public interface IFeatureLayer: IMapLayer
     {
 
 

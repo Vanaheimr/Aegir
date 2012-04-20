@@ -18,8 +18,6 @@
 #region Usings
 
 using System;
-using System.Windows.Media;
-using System.Windows.Input;
 using System.Windows.Controls;
 
 using de.ahzf.Illias.Commons;
@@ -33,10 +31,10 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The common interface for all map layers.
     /// </summary>
-    public interface ILayer : IIdentifier<String>,
-                              IEquatable<ILayer>,
-                              IComparable<ILayer>,
-                              IComparable
+    public interface IMapLayer : IIdentifier<String>,
+                                 IEquatable<IMapLayer>,
+                                 IComparable<IMapLayer>,
+                                 IComparable
     {
 
         #region Properties
@@ -58,10 +56,6 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #endregion
 
-        #region Events
-
-        #endregion
-
         #region Interaction methods
 
         /// <summary>
@@ -70,14 +64,14 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ZoomLevel">The desired zoom level.</param>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        ILayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY);
+        IMapLayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY);
 
         /// <summary>
         /// Set the screen offset of this map layer.
         /// </summary>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        ILayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY);
+        IMapLayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY);
 
         /// <summary>
         /// Redraws this feature layer.

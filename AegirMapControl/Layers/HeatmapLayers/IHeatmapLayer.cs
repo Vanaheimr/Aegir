@@ -33,7 +33,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The common interface for all heatmap layers.
     /// </summary>
-    public interface IHeatmapLayer: ILayer
+    public interface IHeatmapLayer: IMapLayer
     {
 
 

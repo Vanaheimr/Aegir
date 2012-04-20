@@ -76,13 +76,13 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Shapes\AShape.cs" />
-    <Compile Include="Layers\ALayer.cs" />
+    <Compile Include="Layers\AMapLayer.cs" />
     <Compile Include="Features\IFeature.cs" />
     <Compile Include="Layers\ShapesLayers\ShapeLayer.cs" />
     <Compile Include="Layers\FeatureLayers\FeatureLayer.cs" />
     <Compile Include="Features\Feature.cs" />
     <Compile Include="Layers\HeatmapLayers\HeatmapLayer.cs" />
-    <Compile Include="Layers\ILayer.cs" />
+    <Compile Include="Layers\IMapLayer.cs" />
     <Compile Include="MapControl.xaml.cs">
       <DependentUpon>MapControl.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -18,7 +18,6 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -28,7 +27,6 @@ using System.Windows.Media;
 using System.Windows.Controls;
 
 using de.ahzf.Illias.Commons;
-using de.ahzf.Vanaheimr.Aegir.Tiles;
 
 #endregion
 
@@ -43,14 +41,13 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #region Data
 
-        protected UInt64 MapMoves;
+        public const UInt32 MinZoomLevel = 1;
+        public const UInt32 MaxZoomLevel = 23;
 
-        private StackPanel LayerPanel;
-
-        private Int64 ScreenOffsetX;
-        private Int64 ScreenOffsetY;
-        private Int64 ScreenOffset_AtMovementStart_X;
-        private Int64 ScreenOffset_AtMovementStart_Y;
+        private Int64  ScreenOffsetX;
+        private Int64  ScreenOffsetY;
+        private Int64  ScreenOffset_AtMovementStart_X;
+        private Int64  ScreenOffset_AtMovementStart_Y;
 
         private Double LastClickPositionX;
         private Double LastClickPositionY;
@@ -58,10 +55,15 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         private Double LastMousePositionDuringMovementX;
         private Double LastMousePositionDuringMovementY;
 
-        public const UInt32 MinZoomLevel = 1;
-        public const UInt32 MaxZoomLevel = 23;
+        /// <summary>
+        /// The stepping when moving the map
+        /// via the keyboard arrow keys
+        /// </summary>
+        private readonly UInt32 KeyboardStepping;
 
-        private readonly Dictionary<String, ILayer> MapLayers;
+        private readonly Dictionary<String, IMapLayer> MapLayers;
+
+        private readonly StackPanel LayerPanel;
 
         #endregion
 
@@ -69,51 +71,30 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #region ZoomLevel
 
-        private UInt32 _ZoomLevel;
-
         /// <summary>
         /// The zoom level of the map.
         /// </summary>
-        public UInt32 ZoomLevel
-        {
-            
-            get
-            {
-                return _ZoomLevel;
-            }
-
-            //set
-            //{
-            //    _ZoomLevel = value;
-            //    MapLayers.Values.ForEach(Canvas => Canvas.SetZoomLevel(value));
-            //}
-
-        }
+        public UInt32 ZoomLevel { get; private set; }
 
         #endregion
 
-        //#region MapProvider
+        #region MapMoves
 
-        ///// <summary>
-        ///// The map tiles provider for this map.
-        ///// </summary>
-        //public String MapProvider
-        //{
-            
-        //    //get
-        //    //{
-        //    //    return TilesCanvas.MapProvider;
-        //    //}
+        /// <summary>
+        /// The number of movements of this map.
+        /// </summary>
+        public UInt64 MapMovements { get; private set; }
 
-        //    set
-        //    {
-        //        if (value != null && value != "")
-        //            TilesCanvas.MapProvider = value;
-        //    }
+        #endregion
 
-        //}
+        #region InvertedKeyBoard
 
-        //#endregion
+        /// <summary>
+        /// Invert the keyboard commands for moving the map.
+        /// </summary>
+        public Boolean InvertedKeyBoard { get; set; }
+
+        #endregion
 
         #endregion
 
@@ -151,58 +132,19 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #endregion
 
-        #region DisplayOffsetChanged
+        #region MapViewChanged
 
         /// <summary>
         /// An event handler getting fired whenever the
-        /// display offset of the map changed.
+        /// view of the map changed.
         /// </summary>
-        public delegate void DisplayOffsetChangedEventHandler(MapControl Sender, Int64 X, Int64 Y);
+        public delegate void MapViewChangedEventHandler(MapControl Sender, Int64 DisplayOffsetX, Int64 DisplayOffsetY, UInt64 Movements);
 
         /// <summary>
-        /// An event getting fired whenever the display offset
+        /// An event getting fired whenever the view
         /// of the map changed.
         /// </summary>
-        public event DisplayOffsetChangedEventHandler DisplayOffsetChanged;
-
-        #endregion
-
-        //#region MapProviderChanged
-
-        ///// <summary>
-        ///// An event getting fired whenever the map provider
-        ///// of the map changed.
-        ///// </summary>
-        //public event TilesLayer.MapProviderChangedEventHandler MapProviderChanged
-        //{
-
-        //    add
-        //    {
-        //        this.TilesCanvas.MapProviderChanged += value;
-        //    }
-
-        //    remove
-        //    {
-        //        this.TilesCanvas.MapProviderChanged -= value;
-        //    }
-
-        //}
-
-        //#endregion
-
-        #region MapMoved
-
-        /// <summary>
-        /// An event handler getting fired whenever the
-        /// map provider of the map changed.
-        /// </summary>
-        public delegate void MapMovedEventHandler(MapControl Sender, UInt64 Movements);
-
-        /// <summary>
-        /// An event getting fired whenever the map provider
-        /// of the map changed.
-        /// </summary>
-        public event MapMovedEventHandler MapMoved;
+        public event MapViewChangedEventHandler MapViewChanged;
 
         #endregion
 
@@ -211,16 +153,25 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #region MapControl()
 
         /// <summary>
-        /// Initialize the MapControl component.
+        /// Initialize the Aegir map control.
         /// </summary>
         public MapControl()
         {
 
+            #region Initialize the map control
+
             InitializeComponent();
 
-            this.MapLayers               = new Dictionary<String, ILayer>();
-            this.ZoomOutButton.IsEnabled = false;
-            this._ZoomLevel              = MinZoomLevel;
+            this.MapLayers                = new Dictionary<String, IMapLayer>();
+            this.ZoomOutButton.IsEnabled  = false;
+            this.ZoomLevel                = MinZoomLevel;
+            this.Focusable                = true;
+            this.KeyboardStepping         = 50;
+            this.InvertedKeyBoard         = false;
+
+            this.KeyDown                 += new KeyEventHandler(ProcessKeyboardEvents);
+
+            #endregion
 
             #region Create and add the feature layer panel
 
@@ -239,6 +190,8 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #endregion
 
+
+        // Event processing
 
         #region (private) ZoomInButton_Click(Sender, RoutedEventArgs)
 
@@ -279,7 +232,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         public void ProcessMouseMove(Object Sender, MouseEventArgs MouseEventArgs)
         {
 
-            Int32 MapSizeAtZoomlevel;
+            Int64 MapSizeAtZoomLevel;
             var MousePosition = MouseEventArgs.GetPosition(this);
 
             if (LastMousePositionDuringMovementX != MousePosition.X ||
@@ -290,19 +243,19 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
                 if (GeoPositionChanged != null)
                 {
-                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - ScreenOffsetX,
-                                                                                      MousePosition.Y - ScreenOffsetY,
+                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffsetX,
+                                                                                      MousePosition.Y - this.ScreenOffsetY,
                                                                                       ZoomLevel));
                 }
 
                 #endregion
 
 
-                var NewMapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - ScreenOffsetX,
-                                                                            MousePosition.Y - ScreenOffsetY,
-                                                                            _ZoomLevel);
+                var NewMapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffsetX,
+                                                                            MousePosition.Y - this.ScreenOffsetY,
+                                                                            this.ZoomLevel);
 
-                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Latitude, NewMapCenter.Longitude, _ZoomLevel);
+                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Latitude, NewMapCenter.Longitude, this.ZoomLevel);
 
 
                 #region The left mouse button is still pressed => dragging the map!
@@ -310,36 +263,26 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 if (MouseEventArgs.LeftButton == MouseButtonState.Pressed)
                 {
 
-                    MapSizeAtZoomlevel = (Int32)(Math.Pow(2, ZoomLevel) * 256);
+                    MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-                    ScreenOffset_AtMovementStart_X = ScreenOffset_AtMovementStart_X % MapSizeAtZoomlevel;
-                    ScreenOffset_AtMovementStart_Y = ScreenOffset_AtMovementStart_Y % MapSizeAtZoomlevel;
+                    this.ScreenOffset_AtMovementStart_X = this.ScreenOffset_AtMovementStart_X % MapSizeAtZoomLevel;
+                    this.ScreenOffset_AtMovementStart_Y = this.ScreenOffset_AtMovementStart_Y % MapSizeAtZoomLevel;
 
-                    ScreenOffsetX = (Int32) (Math.Round(ScreenOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomlevel);
-                    ScreenOffsetY = (Int32) (Math.Round(ScreenOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomlevel);
+                    this.ScreenOffsetX = (Int32) (Math.Round(ScreenOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomLevel);
+                    this.ScreenOffsetY = (Int32) (Math.Round(ScreenOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomLevel);
 
-                    #region Avoid endless vertical scrolling
+                    AvoidEndlessVerticalScrolling();
 
-                    var MapVerticalStart = (Int32)(-MapSizeAtZoomlevel + this.ActualHeight + 1);
+                    MapLayers.Values.ForEach(Canvas => Canvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY));
 
-                    if (ScreenOffsetY < MapVerticalStart)
-                        ScreenOffsetY = MapVerticalStart;
+                    #region Send MapViewChanged events
 
-                    if (ScreenOffsetY > 0)
-                        ScreenOffsetY = 0;
+                    MapMovements++;
+
+                    if (MapViewChanged != null)
+                        MapViewChanged(this, this.ScreenOffsetX, this.ScreenOffsetY, this.MapMovements);
 
                     #endregion
-
-                    if (DisplayOffsetChanged != null)
-                        DisplayOffsetChanged(this, ScreenOffsetX, ScreenOffsetY);
-
-                    MapMoves++;
-
-                    if (MapMoved != null)
-                        MapMoved(this, MapMoves);
-
-                    //TilesCanvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY);
-                    MapLayers.Values.ForEach(Canvas => Canvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY));
 
                 }
 
@@ -372,7 +315,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             ScreenOffset_AtMovementStart_X = ScreenOffsetX;
             ScreenOffset_AtMovementStart_Y = ScreenOffsetY;
 
-            //MapLayers.Values.ForEach(Canvas => Canvas.ProcessMouseLeftButtonDown(Sender, MouseButtonEventArgs));
+            this.Focus();
 
         }
 
@@ -426,8 +369,104 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #endregion
 
+        #region ProcessKeyboardEvents(Sender, KeyEventArgs)
 
-        #region MoveTo(GeoPosition, ZoomLevel)
+        /// <summary>
+        /// Keys on the keyboard had been pressed.
+        /// </summary>
+        /// <param name="Sender">The sender of the event.</param>
+        /// <param name="KeyEventArgs">The key arguments.</param>
+        public void ProcessKeyboardEvents(Object Sender, KeyEventArgs KeyEventArgs)
+        {
+
+            switch (KeyEventArgs.Key)
+            {
+
+                #region Process arrow keys for moving the map
+
+                case Key.Left:
+
+                    if (InvertedKeyBoard)
+                        MoveTo(this.ScreenOffsetX - KeyboardStepping, this.ScreenOffsetY);
+                    else
+                        MoveTo(this.ScreenOffsetX + KeyboardStepping, this.ScreenOffsetY);
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                case Key.Up:
+
+                    if (InvertedKeyBoard)
+                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY + KeyboardStepping);
+                    else
+                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY - KeyboardStepping);
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                case Key.Right:
+
+                    if (InvertedKeyBoard)
+                        MoveTo(this.ScreenOffsetX + KeyboardStepping, this.ScreenOffsetY);
+                    else
+                        MoveTo(this.ScreenOffsetX - KeyboardStepping, this.ScreenOffsetY);
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                case Key.Down:
+
+                    if (InvertedKeyBoard)
+                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY - KeyboardStepping);
+                    else
+                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY + KeyboardStepping);
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                #endregion
+
+                #region Process + and - keys for zooming the map
+
+                case Key.Add:
+                case Key.OemPlus:
+                    
+                    ZoomIn (this.ActualWidth / 2, this.ActualHeight / 2);
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                case Key.Subtract:
+                case Key.OemMinus:
+
+                    ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
+                    
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                #endregion
+
+                #region Process other keys...
+
+                case Key.I:
+
+                    InvertedKeyBoard = !InvertedKeyBoard;
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                #endregion
+
+            }
+
+        }
+
+        #endregion
+
+
+        // Map view
+
+        #region MoveTo(GeoPosition)
 
         /// <summary>
         /// Move to given position on the map.
@@ -435,7 +474,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="GeoPosition">The geographical coordinates to move to.</param>
         public void MoveTo(GeoCoordinate GeoPosition)
         {
-            ZoomTo(GeoPosition.Latitude, GeoPosition.Longitude, _ZoomLevel);
+            ZoomTo(GeoPosition.Latitude, GeoPosition.Longitude, this.ZoomLevel);
         }
 
         #endregion
@@ -454,7 +493,39 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #endregion
 
-        #region MoveTo(Latitude, Longitude, ZoomLevel)
+        #region MoveTo(ScreenOffsetX, ScreenOffsetY)
+
+        /// <summary>
+        /// Move to given position on the map.
+        /// </summary>
+        /// <param name="ScreenOffsetX">The new x parameter of the screen offset.</param>
+        /// <param name="ScreenOffsetY">The new y parameter of the screen offset.</param>
+        public void MoveTo(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
+        {
+
+            var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, this.ZoomLevel) * 256);
+
+            this.ScreenOffsetX = ScreenOffsetX % MapSizeAtZoomLevel;
+            this.ScreenOffsetY = ScreenOffsetY % MapSizeAtZoomLevel;
+
+            AvoidEndlessVerticalScrolling();
+
+            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, this.ScreenOffsetX, this.ScreenOffsetY));
+
+            #region Send MapViewChanged events
+
+            MapMovements++;
+
+            if (MapViewChanged != null)
+                MapViewChanged(this, this.ScreenOffsetX, this.ScreenOffsetY, this.MapMovements);
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region MoveTo(Latitude, Longitude)
 
         /// <summary>
         /// Move to given position on the map.
@@ -463,7 +534,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="Longitude">The longitude of the zoom center on the map.</param>
         public void MoveTo(Double Latitude, Double Longitude)
         {
-            ZoomTo(Latitude, Longitude, _ZoomLevel);
+            ZoomTo(Latitude, Longitude, this.ZoomLevel);
         }
 
         #endregion
@@ -481,37 +552,65 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
             #region Initial checks
 
+            if (Latitude > 90 || Latitude < -90)
+                throw new ArgumentException("Invalid Latitude!");
+
+            if (Longitude > 90 || Longitude < -90)
+                throw new ArgumentException("Invalid Longitude!");
+
             if (ZoomLevel < MinZoomLevel || ZoomLevel > MaxZoomLevel)
                 throw new ArgumentException("Invalid zoom level!");
 
             #endregion
 
-            var OldZoomLevel = _ZoomLevel;
-            _ZoomLevel = ZoomLevel;
+            var OldZoomLevel = this.ZoomLevel;
+            this.ZoomLevel   = ZoomLevel;
 
-            var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, _ZoomLevel);
+            var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, this.ZoomLevel);
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-            ScreenOffsetX = (Int64) (-((Int64) NewOffset.Item1) + ForegroundLayer.ActualWidth  / 2);
-            ScreenOffsetY = (Int64) (-((Int64) NewOffset.Item2) + ForegroundLayer.ActualHeight / 2);
+            this.ScreenOffsetX = (Int64) (-((Int64) NewOffset.Item1) + ForegroundLayer.ActualWidth  / 2);
+            this.ScreenOffsetY = (Int64) (-((Int64) NewOffset.Item2) + ForegroundLayer.ActualHeight / 2);
 
-            ScreenOffsetX = ScreenOffsetX % MapSizeAtZoomLevel;
-            ScreenOffsetY = ScreenOffsetY % MapSizeAtZoomLevel;
+            this.ScreenOffsetX = this.ScreenOffsetX % MapSizeAtZoomLevel;
+            this.ScreenOffsetY = this.ScreenOffsetY % MapSizeAtZoomLevel;
 
-            if (DisplayOffsetChanged != null)
-                DisplayOffsetChanged(this, ScreenOffsetX, ScreenOffsetY);
+            AvoidEndlessVerticalScrolling();
 
-            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(_ZoomLevel, ScreenOffsetX, ScreenOffsetY));
+            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, ScreenOffsetX, ScreenOffsetY));
 
-            if (ZoomLevelChanged != null)
-                ZoomLevelChanged(this, OldZoomLevel, _ZoomLevel);
+            #region Send MapViewChanged events
 
-            if (_ZoomLevel == MaxZoomLevel)
-                ZoomInButton.IsEnabled = false;
+            MapMovements++;
 
-            if (_ZoomLevel > MinZoomLevel)
+            if (MapViewChanged != null)
+                MapViewChanged(this, this.ScreenOffsetX, this.ScreenOffsetY, this.MapMovements);
+
+            #endregion
+
+            #region Send ZoomLevelChanged event
+
+            if (this.ZoomLevel != OldZoomLevel && ZoomLevelChanged != null)
+                ZoomLevelChanged(this, OldZoomLevel, this.ZoomLevel);
+
+            #endregion
+
+            #region Activate/Deactivate zoom buttons
+
+            if (this.ZoomLevel == MinZoomLevel)
+                ZoomOutButton.IsEnabled = false;
+
+            if (this.ZoomLevel  > MinZoomLevel)
                 ZoomOutButton.IsEnabled = true;
+
+            if (this.ZoomLevel  < MaxZoomLevel)
+                ZoomInButton.IsEnabled  = true;
+
+            if (this.ZoomLevel == MaxZoomLevel)
+                ZoomInButton.IsEnabled  = false;
+
+            #endregion
 
         }
 
@@ -527,12 +626,13 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         public void ZoomIn(Double ScreenX, Double ScreenY)
         {
 
-            if (ZoomLevel < MaxZoomLevel)
+            if (this.ZoomLevel < MaxZoomLevel)
             {
 
-                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - ScreenOffsetX,
-                                                                ScreenY - ScreenOffsetY,
-                                                                _ZoomLevel), _ZoomLevel + 1);
+                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffsetX,
+                                                                ScreenY - this.ScreenOffsetY,
+                                                                this.ZoomLevel),
+                       this.ZoomLevel + 1);
 
             }
 
@@ -550,12 +650,13 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         public void ZoomOut(Double ScreenX, Double ScreenY)
         {
 
-            if (ZoomLevel > MinZoomLevel)
+            if (this.ZoomLevel > MinZoomLevel)
             {
 
-                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - ScreenOffsetX,
-                                                                ScreenY - ScreenOffsetY,
-                                                                _ZoomLevel), _ZoomLevel - 1);
+                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffsetX,
+                                                                ScreenY - this.ScreenOffsetY,
+                                                                this.ZoomLevel),
+                       this.ZoomLevel - 1);
 
             }
 
@@ -564,7 +665,28 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         #endregion
 
 
-        #region AddLayers
+        #region (private) AvoidEndlessVerticalScrolling()
+
+        /// <summary>
+        /// Avoid an endless vertical scrolling of the map.
+        /// </summary>
+        private void AvoidEndlessVerticalScrolling()
+        {
+
+            var MapVerticalStart = (Int32) (Math.Pow(2, ZoomLevel) * -256 + this.ActualHeight + 1);
+
+            if (this.ScreenOffsetY < MapVerticalStart)
+                this.ScreenOffsetY = MapVerticalStart;
+
+            if (this.ScreenOffsetY > 0)
+                this.ScreenOffsetY = 0;
+
+        }
+
+        #endregion
+
+
+        // Map layer management
 
         #region AddLayer<T>(Id, ZIndex, AddToPanel = true)
 
@@ -576,7 +698,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="ZIndex">The z-index of the map layer.</param>
         /// <param name="AddToPanel">Wether to add this map layer to the layer panel or not.</param>
         public T AddLayer<T>(String Id, Int32 ZIndex, Boolean AddToPanel = true)
-            where T : class, ILayer
+            where T : class, IMapLayer
         {
 
             // Find the constructor of the map layer
@@ -596,7 +718,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 throw new ArgumentException("A appropriate constructor for type '" + typeof(T).Name + "' could not be found!");
 
             // Invoke the constructor of the map layer
-            var _Layer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as ILayer;
+            var _Layer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IMapLayer;
 
             if (_Layer != null)
                 AddLayer(_Layer, AddToPanel);
@@ -614,7 +736,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// </summary>
         /// <param name="Layer">A map layer.</param>
         /// <param name="AddToPanel">Wether to add this map layer to the layer panel or not.</param>
-        public ILayer AddLayer(ILayer Layer, Boolean AddToPanel = true)
+        public IMapLayer AddLayer(IMapLayer Layer, Boolean AddToPanel = true)
         {
 
             #region Initial checks
@@ -691,8 +813,6 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             return Layer;
 
         }
-
-        #endregion
 
         #endregion
 

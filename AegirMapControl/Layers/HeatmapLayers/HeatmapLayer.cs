@@ -34,7 +34,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for visualizing a heatmap.
     /// </summary>
-    public class HeatmapLayer : ALayer
+    public class HeatmapLayer : AMapLayer
     {
 
         #region Constructor(s)

@@ -35,7 +35,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The base functionality of all map layers.
     /// </summary>
-    public abstract class ALayer : Canvas, ILayer
+    public abstract class AMapLayer : Canvas, IMapLayer
     {
 
         #region Data
@@ -78,31 +78,27 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// The z-index of this feature layer.
         /// </summary>
-        public Int32 ZIndex { get; private set; }
+        public Int32 ZIndex { get; protected set; }
 
         #endregion
-
-        #endregion
-
-        #region Events
 
         #endregion
 
         #region Constructor(s)
 
-        #region AFeatureLayer()
+        #region AMapLayer()
 
         /// <summary>
         /// Creates a new feature layer for visualizing map features.
         /// </summary>
-        public ALayer()
+        public AMapLayer()
         {
             this.SizeChanged += ProcessMapSizeChangedEvent;
         }
 
         #endregion
 
-        #region AFeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region AMapLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing map features.
@@ -113,7 +109,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The hosting map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public ALayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public AMapLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : this()
         {
             this.Id            = Id;
@@ -145,26 +141,6 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
-        //#region ProcessMouseLeftButtonDown
-
-        //public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
-        //{
-
-        //    // We'll need this for when the Form starts to move
-        //    var MousePosition = MouseButtonEventArgs.GetPosition(this);
-        //    LastClickPositionX = MousePosition.X;
-        //    LastClickPositionY = MousePosition.Y;
-
-        //    DrawingOffset_AtMovementStart_X = ScreenOffsetX;
-        //    DrawingOffset_AtMovementStart_Y = ScreenOffsetY;
-
-        //    MouseButtonEventArgs.Handled = false;
-
-        //}
-
-        //#endregion
-
-
         #region ZoomTo(ZoomLevel, ScreenOffsetX, ScreenOffsetY)
 
         /// <summary>
@@ -173,13 +149,17 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="ZoomLevel">The desired zoom level.</param>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        public ILayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY)
+        public IMapLayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY)
         {
+
             this.ZoomLevel     = ZoomLevel;
             this.ScreenOffsetX = ScreenOffsetX;
             this.ScreenOffsetY = ScreenOffsetY;
+
             Redraw();
+
             return this;
+
         }
 
         #endregion
@@ -191,12 +171,16 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        public ILayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
+        public IMapLayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
         {
+
             this.ScreenOffsetX = ScreenOffsetX;
             this.ScreenOffsetY = ScreenOffsetY;
+
             Redraw();
+
             return this;
+
         }
 
         #endregion
@@ -271,7 +255,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 throw new ArgumentNullException("The given object must not be null!");
 
             // Check if the given object is a feature layer identifier.
-            var FeatureLayer = Object as ILayer;
+            var FeatureLayer = Object as IMapLayer;
             if ((Object) FeatureLayer == null)
                 throw new ArgumentException("The given object is not an IFeatureLayer!");
 
@@ -305,7 +289,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Identifier">An object to compare with.</param>
-        public Int32 CompareTo(ILayer FeatureLayer)
+        public Int32 CompareTo(IMapLayer FeatureLayer)
         {
 
             if ((Object) FeatureLayer == null)
@@ -335,7 +319,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 return false;
 
             // Check if the given object is a feature layer.
-            var FeatureLayer = Object as ILayer;
+            var FeatureLayer = Object as IMapLayer;
             if ((Object)FeatureLayer == null)
                 return false;
 
@@ -371,7 +355,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// </summary>
         /// <param name="FeatureLayer">A feature layer to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(ILayer FeatureLayer)
+        public Boolean Equals(IMapLayer FeatureLayer)
         {
 
             if ((Object) FeatureLayer == null)

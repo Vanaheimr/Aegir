@@ -33,7 +33,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The common interface for all tiles map layers.
     /// </summary>
-    public interface ITilesLayer: ILayer
+    public interface ITilesLayer: IMapLayer
     {
 
 

@@ -33,7 +33,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The common interface for all shape map layers.
     /// </summary>
-    public interface IShapeLayer: ILayer
+    public interface IShapeLayer: IMapLayer
     {
 
 
