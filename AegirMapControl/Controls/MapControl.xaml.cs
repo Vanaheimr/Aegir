@@ -23,7 +23,6 @@ using System.Collections.Generic;
 
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Controls;
 
 using de.ahzf.Illias.Commons;
@@ -170,19 +169,6 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             this.InvertedKeyBoard         = false;
 
             this.KeyDown                 += new KeyEventHandler(ProcessKeyboardEvents);
-
-            #endregion
-
-            #region Create and add the feature layer panel
-
-            this.LayerPanel = new StackPanel() {
-                Background = new SolidColorBrush(Colors.Gray),
-                Opacity    = 0.75
-            };
-
-            ForegroundLayer.Children.Add(LayerPanel);
-            Canvas.SetRight(LayerPanel, 10);
-            Canvas.SetTop  (LayerPanel, 10);
 
             #endregion
 
@@ -433,8 +419,8 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
                 case Key.Add:
                 case Key.OemPlus:
-                    
-                    ZoomIn (this.ActualWidth / 2, this.ActualHeight / 2);
+
+                    ZoomInButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
                     KeyEventArgs.Handled = true;
                     break;
@@ -442,7 +428,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 case Key.Subtract:
                 case Key.OemMinus:
 
-                    ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
+                    ZoomOutButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     
                     KeyEventArgs.Handled = true;
                     break;
@@ -454,6 +440,13 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                 case Key.I:
 
                     InvertedKeyBoard = !InvertedKeyBoard;
+
+                    KeyEventArgs.Handled = true;
+                    break;
+
+                case Key.M:
+
+                    LayerPanel1.IsExpaned = !LayerPanel1.IsExpaned;
 
                     KeyEventArgs.Handled = true;
                     break;
@@ -691,7 +684,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         // Map layer management
 
-        #region AddLayer<T>(Id, ZIndex, Visibility = Visibility.Visible, AddToPanel = true)
+        #region AddLayer<T>(Id, ZIndex, Visibility = Visibility.Visible, AddToLayerPanel = true)
 
         /// <summary>
         /// Create a new map layer of the given type and add it to the map control.
@@ -700,8 +693,8 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="Id">The identification of the map layer.</param>
         /// <param name="ZIndex">The z-index of the map layer.</param>
         /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
-        /// <param name="AddToPanel">Wether to add this map layer to the layer panel or not.</param>
-        public T AddLayer<T>(String Id, Int32 ZIndex, Visibility Visibility = Visibility.Visible, Boolean AddToPanel = true)
+        /// <param name="AddToLayerPanel">Wether to add this map layer to the layer panel or not.</param>
+        public T AddLayer<T>(String Id, Int32 ZIndex, Visibility Visibility = Visibility.Visible, Boolean AddToLayerPanel = true)
             where T : class, IMapLayer
         {
 
@@ -725,7 +718,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             var _MapLayer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IMapLayer;
 
             if (_MapLayer != null)
-                AddLayer(_MapLayer, Visibility, AddToPanel);
+                AddLayer(_MapLayer, Visibility, AddToLayerPanel);
 
             return _MapLayer as T;
 
@@ -733,86 +726,48 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
 
         #endregion
 
-        #region AddLayer(Layer, Visibility = Visibility.Visible, AddToPanel = true)
+        #region AddLayer(Layer, Visibility = Visibility.Visible, AddToLayerPanel = true)
 
         /// <summary>
         /// Add the given map layer to this map control.
         /// </summary>
         /// <param name="Layer">A map layer.</param>
         /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
-        /// <param name="AddToPanel">Wether to add this map layer to the layer panel or not.</param>
-        public IMapLayer AddLayer(IMapLayer Layer, Visibility Visibility = Visibility.Visible, Boolean AddToPanel = true)
+        /// <param name="AddToLayerPanel">Wether to add this map layer to the layer panel or not.</param>
+        public IMapLayer AddLayer(IMapLayer Layer, Visibility Visibility = Visibility.Visible, Boolean AddToLayerPanel = true)
         {
 
             #region Initial checks
 
             if (Layer == null)
-                throw new ApplicationException("The parameter 'FeatureLayer' must not be null!");
+                throw new ApplicationException("The parameter 'Layer' must not be null!");
 
-            var FeatureCanvas = Layer as Canvas;
+            var CurrentLayerAsCanvas = Layer as Canvas;
 
-            if (FeatureCanvas == null)
-                throw new ApplicationException("The parameter 'FeatureLayer' must inherit from Canvas!");
+            if (CurrentLayerAsCanvas == null)
+                throw new ApplicationException("The parameter 'Layer' must inherit from Canvas!");
 
             if (Layer.Id == null)
-                throw new ApplicationException("The identification of the 'FeatureLayer' must be set!");
+                throw new ApplicationException("The identification of the 'Layer' must be set!");
 
             if (Layer.MapControl == null)
-                throw new ApplicationException("The MapControl of the 'FeatureLayer' must be set!");
+                throw new ApplicationException("The MapControl of the 'Layer' must be set!");
 
             #endregion
 
             #region Add the given feature layer
 
-            LayerGrid.Children.Add(FeatureCanvas);
+            LayerGrid.Children.Add(CurrentLayerAsCanvas);
             MapLayers.Add(Layer.Id, Layer);
 
-            FeatureCanvas.SetValue(Canvas.ZIndexProperty, Layer.ZIndex);
+            CurrentLayerAsCanvas.SetValue(Canvas.ZIndexProperty, Layer.ZIndex);
 
             #endregion
 
             #region Add a checkbox entry to the feature layer panel
 
-            if (AddToPanel)
-            {
-
-                var Checkbox = new CheckBox();
-                Checkbox.Content   = Layer.Id;
-                Checkbox.IsChecked = Visibility == Visibility.Visible;
-                Layer.Visibility   = Visibility;
-
-                Checkbox.MouseEnter += (o, e) =>
-                    {
-                        var _CheckBox = o as CheckBox;
-                        _CheckBox.Foreground = new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
-                        _CheckBox.Background = new SolidColorBrush(Colors.White);
-                    };
-
-                Checkbox.MouseLeave += (o, e) =>
-                    {
-                        var _CheckBox = o as CheckBox;
-                        _CheckBox.Foreground = new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
-                        _CheckBox.Background = new SolidColorBrush(Colors.Gray);
-                    };
-
-                Checkbox.Click += (o, e) =>
-                    {
-
-                        var _CheckBox = o as CheckBox;
-
-                        if (_CheckBox.IsChecked.Value)
-                        {
-                            FeatureCanvas.Visibility = Visibility.Visible;
-                            Layer.Redraw();
-                        }
-                        else
-                            FeatureCanvas.Visibility = Visibility.Hidden;
-
-                    };
-
-                LayerPanel.Children.Add(Checkbox);
-            
-            }
+            if (AddToLayerPanel)
+                LayerPanel1.AddLayer(Layer, Visibility);
 
             #endregion
 

@@ -50,6 +50,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ExpandableStackPanel.xaml.cs">
+      <DependentUpon>ExpandableStackPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LayerPanel.cs" />
     <Compile Include="Layers\EditFeatureLayers\EditFeatureLayer.cs" />
     <Compile Include="Layers\EditFeatureLayers\IEditFeatureLayer.cs" />
     <Compile Include="Layers\TilesLayers\ITilesLayer.cs" />
@@ -73,7 +77,11 @@
     <Compile Include="Shapes\Germany\Hessen.cs" />
     <Compile Include="Shapes\Germany\Thueringen.cs" />
     <Compile Include="Shapes\IShape.cs" />
-    <Page Include="MapControl.xaml">
+    <Page Include="Controls\ExpandableStackPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\MapControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -85,7 +93,7 @@
     <Compile Include="Features\Feature.cs" />
     <Compile Include="Layers\HeatmapLayers\HeatmapLayer.cs" />
     <Compile Include="Layers\IMapLayer.cs" />
-    <Compile Include="MapControl.xaml.cs">
+    <Compile Include="Controls\MapControl.xaml.cs">
       <DependentUpon>MapControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -131,10 +139,6 @@
     <ProjectReference Include="..\Aegir\Aegir.csproj">
       <Project>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</Project>
       <Name>Aegir</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InfoBox\InfoBox.csproj">
-      <Project>{0503A69E-CA6F-49EC-8FA4-F6D95DC52C68}</Project>
-      <Name>InfoBox</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
