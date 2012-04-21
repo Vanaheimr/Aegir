@@ -60,7 +60,7 @@
                     <Button Name="ZoomInButton"  Height="23" Width="23" Content="+" Canvas.Left="5" Canvas.Top="10" Canvas.ZIndex="99" Click="ZoomInButton_Click"  Template="{StaticResource ZoomButtonTemplate}" />
                     <Button Name="ZoomOutButton" Height="23" Width="23" Content="-" Canvas.Left="5" Canvas.Top="38" Canvas.ZIndex="99" Click="ZoomOutButton_Click" Template="{StaticResource ZoomButtonTemplate}" />
 
-                    <AegirControls:LayerPanel x:Name="LayerPanel1" Title="Map Layers" Width="150" Canvas.Right="5" Canvas.Top="10" />
+                    <AegirControls:LayerPanel x:Name="LayerPanel1" Title="Map Layers" Width="150" Canvas.Right="7" Canvas.Top="10" />
                     
                 </Canvas>
 

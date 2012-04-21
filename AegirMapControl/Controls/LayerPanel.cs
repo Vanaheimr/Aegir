@@ -34,6 +34,15 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
     public class LayerPanel : ExpandableStackPanel
     {
 
+        #region Data
+
+        /// <summary>
+        /// The speed in milliseconds of the layer panel animations.
+        /// </summary>
+        public const Int32 AnimationSpeed = 400;
+
+        #endregion
+
         #region AddLayer(Layer, Visibility = Visibility.Visible)
 
         /// <summary>
@@ -67,12 +76,18 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
             Checkbox.IsChecked = Visibility == Visibility.Visible;
             Layer.Visibility   = Visibility;
 
+            #region Register Checkbox.MouseEnter event
+
             Checkbox.MouseEnter += (o, e) =>
                 {
                     var _CheckBox = o as CheckBox;
                     _CheckBox.Foreground = new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
                     _CheckBox.Background = new SolidColorBrush(Colors.White);
                 };
+
+            #endregion
+
+            #region Register Checkbox.MouseLeave event
 
             Checkbox.MouseLeave += (o, e) =>
                 {
@@ -81,20 +96,36 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
                     _CheckBox.Background = new SolidColorBrush(Colors.Gray);
                 };
 
+            #endregion
+
+            #region Register Checkbox.Click event
+
             Checkbox.Click += (o, e) =>
                 {
 
                     var _CheckBox = o as CheckBox;
 
                     if (_CheckBox.IsChecked.Value)
-                    {
-                        CurrentLayerAsCanvas.Visibility = Visibility.Visible;
-                        Layer.Redraw();
-                    }
+                        CurrentLayerAsCanvas.Animate(Property:     "Opacity",
+                                                     From:         0.0,
+                                                     To:           1.0,
+                                                     Milliseconds: AnimationSpeed,
+                                                     StartAction:  (UIElement) => {
+                                                         Layer.Redraw();
+                                                         UIElement.Visibility = Visibility.Visible;
+                                                     });
+
+
                     else
-                        CurrentLayerAsCanvas.Visibility = Visibility.Hidden;
+                        CurrentLayerAsCanvas.Animate(Property:     "Opacity",
+                                                     From:         1.0,
+                                                     To:           0.0,
+                                                     Milliseconds: AnimationSpeed,
+                                                     FinalAction:  (UIElement) => UIElement.Visibility = Visibility.Hidden);
 
                 };
+
+            #endregion
 
             base.AddUIElement(Checkbox);
 

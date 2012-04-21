@@ -50,6 +50,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AegirExtentionMethods.cs" />
     <Compile Include="Controls\ExpandableStackPanel.xaml.cs">
       <DependentUpon>ExpandableStackPanel.xaml</DependentUpon>
     </Compile>
