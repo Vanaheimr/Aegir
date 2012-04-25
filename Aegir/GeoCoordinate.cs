@@ -77,6 +77,11 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// A regular expression for matching decimal geo positions/coordinates.
         /// </summary>
+        public static Regex  IsDecimalRegExpr                         = new Regex(IsDecimal_RegExprString);
+
+        /// <summary>
+        /// A regular expression for matching decimal geo positions/coordinates.
+        /// </summary>
         public static Regex  IsDecimalGeoPositionRegExpr              = new Regex(IsDecimalGeoPosition_RegExprString);
 
         /// <summary>
@@ -181,8 +186,8 @@ namespace de.ahzf.Vanaheimr.Aegir
             if (Match.Success)
             {
 
-                var Latitude  = Double.Parse(Match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture);
-                var Longitude = Double.Parse(Match.Groups[2].Value, NumberStyles.Float, CultureInfo.InvariantCulture);
+                var Latitude  = Double.Parse(Match.Groups[1].Value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture);
+                var Longitude = Double.Parse(Match.Groups[2].Value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture);
 
                 GeoPosition = new GeoCoordinate(Latitude, Longitude);
                 return true;

@@ -126,8 +126,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 
         public virtual HTTPResponse GetRoot()
         {
-            //return GetResources("landingpage.html");
-            return Error406_NotAcceptable();
+            return HTTPErrors.HTTPErrorResponse(IHTTPConnection.InHTTPRequest, HTTPStatusCode.NotAcceptable);
         }
 
         #endregion
