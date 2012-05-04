@@ -34,20 +34,20 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     public static class ITileClientExtentions
     {
 
-        #region GetTileStream(MapProviderName, Zoom, X, Y)
+        #region GetTileStream(MapProviderId, Zoom, X, Y)
 
         /// <summary>
         /// Return the tile for the given parameters.
         /// </summary>
         /// <param name="ITileClient">A ITileClient.</param>
-        /// <param name="MapProviderName">The unique identification of the map provider.</param>
+        /// <param name="MapProviderId">The unique identification of the map provider.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
         /// <returns>The requested tile as a byte stream.</returns>
-        public static Stream GetTileStream(this ITileClient ITileClient, String MapProviderName, UInt32 ZoomLevel, UInt32 X, UInt32 Y)
+        public static Stream GetTileStream(this IAegirTilesClient ITileClient, String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y)
         {
-            return new MemoryStream(ITileClient.GetTile(MapProviderName, ZoomLevel, X, Y));
+            return new MemoryStream(ITileClient.GetTile(MapProviderId, ZoomLevel, X, Y));
         }
 
         #endregion
@@ -60,13 +60,13 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     /// <summary>
     /// The common interface for all Aegir tile clients.
     /// </summary>
-    public interface ITileClient
+    public interface IAegirTilesClient
     {
 
         /// <summary>
         /// Return an enumeration of all map provider names.
         /// </summary>
-        IEnumerable<String> RegisteredMapProviderNames { get; }
+        IEnumerable<String> RegisteredMapProviderIds { get; }
 
         /// <summary>
         /// Return an enumeration of all map providers.
@@ -77,12 +77,12 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// Return the tile for the given parameters.
         /// </summary>
-        /// <param name="MapProviderName">The unique identification of the map provider.</param>
+        /// <param name="MapProviderId">The unique identification of the map provider.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
         /// <returns>The requested tile as an array of bytes.</returns>
-        Byte[] GetTile(String MapProviderName, UInt32 ZoomLevel, UInt32 X, UInt32 Y);
+        Byte[] GetTile(String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y);
 
     }
 

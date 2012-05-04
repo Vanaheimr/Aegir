@@ -125,6 +125,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Blueprints.NET\BlueprintsClient\BlueprintsClient.csproj">
+      <Project>{EB31E37B-FA75-44FD-9528-171C9E7C3C37}</Project>
+      <Name>BlueprintsClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
       <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
       <Name>Hermod</Name>
@@ -133,9 +137,9 @@
       <Project>{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}</Project>
       <Name>Commons</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AegirTiles\AegirTiles.csproj">
-      <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
-      <Name>AegirTiles</Name>
+    <ProjectReference Include="..\AegirTilesClient\AegirTilesClient.csproj">
+      <Project>{D6A73280-9D66-4509-9131-3F379E8A3F5A}</Project>
+      <Name>AegirTilesClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aegir\Aegir.csproj">
       <Project>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</Project>

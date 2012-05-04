@@ -52,12 +52,12 @@
     <Compile Include="MapProviders\IMapProvider.cs" />
     <Compile Include="MapProviders\OSMProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TileService\ATilesService.cs" />
-    <Compile Include="TileService\ITilesService.cs" />
-    <Compile Include="TileService\TilesService_ALL.cs" />
-    <Compile Include="TileService\TilesService_EVENTSTREAM.cs" />
-    <Compile Include="TileService\TilesService_HTML.cs" />
-    <Compile Include="TileService\TilesService_JSON.cs" />
+    <Compile Include="TileService\AAegirTileService.cs" />
+    <Compile Include="TileService\IAegirTileService.cs" />
+    <Compile Include="TileService\AegirTilesService_ALL.cs" />
+    <Compile Include="TileService\AegirTilesService_EVENTSTREAM.cs" />
+    <Compile Include="TileService\AegirTilesService_HTML.cs" />
+    <Compile Include="TileService\AegirTilesService_JSON.cs" />
     <Compile Include="TilesServer.cs" />
   </ItemGroup>
   <ItemGroup>

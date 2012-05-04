@@ -32,9 +32,10 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// An abstract tile service implementation.
+    /// An abstract Aegir tile service implementation.
     /// </summary>
-    public abstract class ATileService : AHTTPService, ITileService
+    public abstract class AAegirTileService : AHTTPService,
+                                              IAegirTilesService
     {
 
         #region Data
@@ -42,7 +43,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         protected const String __MapProvider            = "MapProvider";
         protected const String __MapProviders           = "MapProviders";
 
-        protected const String __MapProviderName        = "Name";
+        protected const String __MapProviderId        = "Name";
         protected const String __MapProviderDescription = "Description";
         protected const String __MapProviderUriPattern  = "UriPattern";
         protected const String __MapProviderHosts       = "Hosts";
@@ -51,7 +52,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 
         #region Properties
 
-        public TileServer TileServer { get; set; }
+        public AegirTilesServer TilesServer { get; set; }
 
         #endregion
 
@@ -62,7 +63,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// Creates a new abstract ATileService.
         /// </summary>
-        public ATileService()
+        public AAegirTileService()
         { }
 
         #endregion
@@ -73,7 +74,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// Creates a new abstract ATileService.
         /// </summary>
         /// <param name="HTTPContentType">A content type.</param>
-        public ATileService(HTTPContentType HTTPContentType)
+        public AAegirTileService(HTTPContentType HTTPContentType)
             : base(HTTPContentType)
         { }
 
@@ -85,7 +86,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// Creates a new abstract ATileService.
         /// </summary>
         /// <param name="HTTPContentTypes">A content type.</param>
-        public ATileService(IEnumerable<HTTPContentType> HTTPContentTypes)
+        public AAegirTileService(IEnumerable<HTTPContentType> HTTPContentTypes)
             : base(HTTPContentTypes)
         { }
 
@@ -98,8 +99,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// </summary>
         /// <param name="IHTTPConnection">The http connection for this request.</param>
         /// <param name="HTTPContentType">A content type.</param>
-        /// <param name="ResourcePath">The path to internal resources.</param>
-        public ATileService(IHTTPConnection IHTTPConnection, HTTPContentType HTTPContentType)
+        public AAegirTileService(IHTTPConnection IHTTPConnection, HTTPContentType HTTPContentType)
             : base(IHTTPConnection, HTTPContentType, "TileServer.resources.")
         { }
 
@@ -112,8 +112,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// </summary>
         /// <param name="IHTTPConnection">The http connection for this request.</param>
         /// <param name="HTTPContentTypes">An enumeration of content types.</param>
-        /// <param name="ResourcePath">The path to internal resources.</param>
-        public ATileService(IHTTPConnection IHTTPConnection, IEnumerable<HTTPContentType> HTTPContentTypes)
+        public AAegirTileService(IHTTPConnection IHTTPConnection, IEnumerable<HTTPContentType> HTTPContentTypes)
             : base(IHTTPConnection, HTTPContentTypes, "TileServer.resources.")
         { }
 
@@ -122,44 +121,55 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        #region GetRoot()
+        #region GET_Root()
 
-        public virtual HTTPResponse GetRoot()
+        /// <summary>
+        /// Get the landing page.
+        /// </summary>
+        public virtual HTTPResponse GET_Root()
         {
-            return HTTPErrors.HTTPErrorResponse(IHTTPConnection.InHTTPRequest, HTTPStatusCode.NotAcceptable);
+            return HTTPTools.MovedTemporarily("/MapProviders");
         }
 
         #endregion
 
 
-        public HTTPResponse GetLandingpage()
-        {
-            throw new NotImplementedException();
-        }
-
-        public HTTPResponse ListMapProviders()
-        {
-            throw new NotImplementedException();
-        }
-
-        public HTTPResponse ShowMapProviderInformation(string Provider)
-        {
-            throw new NotImplementedException();
-        }
+        #region GET_MapProviders()
 
         /// <summary>
-        /// Get a tile from the given mapprovider at the
-        /// given zoom level an coordinates.
+        /// Get an enumeration of all registered map providers.
         /// </summary>
-        public HTTPResponse GetTiles(String Mapprovider, String Zoom, String X, String Y)
+        public virtual HTTPResponse GET_MapProviders()
         {
             throw new NotImplementedException();
         }
 
-        public HTTPResponse GetError(String myHTTPStatusCode)
+        #endregion
+
+        #region GET_MapProvider(MapProviderId)
+
+        /// <summary>
+        /// Get detailed information on a map provider.
+        /// </summary>
+        public virtual HTTPResponse GET_MapProvider(String MapProviderId)
         {
             throw new NotImplementedException();
         }
+
+        #endregion
+
+        #region GET_Tile(MapProviderId, Zoom, X, Y)
+
+        /// <summary>
+        /// Get a tile from the given map provider at the
+        /// given zoom level and coordinates.
+        /// </summary>
+        public virtual HTTPResponse GET_Tile(String MapProviderId, String Zoom, String X, String Y)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
     }
 

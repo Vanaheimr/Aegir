@@ -31,29 +31,29 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     /// <summary>
     /// HTML content representation.
     /// </summary>
-    public class TileService_HTML : ATileService
+    public class AegirTileService_HTML : AAegirTileService
     {
 
         #region Constructor(s)
 
-        #region TileService_HTML()
+        #region AegirTileService_HTML()
 
         /// <summary>
         /// Creates a new tile service for HTML content.
         /// </summary>
-        public TileService_HTML()
+        public AegirTileService_HTML()
             : base(HTTPContentType.HTML_UTF8)
         { }
 
         #endregion
 
-        #region TileService_HTML(IHTTPConnection)
+        #region AegirTileService_HTML(IHTTPConnection)
 
         /// <summary>
         /// Creates a new tile service for HTML content.
         /// </summary>
         /// <param name="IHTTPConnection">The http connection for this request.</param>
-        public TileService_HTML(IHTTPConnection IHTTPConnection)
+        public AegirTileService_HTML(IHTTPConnection IHTTPConnection)
             : base(IHTTPConnection, HTTPContentType.HTML_UTF8)
         {
             this.CallingAssembly = Assembly.GetExecutingAssembly();

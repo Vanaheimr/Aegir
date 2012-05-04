@@ -31,9 +31,11 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// A tcp/http based TileServer.
+    /// A tcp/http based Aegir tiles server.
     /// </summary>
-    public class TileServer : HTTPServer<ITileService>, ITileClient
+    public class AegirTilesServer : HTTPServer<IAegirTilesService>,
+                                    IAegirTilesClient
+
     {
 
         #region Data
@@ -53,24 +55,24 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         {
             get
             {
-                return "Linked Energy Tile HTTP/REST Server v0.1";
+                return "Vanaheimr Aegir Tiles HTTP/REST Server v0.1";
             }
         }
 
         #endregion
 
-        #region RegisteredMapProviderNames
+        #region RegisteredMapProviderIds
 
         /// <summary>
         /// Return an enumeration of all registered map provider names.
         /// </summary>
-        public IEnumerable<String> RegisteredMapProviderNames
+        public IEnumerable<String> RegisteredMapProviderIds
         {
             get
             {
                 return from   MapProvider
                        in     AutoMapProviders.RegisteredTypes
-                       select MapProvider.Name;
+                       select MapProvider.Id;
             }
         }
 
@@ -85,7 +87,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         {
             get
             {
-                return AutoMapProviders.RegisteredTypes.ToDictionary(MapProvider => MapProvider.Name,
+                return AutoMapProviders.RegisteredTypes.ToDictionary(MapProvider => MapProvider.Id,
                                                                      MapProvider => MapProvider);
             }
         }
@@ -101,40 +103,40 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// Initialize the TileServer using IPAddress.Any, http port 8182 and start the server.
         /// </summary>
-        public TileServer()
+        public AegirTilesServer()
             : base(IPv4Address.Any, new IPPort(8182), Autostart: true)
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
 
-            base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
+            base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
         }
 
         #endregion
 
-        #region TileServer(Port, AutoStart = false)
+        #region TileServer(Port, AutoStart = true)
 
         /// <summary>
         /// Initialize the TileServer using IPAddress.Any and the given parameters.
         /// </summary>
         /// <param name="Port">The listening port</param>
         /// <param name="Autostart"></param>
-        public TileServer(IPPort Port, Boolean Autostart = false)
-            : base(IPv4Address.Any, Port, Autostart: true)
+        public AegirTilesServer(IPPort Port, Boolean Autostart = true)
+            : base(IPv4Address.Any, Port, Autostart: Autostart)
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
 
-            base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
+            base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
         }
 
         #endregion
 
-        #region TileServer(IIPAddress, Port, AutoStart = false)
+        #region TileServer(IIPAddress, Port, AutoStart = true)
 
         /// <summary>
         /// Initialize the HTTPServer using the given parameters.
@@ -142,34 +144,34 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <param name="IIPAddress">The listening IP address(es)</param>
         /// <param name="Port">The listening port</param>
         /// <param name="Autostart"></param>
-        public TileServer(IIPAddress IIPAddress, IPPort Port, Boolean Autostart = false)
-            : base(IIPAddress, Port, Autostart: true)
+        public AegirTilesServer(IIPAddress IIPAddress, IPPort Port, Boolean Autostart = true)
+            : base(IIPAddress, Port, Autostart: Autostart)
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
 
-            base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
+            base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
         }
 
         #endregion
 
-        #region TileServer(IPSocket, Autostart = false)
+        #region TileServer(IPSocket, Autostart = true)
 
         /// <summary>
         /// Initialize the HTTPServer using the given parameters.
         /// </summary>
         /// <param name="IPSocket">The listening IPSocket.</param>
         /// <param name="Autostart"></param>
-        public TileServer(IPSocket IPSocket, Boolean Autostart = false)
-            : base(IPSocket.IPAddress, IPSocket.Port, Autostart: true)
+        public AegirTilesServer(IPSocket IPSocket, Boolean Autostart = true)
+            : base(IPSocket.IPAddress, IPSocket.Port, Autostart: Autostart)
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
 
-            base.OnNewHTTPService += TilesService => { TilesService.TileServer = this; };
+            base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
         }
 
@@ -178,21 +180,21 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        #region GetTile(MapProviderName, Zoom, X, Y)
+        #region GetTile(MapProviderId, Zoom, X, Y)
 
         /// <summary>
         /// Return the tile for the given parameters.
         /// </summary>
-        /// <param name="MapProviderName">The unique identification of the map provider.</param>
+        /// <param name="MapProviderId">The unique identification of the map provider.</param>
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
         /// <returns>The requested tile as an array of bytes.</returns>
-        public Byte[] GetTile(String MapProviderName, UInt32 ZoomLevel, UInt32 X, UInt32 Y)
+        public Byte[] GetTile(String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y)
         {
 
             IMapProvider _MapProvider = null;
-            if (AutoMapProviders.TryGetInstance(MapProviderName, out _MapProvider))
+            if (AutoMapProviders.TryGetInstance(MapProviderId, out _MapProvider))
             {
                 return _MapProvider.GetTile(ZoomLevel, X, Y);
             }

@@ -34,7 +34,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     /// <summary>
     /// JSON content representation.
     /// </summary>
-    public class TilesService_JSON : ATileService
+    public class AegirTilesService_JSON : AAegirTileService
     {
 
         #region Data
@@ -45,24 +45,24 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 
         #region Constructor(s)
 
-        #region TilesService_JSON()
+        #region AegirTilesService_JSON()
 
         /// <summary>
         /// Creates a new tile service for JSON content.
         /// </summary>
-        public TilesService_JSON()
+        public AegirTilesService_JSON()
             : base(HTTPContentType.JSON_UTF8)
         { }
 
         #endregion
 
-        #region TilesService_JSON(IHTTPConnection)
+        #region AegirTilesService_JSON(IHTTPConnection)
 
         /// <summary>
         /// Creates a new tile service for JSON content.
         /// </summary>
         /// <param name="IHTTPConnection">The http connection for this request.</param>
-        public TilesService_JSON(IHTTPConnection IHTTPConnection)
+        public AegirTilesService_JSON(IHTTPConnection IHTTPConnection)
             : base(IHTTPConnection, HTTPContentType.JSON_UTF8)
         {
             this.CallingAssembly = Assembly.GetExecutingAssembly();
@@ -73,42 +73,11 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        #region GetLandingpage()
-
-        /// <summary>
-        /// The HTML landing page.
-        /// </summary>
-        /// <example>
-        /// $ curl -H "Accept: application/json" http://127.0.0.1:8182
-        /// {
-        ///   "AccountIds": [
-        ///     "Account1"
-        ///   ]
-        /// }
-        /// </example>
-        public HTTPResponse GetLandingpage()
-        {
-
-            return new HTTPResponseBuilder()
-                {
-                    HTTPStatusCode = HTTPStatusCode.OK,
-                    CacheControl   = "no-cache",
-                    ContentType    = HTTPContentType.JSON_UTF8,
-                    Content        = Encoding.UTF8.GetBytes(new JObject(
-                                        new JProperty("AccountIds", "...")
-                                     ).ToString())
-                };
-
-        }
-
-        #endregion
-
-
         /// <summary>
         /// Get a tile from the given mapprovider at the
         /// given zoom level an coordinates.
         /// </summary>
-        public HTTPResponse GetTiles(String Mapprovider, String Zoom, String X, String Y)
+        public HTTPResponse GET_Tile(String Mapprovider, String Zoom, String X, String Y)
         {
             throw new NotImplementedException();
         }
@@ -130,7 +99,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         {
 
             var _Content = Encoding.UTF8.GetBytes(new JObject(
-                               new JProperty(__MapProviders, TileServer.RegisteredMapProviderNames)
+                               new JProperty(__MapProviders, TilesServer.RegisteredMapProviderIds)
                            ).ToString());
 
             return new HTTPResponseBuilder()
@@ -163,11 +132,11 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
             
             IMapProvider _MapProvider;
 
-            if (TileServer.RegisteredMapProviders.TryGetValue(Provider, out _MapProvider))
+            if (TilesServer.RegisteredMapProviders.TryGetValue(Provider, out _MapProvider))
             {
 
                 var _Content = Encoding.UTF8.GetBytes(new JObject(
-                                   new JProperty(__MapProviderName,        _MapProvider.Name),
+                                   new JProperty(__MapProviderId,        _MapProvider.Id),
                                    new JProperty(__MapProviderDescription, _MapProvider.Description),
                                    new JProperty(__MapProviderUriPattern,  _MapProvider.UriPattern),
                                    new JProperty(__MapProviderHosts,       new JArray(

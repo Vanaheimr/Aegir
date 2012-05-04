@@ -30,8 +30,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-using de.ahzf.Vanaheimr.Aegir.Tiles;
 using de.ahzf.Illias.Commons;
+using de.ahzf.Vanaheimr.Aegir.Tiles;
 using de.ahzf.Vanaheimr.Aegir.Controls;
 
 
@@ -65,7 +65,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// The TileClient to use for fetching the
         /// map tiles from the image providers.
         /// </summary>
-        public ITileClient TileClient { get; set; }
+        public IAegirTilesClient TileClient { get; set; }
 
         #endregion
 
@@ -159,7 +159,7 @@ namespace de.ahzf.Vanaheimr.Aegir
 
             // Find map providers via reflection
             MapProviders = new AutoDiscovery<IMapProvider>(Autostart: true,
-                                                           IdentificatorFunc: (MapProviderClass) => MapProviderClass.Name);
+                                                           IdentificatorFunc: (MapProviderClass) => MapProviderClass.Id);
 
             // Add all map providers to the mapping canvas context menu
             foreach (var _MapProvider in MapProviders.RegisteredNames)
@@ -259,7 +259,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                 {
 
                     if (this.TileClient == null)
-                        this.TileClient = new TileServer();
+                        this.TileClient = new AegirTilesClient();
 
                     #region Collect old tiles for deletion
 

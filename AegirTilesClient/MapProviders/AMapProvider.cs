@@ -51,7 +51,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// The unique name of this map provider.
         /// </summary>
-        public String Name
+        public String Id
         {
             get;
             private set;
@@ -180,7 +180,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
                             IEnumerable<String> Hosts = null)
         {
 
-            this.Name               = Name;
+            this.Id               = Name;
             this.Description        = Description;
             this.InfoUri            = InfoUri;
             this.Copyright          = Copyright;

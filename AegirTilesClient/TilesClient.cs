@@ -30,9 +30,9 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// An Aegir tile client.
+    /// An Aegir tiles client.
     /// </summary>
-    public class TileClient : ITileClient
+    public class AegirTilesClient : IAegirTilesClient
     {
 
         #region Data
@@ -43,12 +43,12 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         
         #region Properties
 
-        #region RegisteredMapProviderNames
+        #region RegisteredMapProviderIds
 
         /// <summary>
-        /// Return an enumeration of all registered map provider names.
+        /// Return an enumeration of all registered map provider identifications.
         /// </summary>
-        public IEnumerable<String> RegisteredMapProviderNames
+        public IEnumerable<String> RegisteredMapProviderIds
         {
             get
             {
@@ -67,7 +67,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         {
             get
             {
-                return AutoMapProviders.RegisteredTypes.ToDictionary(MapProvider => MapProvider.Name,
+                return AutoMapProviders.RegisteredTypes.ToDictionary(MapProvider => MapProvider.Id,
                                                                      MapProvider => MapProvider);
             }
         }
@@ -78,14 +78,14 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 
         #region Constructor(s)
 
-        #region TileClient()
+        #region AegirTilesClient()
 
         /// <summary>
         /// Create a new tile client.
         /// </summary>
-        public TileClient()
+        public AegirTilesClient()
         {
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Name);
+            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
         }
 
         #endregion
@@ -107,6 +107,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         {
             
             IMapProvider _MapProvider = null;
+
             if (AutoMapProviders.TryGetInstance(MapProviderName, out _MapProvider))
             {
                 return _MapProvider.GetTile(ZoomLevel, X, Y);
@@ -117,7 +118,6 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         }
 
         #endregion
-
 
     }
 

@@ -33,9 +33,9 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     {
 
         /// <summary>
-        /// The unique name of this map provider.
+        /// The unique identification of this map provider.
         /// </summary>
-        String              Name                { get; }
+        String              Id                  { get; }
 
         /// <summary>
         /// The description of this map provider.

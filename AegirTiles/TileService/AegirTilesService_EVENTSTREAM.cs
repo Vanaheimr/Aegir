@@ -27,32 +27,32 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// ALL content representations.
+    /// EVENTSTREAM content representations.
     /// </summary>
-    public class TileService_ALL : ATileService
+    public class AegirTileService_EVENTSTREAM : AAegirTileService
     {
 
         #region Constructor(s)
 
-        #region TileService_ALL()
+        #region AegirTileService_EVENTSTREAM()
 
         /// <summary>
-        /// Creates a new tile service for all contents.
+        /// Creates a new tile service for EVENTSTREAM content.
         /// </summary>
-        public TileService_ALL()
-            : base(HTTPContentType.ALL)
+        public AegirTileService_EVENTSTREAM()
+            : base(HTTPContentType.EVENTSTREAM)
         { }
 
         #endregion
 
-        #region TileService_ALL(IHTTPConnection)
+        #region AegirTileService_ALL(IHTTPConnection)
 
         /// <summary>
-        /// Creates a new tile service for all contents.
+        /// Creates a new tile service for EVENTSTREAM content.
         /// </summary>
         /// <param name="IHTTPConnection">The http connection for this request.</param>
-        public TileService_ALL(IHTTPConnection IHTTPConnection)
-            : base(IHTTPConnection, HTTPContentType.ALL)
+        public AegirTileService_EVENTSTREAM(IHTTPConnection IHTTPConnection)
+            : base(IHTTPConnection, HTTPContentType.EVENTSTREAM)
         {
             this.CallingAssembly = Assembly.GetExecutingAssembly();
         }

@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAegirTileClient.cs" />
+    <Compile Include="MapProviders\AMapProvider.cs" />
+    <Compile Include="MapProviders\ArcGIS\ArcGIS_WorldImagery_Provider.cs" />
+    <Compile Include="MapProviders\ArcGIS\ArcGIS_WorldStreetMap_Provider.cs" />
+    <Compile Include="MapProviders\DebugProvider.cs" />
+    <Compile Include="MapProviders\IMapProvider.cs" />
+    <Compile Include="MapProviders\OSMProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TilesClient.cs" />
   </ItemGroup>
@@ -48,10 +55,6 @@
     <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">
       <Project>{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}</Project>
       <Name>Commons</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AegirTiles\AegirTiles.csproj">
-      <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
-      <Name>AegirTiles</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aegir\Aegir.csproj">
       <Project>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</Project>

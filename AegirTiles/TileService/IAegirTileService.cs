@@ -27,46 +27,54 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// The Gera service interface mapping HTTP/REST URIs onto .NET methods.
+    /// The interface for the Aegir tile service.
     /// </summary>
     //[HTTPService(Host: "localhost:8080", ForceAuthentication: true)]
     [HTTPService]
-    public interface ITileService : IHTTPService
+    public interface IAegirTilesService : IHTTPService
     {
 
-        TileServer TileServer { get; set; }
+        #region TileServer
 
-        #region ListMapProviders()
+        /// <summary>
+        /// The associated Aegir tiles server.
+        /// </summary>
+        AegirTilesServer TilesServer { get; set; }
+
+        #endregion
+
+
+        #region GET_MapProviders()
 
         /// <summary>
         /// Get an enumeration of all registered map providers.
         /// </summary>
         [NoAuthentication]
         [HTTPMapping(HTTPMethods.GET, "/MapProviders")]
-        HTTPResponse ListMapProviders();
+        HTTPResponse GET_MapProviders();
 
         #endregion
 
-        #region ShowMapProviderInformation()
+        #region GET_MapProvider(MapProviderId)
 
         /// <summary>
         /// Get detailed information on a map provider.
         /// </summary>
         [NoAuthentication]
-        [HTTPMapping(HTTPMethods.GET, "/MapProvider/{Provider}")]
-        HTTPResponse ShowMapProviderInformation(String Provider);
+        [HTTPMapping(HTTPMethods.GET, "/MapProvider/{MapProviderId}")]
+        HTTPResponse GET_MapProvider(String MapProviderId);
 
         #endregion
 
-        #region GetTiles(Mapprovider, Zoom, X, Y)
+        #region GET_Tile(MapProviderId, Zoom, X, Y)
 
         /// <summary>
-        /// Get a tile from the given mapprovider at the
-        /// given zoom level an coordinates.
+        /// Get a tile from the given map provider at the
+        /// given zoom level and coordinates.
         /// </summary>
         [NoAuthentication]
-        [HTTPMapping(HTTPMethods.GET, "/tiles/{MapProvider}/{Zoom}/{X}/{Y}")]
-        HTTPResponse GetTiles(String MapProvider, String Zoom, String X, String Y);
+        [HTTPMapping(HTTPMethods.GET, "/MapProvider/{MapProviderId}/tiles/{Zoom}/{X}/{Y}")]
+        HTTPResponse GET_Tile(String MapProviderId, String Zoom, String X, String Y);
 
         #endregion
 

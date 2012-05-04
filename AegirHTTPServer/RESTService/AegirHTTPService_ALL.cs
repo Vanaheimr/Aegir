@@ -17,42 +17,43 @@
 
 #region Usings
 
+using System;
 using System.Reflection;
 
 using de.ahzf.Hermod.HTTP;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.Tiles
+namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
 {
 
     /// <summary>
-    /// EVENTSTREAM content representations.
+    /// Any content representation.
     /// </summary>
-    public class TileService_EVENTSTREAM : ATileService
+    public class AegirHTTPService_ALL : AAegirHTTPService
     {
 
         #region Constructor(s)
 
-        #region TileService_EVENTSTREAM()
+        #region AegirHTTPService_ALL()
 
         /// <summary>
-        /// Creates a new tile service for EVENTSTREAM content.
+        /// Creates a new Aegir HTTP service.
         /// </summary>
-        public TileService_EVENTSTREAM()
-            : base(HTTPContentType.EVENTSTREAM)
+        public AegirHTTPService_ALL()
+            : base(HTTPContentType.ALL)
         { }
 
         #endregion
 
-        #region TileService_ALL(IHTTPConnection)
+        #region AegirHTTPService_ALL(IHTTPConnection)
 
         /// <summary>
-        /// Creates a new tile service for EVENTSTREAM content.
+        /// Creates a new Aegir HTTP service.
         /// </summary>
         /// <param name="IHTTPConnection">The http connection for this request.</param>
-        public TileService_EVENTSTREAM(IHTTPConnection IHTTPConnection)
-            : base(IHTTPConnection, HTTPContentType.EVENTSTREAM)
+        public AegirHTTPService_ALL(IHTTPConnection IHTTPConnection)
+            : base(IHTTPConnection, HTTPContentType.ALL)
         {
             this.CallingAssembly = Assembly.GetExecutingAssembly();
         }
@@ -64,4 +65,3 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     }
 
 }
-

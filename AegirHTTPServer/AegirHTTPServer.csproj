@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</ProjectGuid>
+    <ProjectGuid>{61C069F9-3FDD-41AA-AB9A-113D3D62140C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Aegir</RootNamespace>
-    <AssemblyName>Aegir</AssemblyName>
+    <RootNamespace>AegirHTTPServer</RootNamespace>
+    <AssemblyName>AegirHTTPServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Aegir.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\AegirHTTPServer.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,28 +42,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AegirExtentionMethods.cs" />
-    <Compile Include="GeoFormat.cs" />
-    <Compile Include="GeoPositions.cs" />
-    <Compile Include="GeoCoordinate.cs" />
-    <Compile Include="IReadonlyPosition.cs" />
-    <Compile Include="GeoCalculations.cs" />
-    <Compile Include="GeoJSON.cs" />
-    <Compile Include="IPosition.cs" />
-    <Compile Include="Pipes\PolyReaderMetaPipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Semantics.cs" />
-    <Compile Include="Tools\Polyfile2ShapeInfo.cs" />
+    <Compile Include="RESTServer\IAegirHTTPServer.cs" />
+    <Compile Include="RESTServer\AegirHTTPServer.cs" />
+    <Compile Include="RESTService\AAegirHTTPService.cs" />
+    <Compile Include="RESTService\IAegirHTTPService.cs" />
+    <Compile Include="RESTService\AegirHTTPService_ALL.cs" />
+    <Compile Include="RESTService\AegirHTTPService_EVENTSTREAM.cs" />
+    <Compile Include="RESTService\AegirHTTPService_HTML.cs" />
+    <Compile Include="RESTService\AegirHTTPService_JSON.cs" />
+    <Compile Include="RESTService\AegirHTTPService_XML.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\Blueprints.NET\BlueprintsServer\BlueprintsServer.csproj">
+      <Project>{DC46B5EF-ECC5-465E-B1C4-85596343A03F}</Project>
+      <Name>BlueprintsServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Blueprints.NET\Blueprints\Blueprints.csproj">
+      <Project>{47FA1E7C-8C47-493D-A371-91A15D53BC95}</Project>
+      <Name>Blueprints</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
+      <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
+      <Name>Hermod</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">
       <Project>{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}</Project>
       <Name>Commons</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
-      <Project>{3949790D-8591-4101-9E4D-CE7A758E7409}</Project>
-      <Name>Styx</Name>
+    <ProjectReference Include="..\AegirTilesClient\AegirTilesClient.csproj">
+      <Project>{D6A73280-9D66-4509-9131-3F379E8A3F5A}</Project>
+      <Name>AegirTilesClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AegirTiles\AegirTilesServer.csproj">
+      <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
+      <Name>AegirTilesServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Aegir\Aegir.csproj">
+      <Project>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</Project>
+      <Name>Aegir</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
