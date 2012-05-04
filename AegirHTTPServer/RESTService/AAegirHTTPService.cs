@@ -118,7 +118,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <summary>
         /// The associated tile server.
         /// </summary>
-        public AegirTilesServer TilesServer { get; set; }
+        public IAegirTilesServer TilesServer { get; set; }
 
         #endregion
 
@@ -502,7 +502,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         #endregion
 
 
-        #region (protected) GET /graph/{GraphId}/near/{Latitude}/{Longitude}/{MaxDistance}
+        #region (protected) GET /graph/{GraphId}/near_by/{Latitude}/{Longitude}/{MaxDistance}
 
         /// <summary>
         /// Get all vertices near the given location.
@@ -514,7 +514,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
 
         #endregion
 
-        #region (protected) FILTER /graph/{GraphId}/near/{Latitude}/{Longitude}/{MaxDistance}
+        #region (protected) FILTER /graph/{GraphId}/near_by/{Latitude}/{Longitude}/{MaxDistance}
 
         /// <summary>
         /// Filter all vertices near the given location.

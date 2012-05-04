@@ -34,7 +34,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
     /// A tcp/http based Aegir tiles server.
     /// </summary>
     public class AegirTilesServer : HTTPServer<IAegirTilesService>,
-                                    IAegirTilesClient
+                                    IAegirTilesServer
 
     {
 

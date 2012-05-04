@@ -74,7 +74,7 @@
       <Project>{D6A73280-9D66-4509-9131-3F379E8A3F5A}</Project>
       <Name>AegirTilesClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AegirTiles\AegirTilesServer.csproj">
+    <ProjectReference Include="..\AegirTilesServer\AegirTilesServer.csproj">
       <Project>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</Project>
       <Name>AegirTilesServer</Name>
     </ProjectReference>

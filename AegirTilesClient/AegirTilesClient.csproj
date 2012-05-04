@@ -49,7 +49,7 @@
     <Compile Include="MapProviders\IMapProvider.cs" />
     <Compile Include="MapProviders\OSMProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TilesClient.cs" />
+    <Compile Include="AegirTilesClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">

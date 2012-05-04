@@ -39,7 +39,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// The associated Aegir tiles server.
         /// </summary>
-        AegirTilesServer TilesServer { get; set; }
+        IAegirTilesServer TilesServer { get; set; }
 
         #endregion
 

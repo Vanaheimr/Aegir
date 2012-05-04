@@ -52,7 +52,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
 
         #region Properties
 
-        public AegirTilesServer TilesServer { get; set; }
+        public IAegirTilesServer TilesServer { get; set; }
 
         #endregion
 
