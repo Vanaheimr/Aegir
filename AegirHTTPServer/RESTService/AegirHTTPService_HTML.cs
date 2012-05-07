@@ -24,7 +24,7 @@ using System.Reflection;
 
 using de.ahzf.Illias.Commons;
 using de.ahzf.Hermod.HTTP;
-using de.ahzf.Blueprints.HTTP.Server;
+using de.ahzf.Bifrost.HTTP.Server;
 using de.ahzf.Blueprints.PropertyGraphs;
 
 #endregion

@@ -19,8 +19,8 @@
 
 using System;
 
-using de.ahzf.Blueprints.HTTP.Server;
 using de.ahzf.Hermod.HTTP;
+using de.ahzf.Bifrost.HTTP.Server;
 using de.ahzf.Vanaheimr.Aegir.Tiles;
 
 #endregion
@@ -30,7 +30,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
 
     //[HTTPService(Host: "localhost:8080", ForceAuthentication: true)]
     [HTTPService(HostAuthentication: false)]
-    public interface IAegirHTTPService : IGraphService,
+    public interface IAegirHTTPService : IBifrostService,
                                          IAegirTilesService
 
     {

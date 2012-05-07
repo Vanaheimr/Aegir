@@ -17,20 +17,14 @@
 
 #region Usings
 
-using System;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-
-using de.ahzf.Blueprints.HTTP.Server;
+using de.ahzf.Bifrost.HTTP.Server;
 
 #endregion
 
 namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
 {
 
-    public interface IAegirHTTPServer : IGraphServer
+    public interface IAegirHTTPServer : IBifrostHTTPServer
     {
 
     }

@@ -125,10 +125,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Blueprints.NET\BlueprintsClient\BlueprintsClient.csproj">
-      <Project>{EB31E37B-FA75-44FD-9528-171C9E7C3C37}</Project>
-      <Name>BlueprintsClient</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
       <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
       <Name>Hermod</Name>

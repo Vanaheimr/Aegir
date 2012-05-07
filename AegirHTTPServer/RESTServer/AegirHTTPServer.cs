@@ -19,7 +19,7 @@
 
 using System;
 
-using de.ahzf.Blueprints.HTTP.Server;
+using de.ahzf.Bifrost.HTTP.Server;
 using de.ahzf.Hermod.Datastructures;
 
 #endregion
@@ -30,7 +30,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
     /// <summary>
     /// A TCP/HTTP/REST based LinkedEnergy server.
     /// </summary>
-    public class AegirHTTPServer : GraphServer<IAegirHTTPService>,
+    public class AegirHTTPServer : BifrostHTTPServer<IAegirHTTPService>,
                                    IAegirHTTPServer
     {
 

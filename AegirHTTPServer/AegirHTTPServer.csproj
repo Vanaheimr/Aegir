@@ -54,9 +54,9 @@
     <Compile Include="RESTService\AegirHTTPService_XML.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Blueprints.NET\BlueprintsServer\BlueprintsServer.csproj">
+    <ProjectReference Include="..\..\Bifrost\BifrostHTTPServer\BifrostHTTPServer.csproj">
       <Project>{DC46B5EF-ECC5-465E-B1C4-85596343A03F}</Project>
-      <Name>BlueprintsServer</Name>
+      <Name>BifrostHTTPServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Blueprints.NET\Blueprints\Blueprints.csproj">
       <Project>{47FA1E7C-8C47-493D-A371-91A15D53BC95}</Project>
