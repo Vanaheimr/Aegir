@@ -17,7 +17,7 @@
 
 #region Usings
 
-using de.ahzf.Bifrost.HTTP.Server;
+using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
 
 #endregion
 

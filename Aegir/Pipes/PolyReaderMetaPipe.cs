@@ -22,7 +22,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using de.ahzf.Styx;
+using de.ahzf.Vanaheimr.Styx;
 
 #endregion
 

@@ -20,8 +20,8 @@
 using System;
 
 using de.ahzf.Hermod.HTTP;
-using de.ahzf.Bifrost.HTTP.Server;
 using de.ahzf.Vanaheimr.Aegir.Tiles;
+using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
 
 #endregion
 
