@@ -32,7 +32,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// The common interface for all features on an Aegir map.
     /// </summary>
     public interface IFeature : IIdentifier<String>,
-                                IPosition,
+                                IGeoPosition,
                                 IEquatable<IFeature>,
                                 IComparable<IFeature>,
                                 IComparable

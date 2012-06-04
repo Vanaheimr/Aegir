@@ -8,7 +8,7 @@
     <ProjectGuid>{4D8FFCCD-738D-41AA-A527-8CFDFE0A681D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Aegir</RootNamespace>
+    <RootNamespace>de.ahzf.Vanaheimr.Aegir</RootNamespace>
     <AssemblyName>Aegir</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\Aegir.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,13 +44,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AegirExtentionMethods.cs" />
+    <Compile Include="GeoCoordinates\Altitude.cs" />
+    <Compile Include="GeoCoordinates\IGeoHash.cs" />
+    <Compile Include="GeoCoordinates\Longitude.cs" />
+    <Compile Include="GeoCoordinates\Latitude.cs" />
+    <Compile Include="GeoCoordinates\GeoHash32.cs" />
     <Compile Include="GeoFormat.cs" />
-    <Compile Include="GeoPositions.cs" />
-    <Compile Include="GeoCoordinate.cs" />
-    <Compile Include="IReadonlyPosition.cs" />
+    <Compile Include="GeoCoordinates\GeoHash64.cs" />
+    <Compile Include="GeoCoordinates\GeoHash.cs" />
+    <Compile Include="GeoCoordinates\IGeoCoordinates.cs" />
+    <Compile Include="GeoCoordinates\GeoPositions.cs" />
+    <Compile Include="GeoCoordinates\GeoCoordinate.cs" />
+    <Compile Include="GeoCoordinates\IReadonlyGeoPosition.cs" />
     <Compile Include="GeoCalculations.cs" />
     <Compile Include="GeoJSON.cs" />
-    <Compile Include="IPosition.cs" />
+    <Compile Include="GeoCoordinates\IGeoPosition.cs" />
     <Compile Include="Pipes\PolyReaderMetaPipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Semantics.cs" />

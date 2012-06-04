@@ -8,7 +8,7 @@
     <ProjectGuid>{61C069F9-3FDD-41AA-AB9A-113D3D62140C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AegirHTTPServer</RootNamespace>
+    <RootNamespace>de.ahzf.Vanaheimr.AegirHTTPServer</RootNamespace>
     <AssemblyName>AegirHTTPServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

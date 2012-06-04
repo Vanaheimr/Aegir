@@ -528,7 +528,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// </summary>
         /// <param name="Latitude">The latitude of the zoom center on the map.</param>
         /// <param name="Longitude">The longitude of the zoom center on the map.</param>
-        public void MoveTo(Double Latitude, Double Longitude)
+        public void MoveTo(Latitude Latitude, Longitude Longitude)
         {
             ZoomTo(Latitude, Longitude, this.ZoomLevel);
         }
@@ -543,15 +543,15 @@ namespace de.ahzf.Vanaheimr.Aegir.Controls
         /// <param name="Latitude">The latitude of the zoom center on the map.</param>
         /// <param name="Longitude">The longitude of the zoom center on the map.</param>
         /// <param name="ZoomLevel">The desired zoom level.</param>
-        public void ZoomTo(Double Latitude, Double Longitude, UInt32 ZoomLevel)
+        public void ZoomTo(Latitude Latitude, Longitude Longitude, UInt32 ZoomLevel)
         {
 
             #region Initial checks
 
-            if (Latitude > 90 || Latitude < -90)
+            if (Latitude.Value > 90  || Latitude.Value < -90)
                 throw new ArgumentException("Invalid Latitude!");
 
-            if (Longitude > 90 || Longitude < -90)
+            if (Longitude.Value > 90 || Longitude.Value < -90)
                 throw new ArgumentException("Invalid Longitude!");
 
             if (ZoomLevel < MinZoomLevel || ZoomLevel > MaxZoomLevel)

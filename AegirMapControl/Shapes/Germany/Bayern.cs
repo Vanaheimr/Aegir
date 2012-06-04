@@ -71,7 +71,7 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Bayern
         /// </summary>
         public Bayern(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Bayern, 50.565010, 08.995120, 0, 47.269858, 13.835958, StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Bayern, new Latitude(50.565010), new Longitude(08.995120), new Altitude(0), new Latitude(47.269858), new Longitude(13.835958), StrokeColor, StrokeThickness, FillColor)
         { }
 
     }

@@ -15,43 +15,38 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-using de.ahzf.Illias.Commons;
-using System.Windows.Media;
-using System.Windows;
-
-#endregion
-
 namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// The common interface for all features on an Aegir map.
+    /// Geographical positions (e.g. for debugging).
     /// </summary>
-    public interface IShape : IIdentifier<String>,
-                              IReadonlyGeoPosition,
-                              IEquatable<IFeature>,
-                              IComparable<IFeature>,
-                              IComparable
+    public static class GeoPositions
     {
 
         /// <summary>
-        /// The geographical width of something.
+        /// Geographical positions in Germany.
         /// </summary>
-        Latitude  Latitude2  { get; }
+        public static class Germany
+        {
 
-        /// <summary>
-        /// The geographical height of something.
-        /// </summary>
-        Longitude Longitude2 { get; }
+            /// <summary>
+            /// The geographical position of Berlin, Germany.
+            /// </summary>
+            public static GeoCoordinate Berlin()
+            {
+                return new GeoCoordinate(new Latitude(52.500556), new Longitude(13.398889));
+            }
 
+            /// <summary>
+            /// The geographical position of Jena, Germany.
+            /// </summary>
+            public static GeoCoordinate Jena()
+            {
+                return new GeoCoordinate(new Latitude(50.929054), new Longitude(11.584074));
+            }
 
-        Rect Bounds { get; }
-
-        UInt32 ZoomLevel { get; set; }
+        }
 
     }
 

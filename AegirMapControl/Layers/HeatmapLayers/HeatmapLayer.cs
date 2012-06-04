@@ -72,7 +72,7 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region AddFeature
 
-        public Feature AddFeature(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
+        public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
         {
             return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
         }

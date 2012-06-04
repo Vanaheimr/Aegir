@@ -172,19 +172,20 @@ namespace de.ahzf.Vanaheimr.Aegir
                 {
 
                     // Polyfiles store "Longitude Latitude"!!!
-                    Shapes[ShapeNumber].Item1.Add(new GeoCoordinate(GeoCoordinate.Longitude, GeoCoordinate.Latitude));
+                    Shapes[ShapeNumber].Item1.Add(new GeoCoordinate(new Latitude(GeoCoordinate.Longitude.Value),
+                                                                    new Longitude(GeoCoordinate.Latitude.Value)));
 
-                    if (min_lat > GeoCoordinate.Longitude)
-                        min_lat = GeoCoordinate.Longitude;
+                    if (min_lat > GeoCoordinate.Longitude.Value)
+                        min_lat = GeoCoordinate.Longitude.Value;
 
-                    if (min_lng > GeoCoordinate.Latitude)
-                        min_lng = GeoCoordinate.Latitude;
+                    if (min_lng > GeoCoordinate.Latitude.Value)
+                        min_lng = GeoCoordinate.Latitude.Value;
 
-                    if (max_lat < GeoCoordinate.Longitude)
-                        max_lat = GeoCoordinate.Longitude;
+                    if (max_lat < GeoCoordinate.Longitude.Value)
+                        max_lat = GeoCoordinate.Longitude.Value;
 
-                    if (max_lng < GeoCoordinate.Latitude)
-                        max_lng = GeoCoordinate.Latitude;
+                    if (max_lng < GeoCoordinate.Latitude.Value)
+                        max_lng = GeoCoordinate.Latitude.Value;
 
                 }
 

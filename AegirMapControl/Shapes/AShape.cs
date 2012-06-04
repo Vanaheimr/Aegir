@@ -41,38 +41,38 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// The identification of this shape.
         /// </summary>
-        public String Id         { get; private set; }
+        public String    Id         { get; private set; }
 
         /// <summary>
         /// The latitude of this shape.
         /// </summary>
-        public Double Latitude   { get; private set; }
+        public Latitude  Latitude   { get; private set; }
 
         /// <summary>
         /// The longitude of this shape.
         /// </summary>
-        public Double Longitude  { get; private set; }
+        public Longitude Longitude  { get; private set; }
 
         /// <summary>
         /// The altitude of this shape.
         /// </summary>
-        public Double Altitude   { get; private set; }
+        public Altitude  Altitude   { get; private set; }
 
         /// <summary>
         /// The geographical width of thsi shape.
         /// </summary>
-        public Double Latitude2  { get; private set; }
+        public Latitude  Latitude2  { get; private set; }
 
         /// <summary>
         /// The geographical height of this shape.
         /// </summary>
-        public Double Longitude2 { get; private set; }
+        public Longitude Longitude2 { get; private set; }
 
 
 
-        public UInt32 ZoomLevel  { get; set; }
+        public UInt32    ZoomLevel  { get; set; }
 
-        public Rect   Bounds     { get; set; }
+        public Rect      Bounds     { get; set; }
 
 
         #region Geometry
@@ -127,14 +127,14 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public AShape(String Id, Double Latitude, Double Longitude, Double Altitude, Double Latitude2, Double Longitude2)
+        public AShape(String Id, Latitude Latitude, Longitude Longitude, Altitude Altitude, Latitude Latitude2, Longitude Longitude2)
         {
 
-            this.Id        = Id;
-            this.Latitude  = Latitude;
-            this.Longitude = Longitude;
-            this.Altitude  = Altitude;
-            this.Latitude2 = Latitude2;
+            this.Id         = Id;
+            this.Latitude   = Latitude;
+            this.Longitude  = Longitude;
+            this.Altitude   = Altitude;
+            this.Latitude2  = Latitude2;
             this.Longitude2 = Longitude2;
 
         }
@@ -152,14 +152,14 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public AShape(String[] Geometries, Double Latitude, Double Longitude, Double Altitude, Double Latitude2, Double Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        public AShape(String[] Geometries, Latitude Latitude, Longitude Longitude, Altitude Altitude, Latitude Latitude2, Longitude Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
         {
 
-            this.Id        = Id;
-            this.Latitude  = Latitude;
-            this.Longitude = Longitude;
-            this.Altitude  = Altitude;
-            this.Latitude2 = Latitude2;
+            this.Id         = Id;
+            this.Latitude   = Latitude;
+            this.Longitude  = Longitude;
+            this.Altitude   = Altitude;
+            this.Latitude2  = Latitude2;
             this.Longitude2 = Longitude2;
 
             var PathGeometry16 = PathGeometry.Parse(Geometries[8]);

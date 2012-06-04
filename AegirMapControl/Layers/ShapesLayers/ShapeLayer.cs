@@ -86,7 +86,7 @@ namespace de.ahzf.Vanaheimr.Aegir
 
 
 
-        public Feature AddPath(String Id, Double Latitude, Double Longitude, Double Width, Double Height, Color Color)
+        public Feature AddPath(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
         {
 
             var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
@@ -164,7 +164,7 @@ namespace de.ahzf.Vanaheimr.Aegir
                             Canvas.SetTop (AShape, ScreenOffsetY + (Int64) XY.Item2);
 
                             AShape.ZoomLevel = ZoomLevel;
-                            WH = GeoCalculations.WorldCoordinates_2_Screen(47.270203, 15.041656, ZoomLevel);
+                            WH = GeoCalculations.WorldCoordinates_2_Screen(new Latitude(47.270203), new Longitude(15.041656), ZoomLevel);
                             AShape.Width  = WH.Item1 - XY.Item1;
                             AShape.Height = WH.Item2 - XY.Item2;
 

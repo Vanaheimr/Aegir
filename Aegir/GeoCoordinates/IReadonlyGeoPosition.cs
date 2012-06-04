@@ -27,7 +27,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The interface for anything having a position.
     /// </summary>
-    public interface IReadonlyPosition
+    public interface IReadonlyGeoPosition
     {
 
         // Latitude, Longitude of Jena, DE
@@ -36,17 +36,17 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <summary>
         /// The latitude of something.
         /// </summary>
-        Double  Latitude       { get; }
+        Latitude  Latitude   { get; }
 
         /// <summary>
         /// The longitude of something.
         /// </summary>
-        Double  Longitude      { get; }
+        Longitude Longitude  { get; }
 
         /// <summary>
         /// The altitude of something.
         /// </summary>
-        Double  Altitude       { get; }
+        Altitude  Altitude   { get; }
 
     }
 

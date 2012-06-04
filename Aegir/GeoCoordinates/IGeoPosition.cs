@@ -27,23 +27,23 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// The interface for anything having a position.
     /// </summary>
-    public interface IPosition : IReadonlyPosition
+    public interface IGeoPosition : IReadonlyGeoPosition
     {
 
         /// <summary>
         /// The latitude of something.
         /// </summary>
-        Double  Latitude       { get; set; }
+        Latitude  Latitude   { get; set; }
 
         /// <summary>
         /// The longitude of something.
         /// </summary>
-        Double  Longitude      { get; set; }
+        Longitude Longitude  { get; set; }
 
         /// <summary>
         /// The altitude of something.
         /// </summary>
-        Double  Altitude       { get; set; }
+        Altitude  Altitude   { get; set; }
 
     }
 

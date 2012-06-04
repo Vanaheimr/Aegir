@@ -38,11 +38,11 @@ namespace de.ahzf.Vanaheimr.Aegir
 
         #region Properties
 
-        public String Id        { get; set; }
+        public String    Id        { get; set; }
 
-        public Double Latitude  { get; set; }
-        public Double Longitude { get; set; }
-        public Double Altitude  { get; set; }
+        public Latitude  Latitude  { get; set; }
+        public Longitude Longitude { get; set; }
+        public Altitude  Altitude  { get; set; }
 
         #region Geometry
 

@@ -8,8 +8,8 @@
     <ProjectGuid>{0F37A34C-E6B7-4047-A5CC-6FD9A128208A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TileServer</RootNamespace>
-    <AssemblyName>TileServer</AssemblyName>
+    <RootNamespace>de.ahzf.Vanaheimr.AegirTileServer</RootNamespace>
+    <AssemblyName>AegirTileServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\TileServer.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\AegirTileServer.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

@@ -15,38 +15,35 @@
  * limitations under the License.
  */
 
+#region Usings
+
+using System;
+
+#endregion
+
 namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// Geographical positions (e.g. for debugging).
+    /// The interface for all latitude/longitude based geo coordinates.
     /// </summary>
-    public static class GeoPositions
+    public interface IGeoCoordinates : IComparable
     {
 
         /// <summary>
-        /// Geographical positions in Germany.
+        /// The Latitude (south to nord).
         /// </summary>
-        public static class Germany
-        {
+        Latitude  Latitude  { get; }
 
-            /// <summary>
-            /// The geographical position of Berlin, Germany.
-            /// </summary>
-            public static GeoCoordinate Berlin()
-            {
-                return new GeoCoordinate(52.500556, 13.398889);
-            }
+        /// <summary>
+        /// The Longitude (parallel to equator).
+        /// </summary>
+        Longitude Longitude { get; }
 
-            /// <summary>
-            /// The geographical position of Jena, Germany.
-            /// </summary>
-            public static GeoCoordinate Jena()
-            {
-                return new GeoCoordinate(50.929054, 11.584074);
-            }
-
-        }
+        /// <summary>
+        /// Returns a string representation of the given object.
+        /// </summary>
+        String ToString();
 
     }
 
