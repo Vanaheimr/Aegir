@@ -55,7 +55,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// The common interface for all geohashes.
     /// </summary>
     /// <typeparam name="T">The type of the geohash.</typeparam>
-    public interface IGeoHash<T> : IGeoCoordinates
+    public interface IGeoHash<T> : IGeoCoordinate
     {
 
         /// <summary>

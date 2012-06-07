@@ -18,8 +18,6 @@
 #region Usings
 
 using System;
-using System.Text.RegularExpressions;
-using System.Globalization;
 
 using NUnit.Framework;
 
@@ -35,6 +33,8 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
     public class GeoCoordinateTests
     {
 
+        #region GeoCoordinateInitializerTest()
+
         [Test]
         public void GeoCoordinateInitializerTest()
         {
@@ -48,6 +48,10 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
             Assert.AreEqual(RandomLongitude.Value, GeoCoordinate1.Longitude.Value, 0.0000001);
 
         }
+
+        #endregion
+
+        #region GeoCoordinateToStringAndBackParsingTest()
 
         [Test]
         public void GeoCoordinateToStringAndBackParsingTest()
@@ -78,6 +82,10 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
             Assert.AreEqual(RandomLongitude.Value, GeoCoordinate5.Longitude.Value, 0.0000001);
 
         }
+
+        #endregion
+
+        #region GeoCoordinateStringParsingTest()
 
         [Test]
         public void GeoCoordinateStringParsingTest()
@@ -124,6 +132,10 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
 
         }
 
+        #endregion
+
+        #region GeoCoordinateInitializerTest2()
+
         [Test]
         public void GeoCoordinateInitializerTest2()
         {
@@ -135,6 +147,9 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
 
         }
 
+        #endregion
+
+        #region ToGeoHashTest1()
 
         [Test]
         public void ToGeoHashTest1()
@@ -146,23 +161,33 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
             var geo01hash64 = geo01.ToGeoHash64(32);
 
             Assert.AreEqual("u4pruydqqvj",          geo01hash.Value);
-            Assert.AreEqual(3291446636U,            geo01hash32.Value);
+            Assert.AreEqual(3793206966U,            geo01hash32.Value);
             Assert.AreEqual(16291699867698975045UL, geo01hash64.Value);
 
-            var geo01rev    = geo01hash.ToGeoCoordinate();
-            var geo01rev32  = geo01hash.ToGeoCoordinate();
-            var geo01rev64  = geo01hash.ToGeoCoordinate();
+            var geo01rev    = geo01hash.ToGeoCoordinate(5);
+            var geo01rev32  = geo01hash.ToGeoCoordinate(5);
+            var geo01rev64  = geo01hash.ToGeoCoordinate(5);
 
+            Assert.IsTrue(geo01.Equals(geo01rev));
+            Assert.IsTrue(geo01 == geo01rev);
             Assert.AreEqual(geo01.Latitude.Value,  geo01rev.Latitude.Value,    0.000001);
             Assert.AreEqual(geo01.Longitude.Value, geo01rev.Longitude.Value,   0.000001);
 
+            Assert.IsTrue(geo01.Equals(geo01rev32));
+            Assert.IsTrue(geo01 == geo01rev32);
             Assert.AreEqual(geo01.Latitude.Value,  geo01rev32.Latitude.Value,  0.000001);
             Assert.AreEqual(geo01.Longitude.Value, geo01rev32.Longitude.Value, 0.000001);
 
+            Assert.IsTrue(geo01.Equals(geo01rev64));
+            Assert.IsTrue(geo01 == geo01rev64);
             Assert.AreEqual(geo01.Latitude.Value,  geo01rev64.Latitude.Value,  0.000001);
             Assert.AreEqual(geo01.Longitude.Value, geo01rev64.Longitude.Value, 0.000001);
 
         }
+
+        #endregion
+
+        #region ToGeoHashTest2()
 
         [Test]
         public void ToGeoHashTest2()
@@ -174,23 +199,33 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
             var geo01hash64 = geo01.ToGeoHash64(32);
 
             Assert.AreEqual("dqcjr0bp7n74cjbuqqub", geo01hash.Value);
-            Assert.AreEqual(886460036U,             geo01hash32.Value);
+            Assert.AreEqual(2590713666U,            geo01hash32.Value);
             Assert.AreEqual(11127030471626460554UL, geo01hash64.Value);
 
             var geo01rev    = geo01hash.ToGeoCoordinate(3);
             var geo01rev32  = geo01hash.ToGeoCoordinate(3);
             var geo01rev64  = geo01hash.ToGeoCoordinate(3);
 
-            Assert.AreEqual(geo01.Latitude.Value,  geo01rev.Latitude.Value,    0.0001);
-            Assert.AreEqual(geo01.Longitude.Value, geo01rev.Longitude.Value,   0.0001);
+            Assert.IsTrue(geo01.Equals(geo01rev));
+            Assert.IsTrue(geo01 == geo01rev);
+            Assert.AreEqual(geo01.Latitude.Value,  geo01rev.Latitude.Value,    0.000001);
+            Assert.AreEqual(geo01.Longitude.Value, geo01rev.Longitude.Value,   0.000001);
 
-            Assert.AreEqual(geo01.Latitude.Value,  geo01rev32.Latitude.Value,  0.0001);
-            Assert.AreEqual(geo01.Longitude.Value, geo01rev32.Longitude.Value, 0.0001);
+            Assert.IsTrue(geo01.Equals(geo01rev32));
+            Assert.IsTrue(geo01 == geo01rev32);
+            Assert.AreEqual(geo01.Latitude.Value,  geo01rev32.Latitude.Value,  0.000001);
+            Assert.AreEqual(geo01.Longitude.Value, geo01rev32.Longitude.Value, 0.000001);
 
-            Assert.AreEqual(geo01.Latitude.Value,  geo01rev64.Latitude.Value,  0.0001);
-            Assert.AreEqual(geo01.Longitude.Value, geo01rev64.Longitude.Value, 0.0001);
+            Assert.IsTrue(geo01.Equals(geo01rev64));
+            Assert.IsTrue(geo01 == geo01rev64);
+            Assert.AreEqual(geo01.Latitude.Value,  geo01rev64.Latitude.Value,  0.000001);
+            Assert.AreEqual(geo01.Longitude.Value, geo01rev64.Longitude.Value, 0.000001);
 
         }
+
+        #endregion
+
+        #region ToGeoHashTest3()
 
         [Test]
         public void ToGeoHashTest3()
@@ -202,23 +237,81 @@ namespace de.ahzf.Vanaheimr.Aegir.UnitTests
             var geo01hash64 = geo01.ToGeoHash64(32);
 
             Assert.AreEqual("6314xp00e1ej140gw3hz", geo01hash.Value);
-            Assert.AreEqual(1635982288U,            geo01hash32.Value);
+            Assert.AreEqual(817991144U,             geo01hash32.Value);
             Assert.AreEqual(3513245211907368736UL,  geo01hash64.Value);
 
             var geo01rev    = geo01hash.ToGeoCoordinate(3);
             var geo01rev32  = geo01hash.ToGeoCoordinate(3);
             var geo01rev64  = geo01hash.ToGeoCoordinate(3);
 
-            Assert.AreEqual(geo01.Latitude.Value,  geo01rev.Latitude.Value,    0.0001);
-            Assert.AreEqual(geo01.Longitude.Value, geo01rev.Longitude.Value,   0.0001);
+            Assert.IsTrue(geo01.Equals(geo01rev));
+            Assert.IsTrue(geo01 == geo01rev);
+            Assert.AreEqual(geo01.Latitude.Value,  geo01rev.Latitude.Value,    0.000001);
+            Assert.AreEqual(geo01.Longitude.Value, geo01rev.Longitude.Value,   0.000001);
 
-            Assert.AreEqual(geo01.Latitude.Value,  geo01rev32.Latitude.Value,  0.0001);
-            Assert.AreEqual(geo01.Longitude.Value, geo01rev32.Longitude.Value, 0.0001);
+            Assert.IsTrue(geo01.Equals(geo01rev32));
+            Assert.IsTrue(geo01 == geo01rev32);
+            Assert.AreEqual(geo01.Latitude.Value,  geo01rev32.Latitude.Value,  0.000001);
+            Assert.AreEqual(geo01.Longitude.Value, geo01rev32.Longitude.Value, 0.000001);
 
-            Assert.AreEqual(geo01.Latitude.Value,  geo01rev64.Latitude.Value,  0.0001);
-            Assert.AreEqual(geo01.Longitude.Value, geo01rev64.Longitude.Value, 0.0001);
+            Assert.IsTrue(geo01.Equals(geo01rev64));
+            Assert.IsTrue(geo01 == geo01rev64);
+            Assert.AreEqual(geo01.Latitude.Value,  geo01rev64.Latitude.Value,  0.000001);
+            Assert.AreEqual(geo01.Longitude.Value, geo01rev64.Longitude.Value, 0.000001);
 
         }
+
+        #endregion
+
+        #region DistanceTest()
+
+        [Test]
+        public void DistanceTest()
+        {
+
+            var Seattle = new GeoCoordinate(new Latitude(47.621800), new Longitude(-122.350326));
+            var Olympia = new GeoCoordinate(new Latitude(47.041917), new Longitude(-122.893766));
+
+            var Distance = Seattle.DistanceTo(Olympia);
+            Assert.AreEqual(76.3866157995487, Distance, 0.0001);
+
+        }
+
+        #endregion
+
+        #region MidPointTest1()
+
+        [Test]
+        public void MidPointTest1()
+        {
+
+            var LA    = new GeoCoordinate(new Latitude(34.122222), new Longitude(118.411111));
+            var NYC   = new GeoCoordinate(new Latitude(40.669722), new Longitude( 73.943889));
+
+            var midpt = LA.MidPoint(NYC);
+            Assert.AreEqual(39.547079, midpt.Latitude.Value,  0.0001);
+            Assert.AreEqual(97.201534, midpt.Longitude.Value, 0.0001);
+
+        }
+
+        #endregion
+
+        #region MidPointTest2()
+
+        [Test]
+        public void MidPointTest2()
+        {
+
+            var geo01 = new GeoCoordinate(new Latitude(35), new Longitude( 45));
+            var geo02 = new GeoCoordinate(new Latitude(35), new Longitude(135));
+
+            var midpt = geo01.MidPoint(geo02);
+            Assert.AreEqual(44.719114, midpt.Latitude.Value, 0.0001);
+            Assert.AreEqual(90.000000, midpt.Longitude.Value, 0.0001);
+
+        }
+
+        #endregion
 
     }
 

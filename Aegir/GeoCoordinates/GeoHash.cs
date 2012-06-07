@@ -59,7 +59,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// A base32-encoded alphanumeric geohash.
     /// </summary>
     public struct GeoHash : IGeoHash<String>,
-                            IGeoCoordinates,
+                            IGeoCoordinate,
                             IEquatable<GeoHash>,
                             IComparable<GeoHash>
 
@@ -415,18 +415,51 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
-        #region CompareTo(GeoHash)
+        #region Operator overloading
+
+        #region Operator == (GeoHash1, GeoHash2)
 
         /// <summary>
-        /// Compares two geohash.
+        /// Compares two geohashs for equality.
         /// </summary>
-        /// <param name="GeoHash">Another geohash.</param>
-        public Int32 CompareTo(GeoHash GeoHash)
+        /// <param name="GeoHash1">A geohash.</param>
+        /// <param name="GeoHash2">Another geohash.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public static Boolean operator == (GeoHash GeoHash1, GeoHash GeoHash2)
         {
-            return this.InternalGeoHash.CompareTo(GeoHash.InternalGeoHash);
+
+            // If both are null, or both are same instance, return true.
+            if (Object.ReferenceEquals(GeoHash1, GeoHash2))
+                return true;
+
+            // If one is null, but not both, return false.
+            if (((Object) GeoHash1 == null) || ((Object) GeoHash2 == null))
+                return false;
+
+            return GeoHash1.Equals(GeoHash2);
+
         }
 
         #endregion
+
+        #region Operator != (GeoHash1, GeoHash2)
+
+        /// <summary>
+        /// Compares two vertices for inequality.
+        /// </summary>
+        /// <param name="GeoHash1">A geohash.</param>
+        /// <param name="GeoHash2">Another geohash.</param>
+        /// <returns>False if both match; True otherwise.</returns>
+        public static Boolean operator != (GeoHash GeoHash1, GeoHash GeoHash2)
+        {
+            return !(GeoHash1 == GeoHash2);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IComparable Members
 
         #region CompareTo(Object)
 
@@ -440,7 +473,72 @@ namespace de.ahzf.Vanaheimr.Aegir
             if (Object == null)
                 throw new ArgumentNullException("The given Object must not be null!");
 
-            return CompareTo((GeoHash) Object);
+            return CompareTo((GeoHash32)Object);
+
+        }
+
+        #endregion
+
+        #region CompareTo(GeoHash)
+
+        /// <summary>
+        /// Compares two geohashes.
+        /// </summary>
+        /// <param name="GeoHash">Another geohash.</param>
+        public Int32 CompareTo(GeoHash GeoHash)
+        {
+            return this.Value.CompareTo(GeoHash.Value);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public override Boolean Equals(Object Object)
+        {
+
+            if (Object == null)
+                return false;
+
+            try
+            {
+                return this.Equals((GeoHash32)Object);
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region Equals(IGeoCoordinate)
+
+        /// <summary>
+        /// Compares two geo coordinates for equality.
+        /// </summary>
+        /// <param name="IGeoCoordinate">Another geo coordinate.</param>
+        /// <returns>True if both are equal; False otherwise.</returns>
+        public Boolean Equals(IGeoCoordinate IGeoCoordinate)
+        {
+
+            if (IGeoCoordinate.Latitude.Value != this.Latitude.Value)
+                return false;
+
+            if (IGeoCoordinate.Longitude.Value != this.Longitude.Value)
+                return false;
+
+            return true;
 
         }
 
@@ -455,8 +553,10 @@ namespace de.ahzf.Vanaheimr.Aegir
         /// <returns>True if both are equal; False otherwise.</returns>
         public Boolean Equals(GeoHash GeoHash)
         {
-            return this.InternalGeoHash.Equals(GeoHash.InternalGeoHash);
+            return this.Value.Equals(GeoHash.Value);
         }
+
+        #endregion
 
         #endregion
 

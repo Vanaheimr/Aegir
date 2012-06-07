@@ -25,20 +25,22 @@ namespace de.ahzf.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// The interface for all latitude/longitude based geo coordinates.
+    /// The interface for all latitude/longitude/altitude based geo coordinates.
     /// </summary>
-    public interface IGeoCoordinates : IComparable
+    public interface IGeoCoordinate : IEquatable<IGeoCoordinate>,
+                                      IComparable
     {
 
         /// <summary>
-        /// The Latitude (south to nord).
+        /// The latitude (south to nord).
         /// </summary>
         Latitude  Latitude  { get; }
 
         /// <summary>
-        /// The Longitude (parallel to equator).
+        /// The longitude (parallel to equator).
         /// </summary>
         Longitude Longitude { get; }
+
 
         /// <summary>
         /// Returns a string representation of the given object.

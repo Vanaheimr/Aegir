@@ -52,7 +52,7 @@
     <Compile Include="GeoFormat.cs" />
     <Compile Include="GeoCoordinates\GeoHash64.cs" />
     <Compile Include="GeoCoordinates\GeoHash.cs" />
-    <Compile Include="GeoCoordinates\IGeoCoordinates.cs" />
+    <Compile Include="GeoCoordinates\IGeoCoordinate.cs" />
     <Compile Include="GeoCoordinates\GeoPositions.cs" />
     <Compile Include="GeoCoordinates\GeoCoordinate.cs" />
     <Compile Include="GeoCoordinates\IReadonlyGeoPosition.cs" />

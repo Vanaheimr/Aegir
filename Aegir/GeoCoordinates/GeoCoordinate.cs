@@ -73,7 +73,7 @@ namespace de.ahzf.Vanaheimr.Aegir
     /// <summary>
     /// A geographical coordinate or position on a map.
     /// </summary>
-    public class GeoCoordinate : IGeoCoordinates,
+    public class GeoCoordinate : IGeoCoordinate,
                                  IEquatable<GeoCoordinate>,
                                  IComparable<GeoCoordinate>
 
@@ -446,6 +446,50 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (GeoCoordinate1, GeoCoordinate2)
+
+        /// <summary>
+        /// Compares two geo coordinates for equality.
+        /// </summary>
+        /// <param name="GeoCoordinate1">A geo coordinate.</param>
+        /// <param name="GeoCoordinate2">Another geo coordinate.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public static Boolean operator == (GeoCoordinate GeoCoordinate1, GeoCoordinate GeoCoordinate2)
+        {
+
+            // If both are null, or both are same instance, return true.
+            if (Object.ReferenceEquals(GeoCoordinate1, GeoCoordinate2))
+                return true;
+
+            // If one is null, but not both, return false.
+            if (((Object) GeoCoordinate1 == null) || ((Object) GeoCoordinate2 == null))
+                return false;
+
+            return GeoCoordinate1.Equals(GeoCoordinate2);
+
+        }
+
+        #endregion
+
+        #region Operator != (GeoCoordinate1, GeoCoordinate2)
+
+        /// <summary>
+        /// Compares two vertices for inequality.
+        /// </summary>
+        /// <param name="GeoCoordinate1">A geo coordinate.</param>
+        /// <param name="GeoCoordinate2">Another geo coordinate.</param>
+        /// <returns>False if both match; True otherwise.</returns>
+        public static Boolean operator != (GeoCoordinate GeoCoordinate1, GeoCoordinate GeoCoordinate2)
+        {
+            return !(GeoCoordinate1 == GeoCoordinate2);
+        }
+
+        #endregion
+
+        #endregion
+
         #region CompareTo(GeoCoordinate)
 
         /// <summary>
@@ -485,6 +529,28 @@ namespace de.ahzf.Vanaheimr.Aegir
                 throw new ArgumentException("The given object is not a GeoCoordinate!");
 
             return CompareTo(GeoCoordinate);
+
+        }
+
+        #endregion
+
+        #region Equals(IGeoCoordinate)
+
+        /// <summary>
+        /// Compares two geo coordinates for equality.
+        /// </summary>
+        /// <param name="IGeoCoordinate">Another geo coordinate.</param>
+        /// <returns>True if both are equal; False otherwise.</returns>
+        public Boolean Equals(IGeoCoordinate IGeoCoordinate)
+        {
+
+            if (IGeoCoordinate.Latitude.Value != this.Latitude.Value)
+                return false;
+
+            if (IGeoCoordinate.Longitude.Value != this.Longitude.Value)
+                return false;
+
+            return true;
 
         }
 

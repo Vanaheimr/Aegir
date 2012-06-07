@@ -16,9 +16,9 @@
  */
 
 /*
- * Based upon: http://github.com/sharonjl/geohash-net
- * 2011 (c) Sharon Lourduraj
- * Distributed under the MIT License
+ * Idea based upon: http://github.com/karussell/GraphHopper
+ * 2011 (c) Peter Karich
+ * Distributed under the Apache License 2
  */
 
 #region Usings
@@ -253,10 +253,6 @@ namespace de.ahzf.Vanaheimr.Aegir
                 if (i < Precision-1)
                     _GeoHash <<= 1;
 
-                if (i == Precision-2)
-                {
-                }
-
             }
 
             return _GeoHash;
@@ -320,6 +316,50 @@ namespace de.ahzf.Vanaheimr.Aegir
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (GeoHash641, GeoHash642)
+
+        /// <summary>
+        /// Compares two geohashs for equality.
+        /// </summary>
+        /// <param name="GeoHash641">A geohash.</param>
+        /// <param name="GeoHash642">Another geohash.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public static Boolean operator == (GeoHash64 GeoHash641, GeoHash64 GeoHash642)
+        {
+
+            // If both are null, or both are same instance, return true.
+            if (Object.ReferenceEquals(GeoHash641, GeoHash642))
+                return true;
+
+            // If one is null, but not both, return false.
+            if (((Object) GeoHash641 == null) || ((Object) GeoHash642 == null))
+                return false;
+
+            return GeoHash641.Equals(GeoHash642);
+
+        }
+
+        #endregion
+
+        #region Operator != (GeoHash641, GeoHash642)
+
+        /// <summary>
+        /// Compares two vertices for inequality.
+        /// </summary>
+        /// <param name="GeoHash641">A geohash.</param>
+        /// <param name="GeoHash642">Another geohash.</param>
+        /// <returns>False if both match; True otherwise.</returns>
+        public static Boolean operator != (GeoHash64 GeoHash641, GeoHash64 GeoHash642)
+        {
+            return !(GeoHash641 == GeoHash642);
+        }
+
+        #endregion
+
+        #endregion
+
         #region IComparable Members
 
         #region CompareTo(Object)
@@ -378,6 +418,28 @@ namespace de.ahzf.Vanaheimr.Aegir
             {
                 return false;
             }
+
+        }
+
+        #endregion
+
+        #region Equals(IGeoCoordinate)
+
+        /// <summary>
+        /// Compares two geo coordinates for equality.
+        /// </summary>
+        /// <param name="IGeoCoordinate">Another geo coordinate.</param>
+        /// <returns>True if both are equal; False otherwise.</returns>
+        public Boolean Equals(IGeoCoordinate IGeoCoordinate)
+        {
+
+            if (IGeoCoordinate.Latitude.Value != this.Latitude.Value)
+                return false;
+
+            if (IGeoCoordinate.Longitude.Value != this.Longitude.Value)
+                return false;
+
+            return true;
 
         }
 
