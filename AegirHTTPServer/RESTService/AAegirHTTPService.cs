@@ -184,10 +184,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="Longitude1">The first longitude.</param>
         /// <param name="Latitude2">The second latitude.</param>
         /// <param name="Longitude2">The second longitude.</param>
-        protected HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                String, Int64, String, String, Object,
-                                                                String, Int64, String, String, Object,
-                                                                String, Int64, String, String, Object>>>
+        protected HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                        String, Int64, String, String, Object,
+                                                                        String, Int64, String, String, Object,
+                                                                        String, Int64, String, String, Object>>>
 
             GET_VerticesInArea_protected(String GraphId, String Latitude1, String Longitude1, String Latitude2, String Longitude2)
 
@@ -204,10 +204,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Latitude1) || !Double.TryParse(Latitude1.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out _Latitude1))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude could not be parsed!");
 
             }
@@ -215,10 +215,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Latitude1 < -90 || _Latitude1 > 90)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude is invalid!");
 
             }
@@ -230,10 +230,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Longitude1) || !Double.TryParse(Longitude1.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture, out _Longitude1))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude could not be parsed!");
 
             }
@@ -241,10 +241,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Longitude1 < -180 || _Longitude1 > 180)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude is invalid!");
 
             }
@@ -256,10 +256,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Latitude2) || !Double.TryParse(Latitude2.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture, out _Latitude2))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude could not be parsed!");
 
             }
@@ -267,10 +267,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Latitude2 < -90 || _Latitude2 > 90)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude is invalid!");
 
             }
@@ -286,10 +286,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Longitude2) || !Double.TryParse(Longitude2.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture, out _Longitude2))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude could not be parsed!");
 
             }
@@ -297,20 +297,20 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Longitude2 < -180 || _Longitude2 > 180)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude is invalid!");
 
             }
 
             #endregion
 
-            return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                     String, Int64, String, String, Object,
-                                                                     String, Int64, String, String, Object,
-                                                                     String, Int64, String, String, Object>>>
+            return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                             String, Int64, String, String, Object,
+                                                                             String, Int64, String, String, Object,
+                                                                             String, Int64, String, String, Object>>>
                        (
 
                            from   Vertex
@@ -353,10 +353,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="Longitude1">The first longitude.</param>
         /// <param name="Latitude2">The second latitude.</param>
         /// <param name="Longitude2">The second longitude.</param>
-        protected HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                String, Int64, String, String, Object,
-                                                                String, Int64, String, String, Object,
-                                                                String, Int64, String, String, Object>>>
+        protected HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                        String, Int64, String, String, Object,
+                                                                        String, Int64, String, String, Object,
+                                                                        String, Int64, String, String, Object>>>
 
             FILTER_MapElementsWithinBoundingBox_protected(String GraphId, String Latitude1, String Longitude1, String Latitude2, String Longitude2)
 
@@ -373,10 +373,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Latitude1) || !Double.TryParse(Latitude1.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out _Latitude1))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude could not be parsed!");
 
             }
@@ -384,10 +384,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Latitude1 < -90 || _Latitude1 > 90)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude is invalid!");
 
             }
@@ -399,10 +399,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Longitude1) || !Double.TryParse(Longitude1.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture, out _Longitude1))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude could not be parsed!");
 
             }
@@ -410,10 +410,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Longitude1 < -180 || _Longitude1 > 180)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude is invalid!");
 
             }
@@ -425,10 +425,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Latitude2) || !Double.TryParse(Latitude2.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture, out _Latitude2))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude could not be parsed!");
 
             }
@@ -436,10 +436,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Latitude2 < -90 || _Latitude2 > 90)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude is invalid!");
 
             }
@@ -455,10 +455,10 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (!GeoCoordinate.IsDecimalRegExpr.IsMatch(Longitude2) || !Double.TryParse(Longitude2.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture, out _Longitude2))
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude could not be parsed!");
 
             }
@@ -466,20 +466,20 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
             if (_Longitude2 < -180 || _Longitude2 > 180)
             {
 
-                return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object,
-                                                                         String, Int64, String, String, Object>>>
+                return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object,
+                                                                                 String, Int64, String, String, Object>>>
                        (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude is invalid!");
 
             }
 
             #endregion
 
-            return new HTTPResult<IEnumerable<IGenericPropertyVertex<String, Int64, String, String, Object,
-                                                                     String, Int64, String, String, Object,
-                                                                     String, Int64, String, String, Object,
-                                                                     String, Int64, String, String, Object>>>
+            return new HTTPResult<IEnumerable<IReadOnlyGenericPropertyVertex<String, Int64, String, String, Object,
+                                                                             String, Int64, String, String, Object,
+                                                                             String, Int64, String, String, Object,
+                                                                             String, Int64, String, String, Object>>>
                        (
 
                            from   Vertex
