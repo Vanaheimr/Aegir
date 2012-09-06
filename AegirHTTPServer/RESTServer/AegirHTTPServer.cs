@@ -20,7 +20,7 @@
 using System;
 
 using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
-using de.ahzf.Hermod.Datastructures;
+using de.ahzf.Vanaheimr.Hermod.Datastructures;
 
 #endregion
 

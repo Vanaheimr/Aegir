@@ -23,7 +23,7 @@ using System.Globalization;
 using System.Collections.Generic;
 
 using de.ahzf.Illias.Commons.Collections;
-using de.ahzf.Hermod.HTTP;
+using de.ahzf.Vanaheimr.Hermod.HTTP;
 using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
 using de.ahzf.Vanaheimr.Aegir.Tiles;
 using de.ahzf.Vanaheimr.Blueprints;

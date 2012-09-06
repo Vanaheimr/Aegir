@@ -23,7 +23,7 @@ using System.Linq;
 using System.Reflection;
 
 using de.ahzf.Illias.Commons;
-using de.ahzf.Hermod.HTTP;
+using de.ahzf.Vanaheimr.Hermod.HTTP;
 using de.ahzf.Vanaheimr.Blueprints;
 
 #endregion

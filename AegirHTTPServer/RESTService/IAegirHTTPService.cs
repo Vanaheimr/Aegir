@@ -19,7 +19,7 @@
 
 using System;
 
-using de.ahzf.Hermod.HTTP;
+using de.ahzf.Vanaheimr.Hermod.HTTP;
 using de.ahzf.Vanaheimr.Aegir.Tiles;
 using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
 

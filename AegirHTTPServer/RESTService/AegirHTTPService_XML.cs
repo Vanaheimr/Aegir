@@ -25,7 +25,7 @@ using System.Reflection;
 using de.ahzf.Illias.Commons;
 using de.ahzf.Illias.Commons.Collections;
 using de.ahzf.Vanaheimr.Blueprints;
-using de.ahzf.Hermod.HTTP;
+using de.ahzf.Vanaheimr.Hermod.HTTP;
 using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
 
 #endregion

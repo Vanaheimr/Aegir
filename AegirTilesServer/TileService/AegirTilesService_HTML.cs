@@ -21,7 +21,7 @@ using System;
 using System.Text;
 using System.Reflection;
 
-using de.ahzf.Hermod.HTTP;
+using de.ahzf.Vanaheimr.Hermod.HTTP;
 
 #endregion
 

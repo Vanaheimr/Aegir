@@ -24,7 +24,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-using de.ahzf.Hermod.HTTP;
+using de.ahzf.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
