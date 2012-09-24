@@ -115,7 +115,7 @@ namespace de.ahzf.Vanaheimr.Aegir.Tiles
         public HTTPResponse GetLandingpage()
         {
 
-            var _RequestHeader = IHTTPConnection.InHTTPRequest;
+            var _RequestHeader = IHTTPConnection.RequestHeader;
             var _Content       = Encoding.UTF8.GetBytes(HTMLBuilder("Hello world!",
                     str => str.AppendLine("<a href=\"/Accounts\">List AccountIds</a><br />").
                                AppendLine("<script type=\"text/javascript\" src=\"resources/jQuery/jquery-1.6.1.min.js\"></script>").

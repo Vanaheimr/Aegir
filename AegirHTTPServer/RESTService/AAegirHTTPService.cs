@@ -173,7 +173,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="Longitude2">The second longitude.</param>
         public virtual HTTPResponse GET_VerticesInArea(String GraphId, String Latitude1, String Longitude1, String Latitude2, String Longitude2)
         {
-            return HTTPErrors.HTTPErrorResponse(IHTTPConnection.InHTTPRequest, HTTPStatusCode.NotAcceptable);
+            return new HTTPResult<Object>(IHTTPConnection.RequestHeader, HTTPStatusCode.NotAcceptable).Error;
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first latitude could not be parsed!");
 
             }
 
@@ -219,7 +219,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first latitude is invalid!");
 
             }
 
@@ -234,7 +234,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first longitude could not be parsed!");
 
             }
 
@@ -245,7 +245,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first longitude is invalid!");
 
             }
 
@@ -260,7 +260,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second latitude could not be parsed!");
 
             }
 
@@ -271,7 +271,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second latitude is invalid!");
 
             }
 
@@ -290,7 +290,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second longitude could not be parsed!");
 
             }
 
@@ -301,7 +301,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second longitude is invalid!");
 
             }
 
@@ -342,7 +342,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="Longitude2">The second longitude.</param>
         public virtual HTTPResponse FILTER_VerticesInArea(String GraphId, String Latitude1, String Longitude1, String Latitude2, String Longitude2)
         {
-            return HTTPErrors.HTTPErrorResponse(IHTTPConnection.InHTTPRequest, HTTPStatusCode.NotAcceptable);
+            return new HTTPResult<Object>(IHTTPConnection.RequestHeader, HTTPStatusCode.NotAcceptable).Error;
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first latitude could not be parsed!");
 
             }
 
@@ -388,7 +388,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first latitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first latitude is invalid!");
 
             }
 
@@ -403,7 +403,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first longitude could not be parsed!");
 
             }
 
@@ -414,7 +414,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The first longitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The first longitude is invalid!");
 
             }
 
@@ -429,7 +429,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second latitude could not be parsed!");
 
             }
 
@@ -440,7 +440,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second latitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second latitude is invalid!");
 
             }
 
@@ -459,7 +459,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude could not be parsed!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second longitude could not be parsed!");
 
             }
 
@@ -470,7 +470,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object,
                                                                                  String, Int64, String, String, Object>>>
-                       (IHTTPConnection.InHTTPRequest, HTTPStatusCode.BadRequest, "The second longitude is invalid!");
+                       (IHTTPConnection.RequestHeader, HTTPStatusCode.BadRequest, "The second longitude is invalid!");
 
             }
 
@@ -507,7 +507,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// </summary>
         public virtual HTTPResponse GET_VerticesNearBy(String Latitude, String Longitude, String MaxDistance)
         {
-            return HTTPErrors.HTTPErrorResponse(IHTTPConnection.InHTTPRequest, HTTPStatusCode.NotAcceptable);
+            return new HTTPResult<Object>(IHTTPConnection.RequestHeader, HTTPStatusCode.NotAcceptable).Error;
         }
 
         #endregion
@@ -519,7 +519,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// </summary>
         public virtual HTTPResponse FILTER_VerticesNearBy(String Latitude, String Longitude, String MaxDistance)
         {
-            return HTTPErrors.HTTPErrorResponse(IHTTPConnection.InHTTPRequest, HTTPStatusCode.NotAcceptable);
+            return new HTTPResult<Object>(IHTTPConnection.RequestHeader, HTTPStatusCode.NotAcceptable).Error;
         }
 
         #endregion
