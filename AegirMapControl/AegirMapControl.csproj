@@ -65,6 +65,7 @@
     <Compile Include="Shapes\Germany\Bayern.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Shapes\Germany\Berlin.cs" />
     <Compile Include="Shapes\IShape.cs" />
     <Page Include="Controls\ExpandableStackPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
