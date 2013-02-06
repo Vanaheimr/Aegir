@@ -97,7 +97,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
                 Result.Data.ForEach(Vertex => StringBuilder.Append("<properties>").
                                                             Append("<id>").          Append(Vertex.Id.ToString()).Append("</id>").
                                                             Append("<label>").       Append(Vertex.Label.ToString()).Append("</label>").
-                                                            Append("<description>"). Append(Vertex.Description).Append("</description>").
+                                                            Append("<description>"). Append(Vertex["Description"]).Append("</description>").
                                                             Append("<latitude>").    Append(Vertex.GetDouble(Semantics.Latitude). ToString().Replace(",",".")).Append("</latitude>").
                                                             Append("<longitude>").   Append(Vertex.GetDouble(Semantics.Longitude).ToString().Replace(",",".")).Append("</longitude>").
                                                             AppendLine("</properties>"));

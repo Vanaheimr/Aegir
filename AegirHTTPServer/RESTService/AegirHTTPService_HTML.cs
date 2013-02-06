@@ -108,7 +108,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         public override HTTPResponse GET_Graphs()
         {
 
-            var AllGraphs = GraphServer.Select(graph => "<a href=\"/graph/" + graph.Id + "\">" + graph.Id + " - " + graph.Description + "</a> " +
+            var AllGraphs = GraphServer.Select(graph => "<a href=\"/graph/" + graph.Id + "\">" + graph.Id + " - " + graph["Description"] + "</a> " +
                                                         "<a href=\"/graph/" + graph.Id + "/vertices\">[All Vertices]</a> " +
                                                         "<a href=\"/graph/" + graph.Id + "/edges\">[All Edge]</a>").
                                         Aggregate((a, b) => a + "<br>" + b);
@@ -210,7 +210,7 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
 
                 Result.Data.ForEach(Vertex => StringBuilder.Append("<tr>").
                                                             Append("<td>").Append(Vertex.Id.ToString()).Append("</td>").
-                                                            Append("<td>").Append(Vertex.Description).Append("</td>").
+                                                            Append("<td>").Append(Vertex["Description"]).Append("</td>").
                                                             Append("<td>").Append(Vertex.GetDouble(Semantics.Latitude).ToString()).Append("</td>").
                                                             Append("<td>").Append(Vertex.GetDouble(Semantics.Longitude).ToString()).Append("</td>").
                                                             Append("</tr>"));
