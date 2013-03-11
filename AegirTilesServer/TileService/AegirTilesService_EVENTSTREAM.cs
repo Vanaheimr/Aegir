@@ -19,11 +19,11 @@
 
 using System.Reflection;
 
-using de.ahzf.Vanaheimr.Hermod.HTTP;
+using eu.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.Tiles
+namespace eu.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>

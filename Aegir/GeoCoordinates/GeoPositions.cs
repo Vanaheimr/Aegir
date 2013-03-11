@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>

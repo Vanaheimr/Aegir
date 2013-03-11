@@ -25,11 +25,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
 
-using de.ahzf.Vanaheimr.Aegir.Controls;
+using eu.Vanaheimr.Aegir.Controls;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>

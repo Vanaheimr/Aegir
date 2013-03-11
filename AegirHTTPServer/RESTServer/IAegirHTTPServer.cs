@@ -17,11 +17,11 @@
 
 #region Usings
 
-using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
+using eu.Vanaheimr.Bifrost.HTTP.Server;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
+namespace eu.Vanaheimr.Aegir.HTTPServer
 {
 
     public interface IAegirHTTPServer : IBifrostHTTPServer

@@ -23,7 +23,7 @@ using System.Windows.Controls;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.Controls
+namespace eu.Vanaheimr.Aegir.Controls
 {
 
     /// <summary>

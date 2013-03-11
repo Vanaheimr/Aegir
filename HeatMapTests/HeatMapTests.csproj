@@ -44,6 +44,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Blueprints.NET\Balder\Balder.csproj">
+      <Project>{D2B4E7C7-0524-4DE5-9D62-2DE05682A74D}</Project>
+      <Name>Balder</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Blueprints.NET\PropertyGraphs\PropertyGraphs.csproj">
+      <Project>{562AC94F-60EA-4911-8C62-684F02867783}</Project>
+      <Name>PropertyGraphs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HeatMap\HeatMap.csproj">
       <Project>{472F0378-292E-4D92-9A37-D59ACCCC307C}</Project>
       <Name>HeatMap</Name>

@@ -20,13 +20,13 @@
 using System;
 using System.Windows.Controls;
 
-using de.ahzf.Illias.Commons;
-using de.ahzf.Vanaheimr.Aegir.Controls;
+using eu.Vanaheimr.Illias.Commons;
+using eu.Vanaheimr.Aegir.Controls;
 using System.Windows;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>

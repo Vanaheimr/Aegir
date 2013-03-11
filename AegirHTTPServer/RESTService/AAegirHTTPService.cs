@@ -22,15 +22,15 @@ using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 
-using de.ahzf.Illias.Commons.Collections;
-using de.ahzf.Vanaheimr.Hermod.HTTP;
-using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
-using de.ahzf.Vanaheimr.Aegir.Tiles;
-using de.ahzf.Vanaheimr.Blueprints;
+using eu.Vanaheimr.Illias.Commons.Collections;
+using eu.Vanaheimr.Hermod.HTTP;
+using eu.Vanaheimr.Bifrost.HTTP.Server;
+using eu.Vanaheimr.Aegir.Tiles;
+using eu.Vanaheimr.Balder;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
+namespace eu.Vanaheimr.Aegir.HTTPServer
 {
 
     /// <summary>

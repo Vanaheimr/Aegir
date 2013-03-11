@@ -23,12 +23,12 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using de.ahzf.Vanaheimr.Styx;
-using de.ahzf.Illias.Commons;
+using eu.Vanaheimr.Styx;
+using eu.Vanaheimr.Illias.Commons;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>

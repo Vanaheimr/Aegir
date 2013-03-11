@@ -58,9 +58,9 @@
       <Project>{DC46B5EF-ECC5-465E-B1C4-85596343A03F}</Project>
       <Name>BifrostHTTPServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Blueprints.NET\Blueprints\Blueprints.csproj">
-      <Project>{47FA1E7C-8C47-493D-A371-91A15D53BC95}</Project>
-      <Name>Blueprints</Name>
+    <ProjectReference Include="..\..\Blueprints.NET\Balder\Balder.csproj">
+      <Project>{D2B4E7C7-0524-4DE5-9D62-2DE05682A74D}</Project>
+      <Name>Balder</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Hermod\HermodHTTPServer\HermodHTTPServer.csproj">
       <Project>{9CE48DAC-0512-4947-942B-EF4C42C52B47}</Project>

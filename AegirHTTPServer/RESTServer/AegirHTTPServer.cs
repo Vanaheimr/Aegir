@@ -19,12 +19,13 @@
 
 using System;
 
-using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
-using de.ahzf.Vanaheimr.Hermod.Datastructures;
+using eu.Vanaheimr.Bifrost.HTTP.Server;
+using eu.Vanaheimr.Hermod.Datastructures;
+using eu.Vanaheimr.Balder;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
+namespace eu.Vanaheimr.Aegir.HTTPServer
 {
 
     /// <summary>
@@ -39,9 +40,23 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <summary>
         /// Initialize the HTTP server using IPAddress.Any, http port 8182 and start the server.
         /// </summary>
-        public AegirHTTPServer()
+        public AegirHTTPServer(Func<String,
+                                    String,
+                                    GraphInitializer<String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object>,
+                                    IGenericPropertyGraph<String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object>> NewGraphCreator)
+
+            : base(NewGraphCreator)
+
         {
+
             base.OnNewHTTPService += IAegirHTTPService => { IAegirHTTPService.GraphServer = this; };
+
         }
 
         #endregion
@@ -54,11 +69,24 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="Port">The listening port</param>
         /// <param name="Autostart"></param>
         public AegirHTTPServer(IPPort  Port,
-                                  Boolean Autostart = true)
-            : base(Port, Autostart)
-        
+                               Func<String,
+                                    String,
+                                    GraphInitializer<String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object>,
+                                    IGenericPropertyGraph<String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object>> NewGraphCreator,
+                               Boolean Autostart = true)
+
+            : base(Port, NewGraphCreator, Autostart)
+
         {
+
             base.OnNewHTTPService += IAegirHTTPService => { IAegirHTTPService.GraphServer = this; };
+
         }
 
         #endregion
@@ -72,12 +100,25 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="Port">The listening port</param>
         /// <param name="Autostart"></param>
         public AegirHTTPServer(IIPAddress IIPAddress,
-                                  IPPort     Port,
-                                  Boolean    Autostart = false)
-            : base(IIPAddress, Port, Autostart)
+                               IPPort     Port,
+                               Func<String,
+                                    String,
+                                    GraphInitializer<String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object>,
+                                    IGenericPropertyGraph<String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object>> NewGraphCreator,
+                               Boolean    Autostart = false)
+
+            : base(IIPAddress, Port, NewGraphCreator, Autostart)
 
         {
+
             base.OnNewHTTPService += IAegirHTTPService => { IAegirHTTPService.GraphServer = this; };
+
         }
 
         #endregion
@@ -90,11 +131,24 @@ namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
         /// <param name="IPSocket">The listening IPSocket.</param>
         /// <param name="Autostart"></param>
         public AegirHTTPServer(IPSocket IPSocket,
-                                  Boolean  Autostart = true)
-            : base(IPSocket.IPAddress, IPSocket.Port, Autostart)
+                               Func<String,
+                                    String,
+                                    GraphInitializer<String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object,
+                                                     String, Int64, String, String, Object>,
+                                    IGenericPropertyGraph<String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object,
+                                                          String, Int64, String, String, Object>> NewGraphCreator,
+                               Boolean  Autostart = true)
+
+            : base(IPSocket.IPAddress, IPSocket.Port, NewGraphCreator, Autostart)
 
         {
+
             base.OnNewHTTPService += IAegirHTTPService => { IAegirHTTPService.GraphServer = this; };
+
         }
 
         #endregion

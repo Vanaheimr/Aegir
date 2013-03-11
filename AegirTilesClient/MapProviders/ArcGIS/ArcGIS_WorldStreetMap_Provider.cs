@@ -21,7 +21,7 @@ using System;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.Tiles
+namespace eu.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>

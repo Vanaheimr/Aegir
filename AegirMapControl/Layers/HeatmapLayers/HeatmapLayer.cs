@@ -22,13 +22,13 @@ using System;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using de.ahzf.Vanaheimr.Aegir.Controls;
+using eu.Vanaheimr.Aegir.Controls;
 using System.Windows.Markup;
 using System.Windows.Shapes;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>

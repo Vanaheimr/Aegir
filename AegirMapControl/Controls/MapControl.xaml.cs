@@ -25,11 +25,11 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 
-using de.ahzf.Illias.Commons;
+using eu.Vanaheimr.Illias.Commons;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.Controls
+namespace eu.Vanaheimr.Aegir.Controls
 {
 
     /// <summary>

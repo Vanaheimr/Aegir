@@ -30,14 +30,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-using de.ahzf.Illias.Commons;
-using de.ahzf.Vanaheimr.Aegir.Tiles;
-using de.ahzf.Vanaheimr.Aegir.Controls;
+using eu.Vanaheimr.Illias.Commons;
+using eu.Vanaheimr.Aegir.Tiles;
+using eu.Vanaheimr.Aegir.Controls;
 
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>
@@ -142,7 +142,7 @@ namespace de.ahzf.Vanaheimr.Aegir
 
             this.Background         = new SolidColorBrush(Colors.Transparent);
             this.TilesOnMap         = new ConcurrentStack<Image>();
-            this.CurrentMapProvider = de.ahzf.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
+            this.CurrentMapProvider = eu.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
 
             #region Register mouse events
 

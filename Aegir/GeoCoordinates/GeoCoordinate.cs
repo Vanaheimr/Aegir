@@ -23,7 +23,7 @@ using System.Globalization;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
 

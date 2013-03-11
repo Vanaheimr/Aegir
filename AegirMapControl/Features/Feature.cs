@@ -21,13 +21,13 @@ using System;
 using System.Windows.Shapes;
 using System.Windows.Media;
 
-using de.ahzf.Vanaheimr.Aegir;
-using de.ahzf.Illias.Commons;
+using eu.Vanaheimr.Aegir;
+using eu.Vanaheimr.Illias.Commons;
 using System.Windows;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir
+namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>

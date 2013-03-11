@@ -19,13 +19,13 @@
 
 using System;
 
-using de.ahzf.Vanaheimr.Hermod.HTTP;
-using de.ahzf.Vanaheimr.Aegir.Tiles;
-using de.ahzf.Vanaheimr.Bifrost.HTTP.Server;
+using eu.Vanaheimr.Hermod.HTTP;
+using eu.Vanaheimr.Aegir.Tiles;
+using eu.Vanaheimr.Bifrost.HTTP.Server;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
+namespace eu.Vanaheimr.Aegir.HTTPServer
 {
 
     //[HTTPService(Host: "localhost:8080", ForceAuthentication: true)]

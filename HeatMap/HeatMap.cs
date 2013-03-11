@@ -24,8 +24,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-using de.ahzf.Vanaheimr.Blueprints;
-using de.ahzf.Illias.Geometry;
+using eu.Vanaheimr.Balder;
+using eu.Vanaheimr.Illias.Geometry;
 
 #endregion
 

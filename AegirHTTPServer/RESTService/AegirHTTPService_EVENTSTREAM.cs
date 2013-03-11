@@ -22,13 +22,13 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 
-using de.ahzf.Illias.Commons;
-using de.ahzf.Vanaheimr.Hermod.HTTP;
-using de.ahzf.Vanaheimr.Blueprints;
+using eu.Vanaheimr.Illias.Commons;
+using eu.Vanaheimr.Hermod.HTTP;
+using eu.Vanaheimr.Balder;
 
 #endregion
 
-namespace de.ahzf.Vanaheimr.Aegir.HTTPServer
+namespace eu.Vanaheimr.Aegir.HTTPServer
 {
 
     /// <summary>
