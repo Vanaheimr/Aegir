@@ -58,7 +58,7 @@
       <Project>{DC46B5EF-ECC5-465E-B1C4-85596343A03F}</Project>
       <Name>BifrostHTTPServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Blueprints.NET\Balder\Balder.csproj">
+    <ProjectReference Include="..\..\Balder\Balder\Balder.csproj">
       <Project>{D2B4E7C7-0524-4DE5-9D62-2DE05682A74D}</Project>
       <Name>Balder</Name>
     </ProjectReference>
