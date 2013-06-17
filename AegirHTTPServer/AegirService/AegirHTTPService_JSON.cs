@@ -35,7 +35,36 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
     /// <summary>
     /// JSON content representation.
     /// </summary>
-    public class AegirHTTPService_JSON : AAegirHTTPService
+    public class AegirHTTPService_JSON<TIdVertex,    TRevIdVertex,    TVertexLabel,    TKeyVertex,    TValueVertex,
+                                       TIdEdge,      TRevIdEdge,      TEdgeLabel,      TKeyEdge,      TValueEdge,
+                                       TIdMultiEdge, TRevIdMultiEdge, TMultiEdgeLabel, TKeyMultiEdge, TValueMultiEdge,
+                                       TIdHyperEdge, TRevIdHyperEdge, THyperEdgeLabel, TKeyHyperEdge, TValueHyperEdge>
+
+                                       : AAegirHTTPService<TIdVertex,    TRevIdVertex,    TVertexLabel,    TKeyVertex,    TValueVertex,
+                                                           TIdEdge,      TRevIdEdge,      TEdgeLabel,      TKeyEdge,      TValueEdge,
+                                                           TIdMultiEdge, TRevIdMultiEdge, TMultiEdgeLabel, TKeyMultiEdge, TValueMultiEdge,
+                                                           TIdHyperEdge, TRevIdHyperEdge, THyperEdgeLabel, TKeyHyperEdge, TValueHyperEdge>
+
+        where TIdVertex        : IEquatable<TIdVertex>,       IComparable<TIdVertex>,       IComparable, TValueVertex
+        where TIdEdge          : IEquatable<TIdEdge>,         IComparable<TIdEdge>,         IComparable, TValueEdge
+        where TIdMultiEdge     : IEquatable<TIdMultiEdge>,    IComparable<TIdMultiEdge>,    IComparable, TValueMultiEdge
+        where TIdHyperEdge     : IEquatable<TIdHyperEdge>,    IComparable<TIdHyperEdge>,    IComparable, TValueHyperEdge
+
+        where TRevIdVertex     : IEquatable<TRevIdVertex>,    IComparable<TRevIdVertex>,    IComparable, TValueVertex
+        where TRevIdEdge       : IEquatable<TRevIdEdge>,      IComparable<TRevIdEdge>,      IComparable, TValueEdge
+        where TRevIdMultiEdge  : IEquatable<TRevIdMultiEdge>, IComparable<TRevIdMultiEdge>, IComparable, TValueMultiEdge
+        where TRevIdHyperEdge  : IEquatable<TRevIdHyperEdge>, IComparable<TRevIdHyperEdge>, IComparable, TValueHyperEdge
+
+        where TVertexLabel     : IEquatable<TVertexLabel>,    IComparable<TVertexLabel>,    IComparable, TValueVertex
+        where TEdgeLabel       : IEquatable<TEdgeLabel>,      IComparable<TEdgeLabel>,      IComparable, TValueEdge
+        where TMultiEdgeLabel  : IEquatable<TMultiEdgeLabel>, IComparable<TMultiEdgeLabel>, IComparable, TValueMultiEdge
+        where THyperEdgeLabel  : IEquatable<THyperEdgeLabel>, IComparable<THyperEdgeLabel>, IComparable, TValueHyperEdge
+
+        where TKeyVertex       : IEquatable<TKeyVertex>,      IComparable<TKeyVertex>,      IComparable
+        where TKeyEdge         : IEquatable<TKeyEdge>,        IComparable<TKeyEdge>,        IComparable
+        where TKeyMultiEdge    : IEquatable<TKeyMultiEdge>,   IComparable<TKeyMultiEdge>,   IComparable
+        where TKeyHyperEdge    : IEquatable<TKeyHyperEdge>,   IComparable<TKeyHyperEdge>,   IComparable
+
     {
 
         #region Constructor(s)
@@ -95,9 +124,9 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
                 Result.Data.ForEach(Vertex => StringBuilder.Append("{ \"properties\": {").
                                                             Append("\"id\" : \"").         Append(Vertex.Id.ToString()).Append("\",").
                                                             Append("\"label\" : \"").      Append(Vertex.Label.ToString()).Append("\",").
-                                                            Append("\"description\" : \"").Append(Vertex["Description"]).Append("\",").
-                                                            Append("\"latitude\" : ").     Append(Vertex.GetDouble(Semantics.Latitude). ToString().Replace(",",".")).Append(",").
-                                                            Append("\"longitude\" : ").    Append(Vertex.GetDouble(Semantics.Longitude).ToString().Replace(",",".")).
+                                                            Append("\"description\" : \"").Append(Vertex[VertexPropertyKeyParser("Description")]).Append("\",").
+                                                            Append("\"latitude\" : ").     Append(Vertex.GetDouble(LatitudeKey). ToString().Replace(",",".")).Append(",").
+                                                            Append("\"longitude\" : ").    Append(Vertex.GetDouble(LongitudeKey).ToString().Replace(",",".")).
                                                             AppendLine("} },"));
 
                 StringBuilder.Length = StringBuilder.Length - 3;

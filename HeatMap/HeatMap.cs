@@ -29,7 +29,7 @@ using eu.Vanaheimr.Illias.Geometry;
 
 #endregion
 
-namespace de.ahzf.Loki
+namespace eu.Vanaheimr.Loki
 {
 
     public class HeatMap

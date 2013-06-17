@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 #endregion
 
-namespace de.ahzf.Loki
+namespace eu.Vanaheimr.Loki
 {
 
     /// <summary>

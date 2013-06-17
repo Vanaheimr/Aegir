@@ -23,7 +23,7 @@ using System.Windows.Media.Imaging;
 
 #endregion
 
-namespace de.ahzf.Loki
+namespace eu.Vanaheimr.Loki
 {
 
     //public static class BitmapSourceExtensions

@@ -36,7 +36,36 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
     /// <summary>
     /// HTML content representation.
     /// </summary>
-    public class AegirHTTPService_HTML : AAegirHTTPService
+    public class AegirHTTPService_HTML<TIdVertex,    TRevIdVertex,    TVertexLabel,    TKeyVertex,    TValueVertex,
+                                       TIdEdge,      TRevIdEdge,      TEdgeLabel,      TKeyEdge,      TValueEdge,
+                                       TIdMultiEdge, TRevIdMultiEdge, TMultiEdgeLabel, TKeyMultiEdge, TValueMultiEdge,
+                                       TIdHyperEdge, TRevIdHyperEdge, THyperEdgeLabel, TKeyHyperEdge, TValueHyperEdge>
+
+                                       : AAegirHTTPService<TIdVertex,    TRevIdVertex,    TVertexLabel,    TKeyVertex,    TValueVertex,
+                                                           TIdEdge,      TRevIdEdge,      TEdgeLabel,      TKeyEdge,      TValueEdge,
+                                                           TIdMultiEdge, TRevIdMultiEdge, TMultiEdgeLabel, TKeyMultiEdge, TValueMultiEdge,
+                                                           TIdHyperEdge, TRevIdHyperEdge, THyperEdgeLabel, TKeyHyperEdge, TValueHyperEdge>
+
+        where TIdVertex        : IEquatable<TIdVertex>,       IComparable<TIdVertex>,       IComparable, TValueVertex
+        where TIdEdge          : IEquatable<TIdEdge>,         IComparable<TIdEdge>,         IComparable, TValueEdge
+        where TIdMultiEdge     : IEquatable<TIdMultiEdge>,    IComparable<TIdMultiEdge>,    IComparable, TValueMultiEdge
+        where TIdHyperEdge     : IEquatable<TIdHyperEdge>,    IComparable<TIdHyperEdge>,    IComparable, TValueHyperEdge
+
+        where TRevIdVertex     : IEquatable<TRevIdVertex>,    IComparable<TRevIdVertex>,    IComparable, TValueVertex
+        where TRevIdEdge       : IEquatable<TRevIdEdge>,      IComparable<TRevIdEdge>,      IComparable, TValueEdge
+        where TRevIdMultiEdge  : IEquatable<TRevIdMultiEdge>, IComparable<TRevIdMultiEdge>, IComparable, TValueMultiEdge
+        where TRevIdHyperEdge  : IEquatable<TRevIdHyperEdge>, IComparable<TRevIdHyperEdge>, IComparable, TValueHyperEdge
+
+        where TVertexLabel     : IEquatable<TVertexLabel>,    IComparable<TVertexLabel>,    IComparable, TValueVertex
+        where TEdgeLabel       : IEquatable<TEdgeLabel>,      IComparable<TEdgeLabel>,      IComparable, TValueEdge
+        where TMultiEdgeLabel  : IEquatable<TMultiEdgeLabel>, IComparable<TMultiEdgeLabel>, IComparable, TValueMultiEdge
+        where THyperEdgeLabel  : IEquatable<THyperEdgeLabel>, IComparable<THyperEdgeLabel>, IComparable, TValueHyperEdge
+
+        where TKeyVertex       : IEquatable<TKeyVertex>,      IComparable<TKeyVertex>,      IComparable
+        where TKeyEdge         : IEquatable<TKeyEdge>,        IComparable<TKeyEdge>,        IComparable
+        where TKeyMultiEdge    : IEquatable<TKeyMultiEdge>,   IComparable<TKeyMultiEdge>,   IComparable
+        where TKeyHyperEdge    : IEquatable<TKeyHyperEdge>,   IComparable<TKeyHyperEdge>,   IComparable
+
     {
 
         #region Constructor(s)
@@ -108,7 +137,7 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
         public override HTTPResponse GET_Graphs()
         {
 
-            var AllGraphs = GraphServer.Select(graph => "<a href=\"/graph/" + graph.Id + "\">" + graph.Id + " - " + graph["Description"] + "</a> " +
+            var AllGraphs = GraphServer.Select(graph => "<a href=\"/graph/" + graph.Id + "\">" + graph.Id + " - " + graph[VertexPropertyKeyParser("Description")] + "</a> " +
                                                         "<a href=\"/graph/" + graph.Id + "/vertices\">[All Vertices]</a> " +
                                                         "<a href=\"/graph/" + graph.Id + "/edges\">[All Edge]</a>").
                                         Aggregate((a, b) => a + "<br>" + b);
@@ -210,9 +239,9 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
 
                 Result.Data.ForEach(Vertex => StringBuilder.Append("<tr>").
                                                             Append("<td>").Append(Vertex.Id.ToString()).Append("</td>").
-                                                            Append("<td>").Append(Vertex["Description"]).Append("</td>").
-                                                            Append("<td>").Append(Vertex.GetDouble(Semantics.Latitude).ToString()).Append("</td>").
-                                                            Append("<td>").Append(Vertex.GetDouble(Semantics.Longitude).ToString()).Append("</td>").
+                                                            Append("<td>").Append(Vertex[VertexPropertyKeyParser("Description")]).Append("</td>").
+                                                            Append("<td>").Append(Vertex.GetDouble(LatitudeKey).ToString()).Append("</td>").
+                                                            Append("<td>").Append(Vertex.GetDouble(LongitudeKey).ToString()).Append("</td>").
                                                             Append("</tr>"));
                 
                 StringBuilder.Append("</table>");
