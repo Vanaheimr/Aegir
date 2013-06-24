@@ -231,7 +231,7 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
 
             ParseAndCheckGraphId(GraphId);
             ParseSkipParameter();
-            ParseTakeParameter();
+            ParseTakeParameter(25);
 
             Double _Latitude1, _Longitude1, _Latitude2, _Longitude2;
 
@@ -400,7 +400,7 @@ namespace eu.Vanaheimr.Aegir.HTTPServer
 
             ParseAndCheckGraphId(GraphId);
             ParseSkipParameter();
-            ParseTakeParameter();
+            ParseTakeParameter(25);
 
             Double _Latitude1, _Longitude1, _Latitude2, _Longitude2;
 
