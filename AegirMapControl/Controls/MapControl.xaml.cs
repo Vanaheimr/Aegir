@@ -566,8 +566,8 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-            this.ScreenOffsetX = (Int64) (-((Int64) NewOffset.Item1) + ForegroundLayer.ActualWidth  / 2);
-            this.ScreenOffsetY = (Int64) (-((Int64) NewOffset.Item2) + ForegroundLayer.ActualHeight / 2);
+            this.ScreenOffsetX = (Int64) (-((Int64) NewOffset.X) + ForegroundLayer.ActualWidth  / 2);
+            this.ScreenOffsetY = (Int64) (-((Int64) NewOffset.Y) + ForegroundLayer.ActualHeight / 2);
 
             this.ScreenOffsetX = this.ScreenOffsetX % MapSizeAtZoomLevel;
             this.ScreenOffsetY = this.ScreenOffsetY % MapSizeAtZoomLevel;

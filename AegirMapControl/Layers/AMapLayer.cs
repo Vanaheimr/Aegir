@@ -47,7 +47,6 @@ namespace eu.Vanaheimr.Aegir
 
         protected Double LastClickPositionX;
         protected Double LastClickPositionY;
-        protected internal UInt32 ZoomLevel;
 
         protected volatile Boolean IsCurrentlyPainting;
 
@@ -61,6 +60,12 @@ namespace eu.Vanaheimr.Aegir
         /// The identification string of this feature layer.
         /// </summary>
         public String Id { get; private set; }
+
+        #endregion
+
+        #region ZoomLevel
+
+        public UInt32 ZoomLevel { get; private set; }
 
         #endregion
 
@@ -112,12 +117,16 @@ namespace eu.Vanaheimr.Aegir
         public AMapLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
             : this()
         {
+
             this.Id            = Id;
             this.ZoomLevel     = ZoomLevel;
             this.ScreenOffsetX = ScreenOffsetX;
             this.ScreenOffsetY = ScreenOffsetY;
             this.MapControl    = MapControl;
             this.ZIndex        = ZIndex;
+
+      //      this.MapControl.ZoomLevelChanged += (s, o, n) => SetZoomLevel(n);
+
         }
 
         #endregion
@@ -203,7 +212,7 @@ namespace eu.Vanaheimr.Aegir
                 {
 
                     Feature Feature;
-                    Tuple<UInt64, UInt64> XY;
+                    UInt64XY ScreenXY;
 
                     foreach (var Child in this.Children)
                     {
@@ -212,11 +221,11 @@ namespace eu.Vanaheimr.Aegir
 
                         if (Feature != null)
                         {
-                            
-                            XY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, ZoomLevel);
-                            
-                            Canvas.SetLeft(Feature, ScreenOffsetX + (Int64) XY.Item1);
-                            Canvas.SetTop (Feature, ScreenOffsetY + (Int64) XY.Item2);
+
+                            ScreenXY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, ZoomLevel);
+
+                            Canvas.SetLeft(Feature, ScreenOffsetX + (Int64) ScreenXY.X);
+                            Canvas.SetTop (Feature, ScreenOffsetY + (Int64) ScreenXY.Y);
 
                             //if (Feature.GeoWidth != 0)
                             //    Feature.Width = 
@@ -238,6 +247,7 @@ namespace eu.Vanaheimr.Aegir
         }
 
         #endregion
+
 
 
         #region IComparable<Identifier> Members

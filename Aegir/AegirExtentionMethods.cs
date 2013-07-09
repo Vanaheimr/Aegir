@@ -19,18 +19,32 @@
 
 using System;
 
+using eu.Vanaheimr.Illias.Geometry;
+
 #endregion
 
 namespace eu.Vanaheimr.Aegir
 {
+
+    public class UInt64XY
+    {
+
+        public UInt64 X { get; private set; }
+        public UInt64 Y { get; private set; }
+
+        public UInt64XY(UInt64 X, UInt64 Y)
+        {
+            this.X = X;
+            this.Y = Y;
+        }
+
+    }
 
     /// <summary>
     /// Exention methods for working with maps.
     /// </summary>
     public static class AegirExtentionMethods
     {
-
-        
 
     }
 

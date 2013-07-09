@@ -18,15 +18,11 @@
 #region Usings
 
 using System;
-
-using System.Windows.Input;
 using System.Windows.Media;
-
-using eu.Vanaheimr.Aegir.Controls;
-using System.Windows.Shapes;
-using System.Windows;
 using System.ComponentModel;
 using System.Windows.Controls;
+
+using eu.Vanaheimr.Aegir.Controls;
 
 #endregion
 
@@ -65,6 +61,8 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
+            this.MapControl.ZoomLevelChanged += (s, o, n) => SetZoomLevel(n);
+
         }
 
         #endregion
@@ -75,16 +73,19 @@ namespace eu.Vanaheimr.Aegir
         public IShape AddShape(AShape AShape)
         {
 
-            AShape.ToolTip = AShape.GetType().Name;
-
             // The position and size on the map will be set within the PaintMap() method!
             this.Children.Add(AShape);
+            AShape.ZoomLevel = ZoomLevel;
 
             return AShape;
 
         }
 
-
+        private void SetZoomLevel(UInt32 ZoomLevel)
+        {
+            this.Children.
+                ForEach<AShape>(AShape => AShape.ZoomLevel = ZoomLevel);
+        }
 
         public Feature AddPath(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
         {
@@ -148,31 +149,18 @@ namespace eu.Vanaheimr.Aegir
                 if (!DesignerProperties.GetIsInDesignMode(this))
                 {
 
-                    AShape AShape;
-                    Tuple<UInt64, UInt64> XY, WH;
-
-                    foreach (var Child in this.Children)
-                    {
-
-                        AShape = Child as AShape;
-
-                        if (AShape != null)
-                        {
-
-                            XY = GeoCalculations.WorldCoordinates_2_Screen(AShape.Latitude, AShape.Longitude, ZoomLevel);
-                            Canvas.SetLeft(AShape, ScreenOffsetX + (Int64) XY.Item1);
-                            Canvas.SetTop (AShape, ScreenOffsetY + (Int64) XY.Item2);
+                    this.Children.
+                         ForEach<AShape>(AShape => {
 
                             AShape.ZoomLevel = ZoomLevel;
-                            WH = GeoCalculations.WorldCoordinates_2_Screen(new Latitude(47.270203), new Longitude(15.041656), ZoomLevel);
-                            AShape.Width  = WH.Item1 - XY.Item1;
-                            AShape.Height = WH.Item2 - XY.Item2;
 
-//                            AShape.DrawingBrush.Stretch = Stretch.UniformToFill;
+                            Canvas.SetLeft(AShape, ScreenOffsetX + (Int64) AShape.OnScreenUpperLeft.X);
+                            Canvas.SetTop (AShape, ScreenOffsetY + (Int64) AShape.OnScreenLowerRight.Y);
 
-                        }
+                            AShape.Width  = AShape.OnScreenWidth;
+                            AShape.Height = AShape.OnScreenHeight;
 
-                    }
+                        });
 
                 }
 

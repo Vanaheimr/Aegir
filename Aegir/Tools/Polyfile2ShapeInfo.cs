@@ -109,10 +109,6 @@ namespace eu.Vanaheimr.Aegir
     public static class Polyfiles
     {
 
-        //public Polyfile2Shape()
-        //{
-        //}
-
         public static ShapeInfo Polyfile2ShapeInfo(IEnumerable<String> InputData, UInt32 min_resolution, UInt32 max_resolution)
         {
 
@@ -128,7 +124,9 @@ namespace eu.Vanaheimr.Aegir
             var max_lat      = Double.MinValue;
             var max_lng      = Double.MinValue;
 
-            var Shapes       = new Dictionary<UInt32, Tuple<List<GeoCoordinate>, Dictionary<UInt32, Tuple<List<Tuple<UInt64, UInt64>>, StringBuilder>>>>();
+            var Shapes       = new Dictionary<UInt32, Tuple<List<GeoCoordinate>,
+                                                            Dictionary<UInt32,
+                                                                       Tuple<List<UInt64XY>, StringBuilder>>>>();
 
             GeoCoordinate GeoCoordinate = null;
 
@@ -152,9 +150,9 @@ namespace eu.Vanaheimr.Aegir
                 else if (UInt32.TryParse(Line, out Integer))
                 {
                     ShapeNumber = Integer;
-                    Shapes.Add(ShapeNumber, new Tuple<List<GeoCoordinate>, Dictionary<UInt32, Tuple<List<Tuple<UInt64, UInt64>>, StringBuilder>>>(
+                    Shapes.Add(ShapeNumber, new Tuple<List<GeoCoordinate>, Dictionary<UInt32, Tuple<List<UInt64XY>, StringBuilder>>>(
                                                 new List<GeoCoordinate>(),
-                                                new Dictionary<UInt32, Tuple<List<Tuple<UInt64, UInt64>>, StringBuilder>>()));
+                                                new Dictionary<UInt32, Tuple<List<UInt64XY>, StringBuilder>>()));
                 }
 
                 #endregion
@@ -172,8 +170,8 @@ namespace eu.Vanaheimr.Aegir
                 {
 
                     // Polyfiles store "Longitude Latitude"!!!
-                    Shapes[ShapeNumber].Item1.Add(new GeoCoordinate(new Latitude(GeoCoordinate.Longitude.Value),
-                                                                    new Longitude(GeoCoordinate.Latitude.Value)));
+                    Shapes[ShapeNumber].Item1.Add(new GeoCoordinate(new Latitude (GeoCoordinate.Longitude.Value),
+                                                                    new Longitude(GeoCoordinate.Latitude. Value)));
 
                     if (min_lat > GeoCoordinate.Longitude.Value)
                         min_lat = GeoCoordinate.Longitude.Value;
@@ -229,17 +227,14 @@ namespace eu.Vanaheimr.Aegir
             //Output2.WriteLine("Diff:       " + diff_lat.ToString("00.000000").Replace(",", ".") + ", " + diff_lng.ToString("00.000000").Replace(",", "."));
             //Output2.WriteLine("Resolution: " + min_resolution + " -> " + max_resolution);
 
-            Shapes.ForEach((shape) =>
-            {
+            Shapes.ForEach(shape => {
 
-                for (var resolution = min_resolution; resolution <= max_resolution; resolution++)
-                {
+                for (var resolution = min_resolution; resolution <= max_resolution; resolution++) {
 
-                    shape.Value.Item2.Add(resolution, new Tuple<List<Tuple<UInt64, UInt64>>, StringBuilder>(new List<Tuple<UInt64, UInt64>>(), new StringBuilder()));
+                    shape.Value.Item2.Add(resolution, new Tuple<List<UInt64XY>, StringBuilder>(new List<UInt64XY>(), new StringBuilder()));
 
-                    shape.Value.Item1.ForEach(coor =>
-                    {
-                        var XY = GeoCalculations.WorldCoordinates_2_Screen(coor, resolution);
+                    shape.Value.Item1.ForEach(GeoCoord => {
+                        var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoord, resolution);
                         shape.Value.Item2[resolution].Item1.Add(XY);
                     });
 
@@ -256,12 +251,10 @@ namespace eu.Vanaheimr.Aegir
                 min_x = UInt64.MaxValue;
                 min_y = UInt64.MaxValue;
 
-                Shapes.ForEach((shape) =>
-                {
-                    shape.Value.Item2[resolution].Item1.ForEach(XY =>
-                    {
-                        if (XY.Item1 < min_x) min_x = XY.Item1;
-                        if (XY.Item2 < min_y) min_y = XY.Item2;
+                Shapes.ForEach((shape) => {
+                    shape.Value.Item2[resolution].Item1.ForEach(XY => {
+                        if (XY.X < min_x) min_x = XY.X;
+                        if (XY.Y < min_y) min_y = XY.Y;
                     });
                 });
 
@@ -270,9 +263,8 @@ namespace eu.Vanaheimr.Aegir
 
                     var Char = "M ";
 
-                    shape.Value.Item2[resolution].Item1.ForEach(XY =>
-                    {
-                        shape.Value.Item2[resolution].Item2.Append(Char + (XY.Item1 - min_x) + " " + (XY.Item2 - min_y) + " ");
+                    shape.Value.Item2[resolution].Item1.ForEach(XY => {
+                        shape.Value.Item2[resolution].Item2.Append(Char + (XY.X - min_x) + " " + (XY.Y - min_y) + " ");
                         if (Char == "L ") Char = "";
                         if (Char == "M ") Char = "L ";
                     });

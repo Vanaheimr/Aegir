@@ -94,7 +94,7 @@ namespace eu.Vanaheimr.Aegir
 
             // The position on the map will be set within the PaintMap() method!
             this.Children.Add(Feature);
-            
+
             return Feature;
 
         }

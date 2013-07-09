@@ -591,12 +591,12 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region ToGeoString()
+        #region ToGeoString(GeoType = GeoFormat.Decimal, Decimals = 5)
 
         /// <summary>
         /// Returns a user-friendly string representaion.
         /// </summary>
-        public String ToGeoString(GeoFormat GeoType = GeoFormat.Decimal)
+        public String ToGeoString(GeoFormat GeoType = GeoFormat.Decimal, UInt16 Decimals = 7)
         {
 
             switch (GeoType)
@@ -606,9 +606,9 @@ namespace eu.Vanaheimr.Aegir
                 case GeoFormat.Decimal:
 
                     return String.Format("{0}° {1}, {2}° {3}",
-                                         Math.Abs(Latitude.Value).ToString().Replace(',', '.'),
+                                         Math.Round(Latitude.Value,  Decimals).ToString().Replace(',', '.'),
                                          (Latitude.Value  < 0) ? "S" : "N",
-                                         Math.Abs(Longitude.Value).ToString().Replace(',', '.'),
+                                         Math.Round(Longitude.Value, Decimals).ToString().Replace(',', '.'),
                                          (Longitude.Value < 0) ? "W" : "E");
 
 

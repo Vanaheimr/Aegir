@@ -20,6 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
+using System.Windows.Controls;
 
 #endregion
 
@@ -78,6 +79,16 @@ namespace eu.Vanaheimr.Aegir
         }
 
         #endregion
+
+
+        public static void ForEach<T>(this UIElementCollection Col, Action<T> Action) 
+        {
+
+            foreach (var element in Col)
+                if (element is T)
+                    Action((T) element);
+
+        }
 
     }
 

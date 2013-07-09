@@ -18,17 +18,30 @@
 #region Usings
 
 using System;
-using System.Windows.Shapes;
+using System.Linq;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Collections.Generic;
 
 using eu.Vanaheimr.Aegir;
 using eu.Vanaheimr.Illias.Commons;
-using System.Windows;
+using System.Text;
 
 #endregion
 
 namespace eu.Vanaheimr.Aegir
 {
+
+    public class GeoShape : AShape
+    {
+
+        public GeoShape(String Id, GeoCoordinate[] GeoCoordinates, Color StrokeColor, Double StrokeThickness, Color FillColor)
+            : base(Id, GeoCoordinates, StrokeColor, StrokeThickness, FillColor)
+        { }
+
+    }
+
 
     /// <summary>
     /// A shape on an Aegir map.
@@ -36,12 +49,24 @@ namespace eu.Vanaheimr.Aegir
     public abstract class AShape : Shape, IShape
     {
 
+        #region Data
+
+        private IEnumerable<GeoCoordinate> _GeoCoordinates;
+
+        #endregion
+
         #region Properties
+
+        #region Id
 
         /// <summary>
         /// The identification of this shape.
         /// </summary>
         public String    Id         { get; private set; }
+
+        #endregion
+
+        #region Lat/Lng/.../GeoWidth/GeoHeight/Altitude
 
         /// <summary>
         /// The latitude of this shape.
@@ -54,57 +79,89 @@ namespace eu.Vanaheimr.Aegir
         public Longitude Longitude  { get; private set; }
 
         /// <summary>
-        /// The altitude of this shape.
-        /// </summary>
-        public Altitude  Altitude   { get; private set; }
-
-        /// <summary>
-        /// The geographical width of thsi shape.
+        /// The latitude2 of this shape.
         /// </summary>
         public Latitude  Latitude2  { get; private set; }
 
         /// <summary>
-        /// The geographical height of this shape.
+        /// The longitude2 of this shape.
         /// </summary>
         public Longitude Longitude2 { get; private set; }
 
+        /// <summary>
+        /// The geographical width of this shape.
+        /// </summary>
+        public Latitude  GeoWidth   { get; private set; }
 
+        /// <summary>
+        /// The geographical height of this shape.
+        /// </summary>
+        public Longitude GeoHeight  { get; private set; }
 
-        public UInt32    ZoomLevel  { get; set; }
-
-        public Rect      Bounds     { get; set; }
-
-
-        #region Geometry
-
-        private readonly Geometry Geometry;
-
-        //protected override Geometry DefiningGeometry
-        //{
-        //    get
-        //    {
-        //        return Geometry;
-        //    }
-        //}
+        /// <summary>
+        /// The altitude of this shape.
+        /// </summary>
+        public Altitude  Altitude   { get; private set; }
 
         #endregion
 
-        #region Geometry
+        #region OnScreen...
+
+        public UInt64XY OnScreenUpperLeft   { get; private set; }
+        public UInt64XY OnScreenLowerRight  { get; private set; }
+
+        public UInt64   OnScreenWidth       { get; private set; }
+        public UInt64   OnScreenHeight      { get; private set; }
+
+        #endregion
+
+        #region ZoomLevel
+
+        private UInt32 _ZoomLevel;
+
+        public UInt32 ZoomLevel
+        {
+
+            get
+            {
+                return _ZoomLevel;
+            }
+
+            set
+            {
+
+                this._ZoomLevel = value;
+
+                SetScreenGeometry();
+
+            }
+
+        }
+
+        #endregion
+
+        #region Bounds
+
+        public Rect Bounds { get; set; }
+
+        #endregion
+
+        public Color FillColor   { get; set; }
+        public Color StrokeColor { get; set; }
+
+        #region DefiningGeometry
+
+        private Geometry _DefiningGeometry;
 
         protected override Geometry DefiningGeometry
         {
             get
             {
 
-                var Starts = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  ZoomLevel);
-                var Ends   = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, ZoomLevel);
-                // Width:  7.788112
-                // Height: 9.175257
+                if (_DefiningGeometry == null)
+                    SetScreenGeometry();
 
-                var w2 = Ends.Item1 - Starts.Item1;
-                var h2 = Ends.Item2 - Starts.Item2;
-
-                return new RectangleGeometry() { Rect = new Rect(new Size(w2, Bounds.Height / Bounds.Width * w2)) }; ;
+                return _DefiningGeometry;
 
             }
         }
@@ -113,33 +170,7 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-
         #region Constructor(s)
-
-        #region AShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
-
-        /// <summary>
-        /// Create a new abstract shape.
-        /// </summary>
-        /// <param name="Id">The Id of the shape.</param>
-        /// <param name="Latitude">The latitude of the shape center.</param>
-        /// <param name="Longitude">The longitude of the shape center.</param>
-        /// <param name="Altitude">The altitude of the shape center.</param>
-        /// <param name="GeoWidth">The geographical width of the shape center.</param>
-        /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public AShape(String Id, Latitude Latitude, Longitude Longitude, Altitude Altitude, Latitude Latitude2, Longitude Longitude2)
-        {
-
-            this.Id         = Id;
-            this.Latitude   = Latitude;
-            this.Longitude  = Longitude;
-            this.Altitude   = Altitude;
-            this.Latitude2  = Latitude2;
-            this.Longitude2 = Longitude2;
-
-        }
-
-        #endregion
 
         #region AShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
 
@@ -162,28 +193,136 @@ namespace eu.Vanaheimr.Aegir
             this.Latitude2  = Latitude2;
             this.Longitude2 = Longitude2;
 
-            var PathGeometry16 = PathGeometry.Parse(Geometries[8]);
-
-            var GD16 = new GeometryDrawing(new SolidColorBrush(FillColor), new Pen(new SolidColorBrush(StrokeColor), StrokeThickness), PathGeometry16);
+            this.GeoWidth   = new Latitude (Latitude2. Value - Latitude. Value);
+            this.GeoHeight  = new Longitude(Longitude2.Value - Longitude.Value);
 
             var DrawingGroup = new DrawingGroup();
-            DrawingGroup.Children.Add(GD16);
+                DrawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(FillColor), new Pen(new SolidColorBrush(StrokeColor), StrokeThickness), PathGeometry.Parse(Geometries[8])));
 
-            this.Fill = new DrawingBrush()
-            {
-                Drawing = DrawingGroup,
+            this.Fill = new DrawingBrush() {
+                Drawing   = DrawingGroup,
                 //Viewport = new Rect(0, 0, 1, 1),
-                TileMode = TileMode.None,
-                Stretch = Stretch.UniformToFill
+                TileMode  = TileMode.None,
+                Stretch   = Stretch.UniformToFill
             };
 
             Bounds = DrawingGroup.Bounds;
-            var w = Bounds.Width;
-            var h = Bounds.Height;
 
         }
 
         #endregion
+
+        #region AShape(Id, GeoCoordinates, StrokeColor, StrokeThickness, FillColor)
+
+        /// <summary>
+        /// Create a new abstract shape.
+        /// </summary>
+        /// <param name="Id">The Id of the shape.</param>
+        public AShape(String Id, IEnumerable<GeoCoordinate> GeoCoordinates, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        {
+
+            this.FillColor        = FillColor;
+            this.StrokeColor      = StrokeColor;
+            this.StrokeThickness  = StrokeThickness;
+
+            this.Id               = Id;
+            this.ToolTip          = Id;
+            this._GeoCoordinates  = GeoCoordinates;
+
+            var MinLat = Double.MaxValue;
+            var MaxLat = Double.MinValue;
+
+            var MinLng = Double.MaxValue;
+            var MaxLng = Double.MinValue;
+
+            foreach (var GeoCoordinate in GeoCoordinates)
+            {
+
+                if (GeoCoordinate.Latitude.Value < MinLat)
+                    MinLat = GeoCoordinate.Latitude.Value;
+
+                if (GeoCoordinate.Latitude.Value > MaxLat)
+                    MaxLat = GeoCoordinate.Latitude.Value;
+
+
+                if (GeoCoordinate.Longitude.Value < MinLng)
+                    MinLng = GeoCoordinate.Longitude.Value;
+
+                if (GeoCoordinate.Longitude.Value > MaxLng)
+                    MaxLng = GeoCoordinate.Longitude.Value;
+
+            }
+
+            this.Latitude   = new Latitude  (MinLat);
+            this.Longitude  = new Longitude (MinLng);
+            this.Altitude   = new Altitude  (0);
+            this.Latitude2  = new Latitude  (MaxLat);
+            this.Longitude2 = new Longitude (MaxLng);
+
+            this.GeoWidth   = new Latitude (Latitude2. Value - Latitude. Value);
+            this.GeoHeight  = new Longitude(Longitude2.Value - Longitude.Value);
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region (private) SetScreenGeometry()
+
+        private void SetScreenGeometry()
+        {
+
+            this.OnScreenUpperLeft  = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  _ZoomLevel);
+            this.OnScreenLowerRight = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, _ZoomLevel);
+
+            this.OnScreenWidth      = (UInt64) Math.Abs((Int64) OnScreenLowerRight.X - (Int64) OnScreenUpperLeft.X);
+            this.OnScreenHeight     = (UInt64) Math.Abs((Int64) OnScreenLowerRight.Y - (Int64) OnScreenUpperLeft.Y);
+
+            if (_GeoCoordinates != null)
+            {
+
+                var Char = "M ";
+                var st = new StringBuilder();
+
+                _GeoCoordinates.
+                    Select(GeoCoord => GeoCalculations.WorldCoordinates_2_Screen(GeoCoord, _ZoomLevel)).
+                    ForEach(XY => {
+                        st.Append(Char + (((Int64) XY.X) - ((Int64) OnScreenUpperLeft.X)) + " " + (((Int64) XY.Y) - ((Int64) OnScreenUpperLeft.Y)) + " ");
+                        if (Char == "L ") Char = "";
+                        if (Char == "M ") Char = "L ";
+                    });
+
+                st.Append("Z ");
+
+
+                var DrawingGroup = new DrawingGroup();
+                DrawingGroup.Children.Add(
+                    new GeometryDrawing(
+                        new SolidColorBrush(FillColor),
+                        new Pen(new SolidColorBrush(StrokeColor),
+                                StrokeThickness),
+                        PathGeometry.Parse(st.ToString())));
+
+                this.Fill = new DrawingBrush()
+                {
+                    Drawing = DrawingGroup,
+                    //Viewport = new Rect(0, 0, 1, 1),
+                    TileMode = TileMode.None,
+                    Stretch = Stretch.UniformToFill
+                };
+
+                Bounds = DrawingGroup.Bounds;
+
+            }
+
+            this._DefiningGeometry = new RectangleGeometry()
+            {
+                Rect = new Rect(new Size(OnScreenWidth, Bounds.Height / Bounds.Width * OnScreenWidth))
+            };
+
+        }
 
         #endregion
 
