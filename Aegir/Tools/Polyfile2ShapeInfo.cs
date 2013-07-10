@@ -126,7 +126,7 @@ namespace eu.Vanaheimr.Aegir
 
             var Shapes       = new Dictionary<UInt32, Tuple<List<GeoCoordinate>,
                                                             Dictionary<UInt32,
-                                                                       Tuple<List<UInt64XY>, StringBuilder>>>>();
+                                                                       Tuple<List<ScreenXY>, StringBuilder>>>>();
 
             GeoCoordinate GeoCoordinate = null;
 
@@ -150,9 +150,9 @@ namespace eu.Vanaheimr.Aegir
                 else if (UInt32.TryParse(Line, out Integer))
                 {
                     ShapeNumber = Integer;
-                    Shapes.Add(ShapeNumber, new Tuple<List<GeoCoordinate>, Dictionary<UInt32, Tuple<List<UInt64XY>, StringBuilder>>>(
+                    Shapes.Add(ShapeNumber, new Tuple<List<GeoCoordinate>, Dictionary<UInt32, Tuple<List<ScreenXY>, StringBuilder>>>(
                                                 new List<GeoCoordinate>(),
-                                                new Dictionary<UInt32, Tuple<List<UInt64XY>, StringBuilder>>()));
+                                                new Dictionary<UInt32, Tuple<List<ScreenXY>, StringBuilder>>()));
                 }
 
                 #endregion
@@ -231,25 +231,24 @@ namespace eu.Vanaheimr.Aegir
 
                 for (var resolution = min_resolution; resolution <= max_resolution; resolution++) {
 
-                    shape.Value.Item2.Add(resolution, new Tuple<List<UInt64XY>, StringBuilder>(new List<UInt64XY>(), new StringBuilder()));
+                    shape.Value.Item2.Add(resolution, new Tuple<List<ScreenXY>, StringBuilder>(new List<ScreenXY>(), new StringBuilder()));
 
-                    shape.Value.Item1.ForEach(GeoCoord => {
-                        var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoord, resolution);
-                        shape.Value.Item2[resolution].Item1.Add(XY);
-                    });
+                    shape.Value.Item1.ForEach(GeoCoord => 
+                        shape.Value.Item2[resolution].Item1.Add(GeoCalculations.WorldCoordinates_2_Screen(GeoCoord, resolution))
+                    );
 
                 }
 
             });
 
-            var min_x = 0UL;
-            var min_y = 0UL;
+            var min_x = 0L;
+            var min_y = 0L;
 
             for (var resolution = min_resolution; resolution <= max_resolution; resolution++)
             {
 
-                min_x = UInt64.MaxValue;
-                min_y = UInt64.MaxValue;
+                min_x = Int64.MaxValue;
+                min_y = Int64.MaxValue;
 
                 Shapes.ForEach((shape) => {
                     shape.Value.Item2[resolution].Item1.ForEach(XY => {

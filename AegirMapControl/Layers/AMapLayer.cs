@@ -212,7 +212,7 @@ namespace eu.Vanaheimr.Aegir
                 {
 
                     Feature Feature;
-                    UInt64XY ScreenXY;
+                    ScreenXY ScreenXY;
 
                     foreach (var Child in this.Children)
                     {
@@ -224,8 +224,8 @@ namespace eu.Vanaheimr.Aegir
 
                             ScreenXY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, ZoomLevel);
 
-                            Canvas.SetLeft(Feature, ScreenOffsetX + (Int64) ScreenXY.X);
-                            Canvas.SetTop (Feature, ScreenOffsetY + (Int64) ScreenXY.Y);
+                            Canvas.SetLeft(Feature, ScreenOffsetX + ScreenXY.X);
+                            Canvas.SetTop (Feature, ScreenOffsetY + ScreenXY.Y);
 
                             //if (Feature.GeoWidth != 0)
                             //    Feature.Width = 

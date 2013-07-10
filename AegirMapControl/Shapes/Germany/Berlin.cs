@@ -64,7 +64,7 @@ namespace eu.Vanaheimr.Aegir
     /// <summary>
     /// Europe / Western Europe / Germany / Berlin
     /// </summary>
-    public class Berlin : AShape
+    public class Berlin : GeoShape
     {
 
         /// <summary>

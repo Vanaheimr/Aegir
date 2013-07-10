@@ -64,7 +64,7 @@ namespace eu.Vanaheimr.Aegir
     /// <summary>
     /// Europe / Western Europe / Germany / Bayern
     /// </summary>
-    public class Bayern : AShape
+    public class Bayern : GeoShape
     {
 
         /// <summary>

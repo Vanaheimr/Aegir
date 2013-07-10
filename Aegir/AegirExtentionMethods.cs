@@ -26,13 +26,27 @@ using eu.Vanaheimr.Illias.Geometry;
 namespace eu.Vanaheimr.Aegir
 {
 
-    public class UInt64XY
+    public class TilesXY
     {
 
         public UInt64 X { get; private set; }
         public UInt64 Y { get; private set; }
 
-        public UInt64XY(UInt64 X, UInt64 Y)
+        public TilesXY(UInt64 X, UInt64 Y)
+        {
+            this.X = X;
+            this.Y = Y;
+        }
+
+    }
+
+    public class ScreenXY
+    {
+
+        public Int64 X { get; private set; }
+        public Int64 Y { get; private set; }
+
+        public ScreenXY(Int64 X, Int64 Y)
         {
             this.X = X;
             this.Y = Y;

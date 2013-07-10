@@ -70,7 +70,7 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        public IShape AddShape(AShape AShape)
+        public GeoShape AddShape(GeoShape AShape)
         {
 
             // The position and size on the map will be set within the PaintMap() method!
@@ -84,7 +84,7 @@ namespace eu.Vanaheimr.Aegir
         private void SetZoomLevel(UInt32 ZoomLevel)
         {
             this.Children.
-                ForEach<AShape>(AShape => AShape.ZoomLevel = ZoomLevel);
+                ForEach<GeoShape>(AShape => AShape.ZoomLevel = ZoomLevel);
         }
 
         public Feature AddPath(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
@@ -150,7 +150,7 @@ namespace eu.Vanaheimr.Aegir
                 {
 
                     this.Children.
-                         ForEach<AShape>(AShape => {
+                         ForEach<GeoShape>(AShape => {
 
                             AShape.ZoomLevel = ZoomLevel;
 

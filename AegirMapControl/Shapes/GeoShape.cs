@@ -33,20 +33,10 @@ using System.Text;
 namespace eu.Vanaheimr.Aegir
 {
 
-    public class GeoShape : AShape
-    {
-
-        public GeoShape(String Id, GeoCoordinate[] GeoCoordinates, Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(Id, GeoCoordinates, StrokeColor, StrokeThickness, FillColor)
-        { }
-
-    }
-
-
     /// <summary>
-    /// A shape on an Aegir map.
+    /// A polygon shape on an Aegir map.
     /// </summary>
-    public abstract class AShape : Shape, IShape
+    public class GeoShape : Shape
     {
 
         #region Data
@@ -107,8 +97,8 @@ namespace eu.Vanaheimr.Aegir
 
         #region OnScreen...
 
-        public UInt64XY OnScreenUpperLeft   { get; private set; }
-        public UInt64XY OnScreenLowerRight  { get; private set; }
+        public ScreenXY OnScreenUpperLeft   { get; private set; }
+        public ScreenXY OnScreenLowerRight  { get; private set; }
 
         public UInt64   OnScreenWidth       { get; private set; }
         public UInt64   OnScreenHeight      { get; private set; }
@@ -146,8 +136,13 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
+        #region Fill-/StrokeColor
+
         public Color FillColor   { get; set; }
+
         public Color StrokeColor { get; set; }
+
+        #endregion
 
         #region DefiningGeometry
 
@@ -172,10 +167,10 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region AShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
+        #region GeoShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
 
         /// <summary>
-        /// Create a new abstract shape.
+        /// Create a new polygon geo shape.
         /// </summary>
         /// <param name="Id">The Id of the shape.</param>
         /// <param name="Latitude">The latitude of the shape center.</param>
@@ -183,7 +178,7 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public AShape(String[] Geometries, Latitude Latitude, Longitude Longitude, Altitude Altitude, Latitude Latitude2, Longitude Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        public GeoShape(String[] Geometries, Latitude Latitude, Longitude Longitude, Altitude Altitude, Latitude Latitude2, Longitude Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
         {
 
             this.Id         = Id;
@@ -212,13 +207,13 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region AShape(Id, GeoCoordinates, StrokeColor, StrokeThickness, FillColor)
+        #region GeoShape(Id, GeoCoordinates, StrokeColor, StrokeThickness, FillColor)
 
         /// <summary>
-        /// Create a new abstract shape.
+        /// Create a new polygon geo shape.
         /// </summary>
         /// <param name="Id">The Id of the shape.</param>
-        public AShape(String Id, IEnumerable<GeoCoordinate> GeoCoordinates, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        public GeoShape(String Id, IEnumerable<GeoCoordinate> GeoCoordinates, Color StrokeColor, Double StrokeThickness, Color FillColor)
         {
 
             this.FillColor        = FillColor;
@@ -277,25 +272,11 @@ namespace eu.Vanaheimr.Aegir
             this.OnScreenUpperLeft  = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  _ZoomLevel);
             this.OnScreenLowerRight = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, _ZoomLevel);
 
-            this.OnScreenWidth      = (UInt64) Math.Abs((Int64) OnScreenLowerRight.X - (Int64) OnScreenUpperLeft.X);
-            this.OnScreenHeight     = (UInt64) Math.Abs((Int64) OnScreenLowerRight.Y - (Int64) OnScreenUpperLeft.Y);
+            this.OnScreenWidth      = (UInt64) Math.Abs(OnScreenLowerRight.X - OnScreenUpperLeft.X);
+            this.OnScreenHeight     = (UInt64) Math.Abs(OnScreenLowerRight.Y - OnScreenUpperLeft.Y);
 
             if (_GeoCoordinates != null)
             {
-
-                var Char = "M ";
-                var st = new StringBuilder();
-
-                _GeoCoordinates.
-                    Select(GeoCoord => GeoCalculations.WorldCoordinates_2_Screen(GeoCoord, _ZoomLevel)).
-                    ForEach(XY => {
-                        st.Append(Char + (((Int64) XY.X) - ((Int64) OnScreenUpperLeft.X)) + " " + (((Int64) XY.Y) - ((Int64) OnScreenUpperLeft.Y)) + " ");
-                        if (Char == "L ") Char = "";
-                        if (Char == "M ") Char = "L ";
-                    });
-
-                st.Append("Z ");
-
 
                 var DrawingGroup = new DrawingGroup();
                 DrawingGroup.Children.Add(
@@ -303,7 +284,9 @@ namespace eu.Vanaheimr.Aegir
                         new SolidColorBrush(FillColor),
                         new Pen(new SolidColorBrush(StrokeColor),
                                 StrokeThickness),
-                        PathGeometry.Parse(st.ToString())));
+                        PathGeometry.Parse(_GeoCoordinates.GeoCoord2Shape(OnScreenUpperLeft, _ZoomLevel))
+                    )
+                );
 
                 this.Fill = new DrawingBrush()
                 {
@@ -317,8 +300,7 @@ namespace eu.Vanaheimr.Aegir
 
             }
 
-            this._DefiningGeometry = new RectangleGeometry()
-            {
+            this._DefiningGeometry = new RectangleGeometry() {
                 Rect = new Rect(new Size(OnScreenWidth, Bounds.Height / Bounds.Width * OnScreenWidth))
             };
 
