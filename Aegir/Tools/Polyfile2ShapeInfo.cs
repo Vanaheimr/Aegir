@@ -210,7 +210,7 @@ namespace eu.Vanaheimr.Aegir
             //    Array.AppendLine(shape.Key.ToString());
             //    shape.Value.Item1.ForEach(c =>
             //    {
-            //        Array.AppendLine("\t\t\t{ " + c.Latitude.ToString("00.000000").Replace(",", ".") + ", " + c.Longitude.ToString("00.000000").Replace(",", ".") + " },");
+            //        Array.AppendLine("            { " + c.Latitude.ToString("00.000000").Replace(",", ".") + ", " + c.Longitude.ToString("00.000000").Replace(",", ".") + " },");
             //    });
             //});
 

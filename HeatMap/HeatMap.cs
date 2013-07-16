@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (c) 2011-2012 Achim 'ahzf' Friedland <achim@ahzf.de>
- * This file is part of Loki <http://www.github.com/ahzf/Loki>
+ * Copyright (c) 2011-2013 Achim 'ahzf' Friedland <achim@graph-database.org>
+ * This file is part of Aegir <http://www.github.com/Vanaheimr/Aegir>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -8,8 +8,8 @@
  * (at your option) any later version.
  * 
  * You may obtain a copy of the License at
- *     http://www.gnu.org/licenses/gpl.html
- *     
+ *   http://www.gnu.org/licenses/gpl.html
+ * 
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
