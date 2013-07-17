@@ -57,13 +57,13 @@ namespace eu.Vanaheimr.Aegir
         /// </summary>
 //        private AutoDiscovery<IMapTilesProvider> MapProviders;
 
-        private readonly ConcurrentStack<Image> TilesOnMap;
+        private readonly List<Image> TilesOnMap;
         private Image[] VeryOldTilesToDelete = new Image[0];
         private Image[] OldTilesToDelete = new Image[0];
 
-        private Object LockObject;
+        private Object AutoTilesRefreshLock;
 
-        private UInt64 CurrentVersion = 0;
+        private readonly Timer TilesRefreshTimer;
 
         #endregion
 
@@ -102,6 +102,7 @@ namespace eu.Vanaheimr.Aegir
 
                     this.TileClient.CurrentProviderId = value;
 
+                    this.Children.Clear();
                     Redraw();
 
                     if (MapProviderChanged != null)
@@ -148,9 +149,9 @@ namespace eu.Vanaheimr.Aegir
             : base(Id, MapControl, ZIndex)
         {
 
-            this.LockObject         = new Object();
+            this.AutoTilesRefreshLock         = new Object();
             this.Background         = new SolidColorBrush(Colors.Transparent);
-            this.TilesOnMap         = new ConcurrentStack<Image>();
+            this.TilesOnMap         = new List<Image>();
 
             #region Register mouse events
 
@@ -196,6 +197,10 @@ namespace eu.Vanaheimr.Aegir
 
             this.TileClient = new AegirTilesClient();
             this.TileClient.Register(new OSMProvider());
+
+            //this.Loaded += (s, o) => { PaintTiles(); PaintTiles(); };
+
+            this.TilesRefreshTimer = new Timer(TilesAutoRefresh, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
 
         }
 
@@ -258,44 +263,47 @@ namespace eu.Vanaheimr.Aegir
 
         #region RedrawLayer()
 
-        /// <summary>
-        /// Paints the map.
-        /// </summary>
-        /// <returns>True if the map was repainted; false otherwise.</returns>
-        public override Boolean Redraw()
+        public Boolean lala_old()
         {
 
             if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
             {
 
-                if (Monitor.TryEnter(LockObject))
+                if (Monitor.TryEnter(AutoTilesRefreshLock))
                 {
 
-                    CurrentVersion++;
+                    try
+                    {
 
-                    Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
+                        Debug.WriteLine(Thread.CurrentThread.ManagedThreadId + "-" + this.Children.Count);
 
-                    #region Collect old tiles for deletion
+                        #region Collect old tiles for deletion
 
-                    VeryOldTilesToDelete = OldTilesToDelete;
-                    OldTilesToDelete = TilesOnMap.ToArray();
-                    TilesOnMap.Clear();
+                        //VeryOldTilesToDelete = OldTilesToDelete;
+                        //OldTilesToDelete = TilesOnMap.ToArray();
+                        //TilesOnMap.Clear();
 
-                    #endregion
+                        //this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+                        //    {
+                        //        this.Children.Clear();
+                        //    }));
 
-                    #region Paint new map as background task
+                        #endregion
 
-                    //Task.Factory.StartNew(() =>
-                    //{
+                        #region Paint new map as background task
 
-                        var _NumberOfXTiles = (Int32)Math.Floor(base.ActualWidth / 256);
-                        var _NumberOfYTiles = (Int32)Math.Floor(base.ActualHeight / 256);
-                        var _NumberOfTiles  = (Int32)Math.Pow(2, this.MapControl.ZoomLevel);
-                        var ___x = (Int32)this.MapControl.ScreenOffsetX % (_NumberOfTiles * 256) / 256;
-                        var ___y = (Int32)this.MapControl.ScreenOffsetY % (_NumberOfTiles * 256) / 256;
+                        //Task.Factory.StartNew(() =>
+                        //{
+
+                        var _NumberOfXTiles = (Int32) Math.Floor(base.ActualWidth / 256) + 1;
+                        var _NumberOfYTiles = (Int32) Math.Floor(base.ActualHeight / 256) + 1;
+                        var _NumberOfTiles  = (Int32) Math.Pow(2, this.MapControl.ZoomLevel);
+                        var ___x = (Int32) this.MapControl.ScreenOffsetX % (_NumberOfTiles * 256) / 256;
+                        var ___y = (Int32) this.MapControl.ScreenOffsetY % (_NumberOfTiles * 256) / 256;
                         var ListOfTasks = new List<Task>();
+                  //      this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => TilesOnMap.Clear()));
 
-                        for (var _x = -1; _x < _NumberOfXTiles + 2; _x++)
+                        for (var _x = 0; _x < _NumberOfXTiles + 1; _x++)
                         {
 
                             Int32 _ActualXTile;
@@ -304,7 +312,7 @@ namespace eu.Vanaheimr.Aegir
                             _ActualXTile = ((_x - ___x) % _NumberOfTiles);
                             if (_ActualXTile < 0) _ActualXTile += _NumberOfTiles;
 
-                            for (var _y = -1; _y < _NumberOfYTiles + 2; _y++)
+                            for (var _y = 0; _y < _NumberOfYTiles + 1; _y++)
                             {
 
                                 _ActualYTile = (Int32)((_y - ___y) % _NumberOfTiles);
@@ -313,31 +321,40 @@ namespace eu.Vanaheimr.Aegir
                                 ListOfTasks.Add(TileClient.GetTile(this.MapControl.ZoomLevel,
                                                                    (UInt32)_ActualXTile,
                                                                    (UInt32)_ActualYTile,
-                                                                   new Tuple<Int64, Int64, UInt64>(
+                                                                   new Tuple<Int64, Int64>(
                                                                        this.MapControl.ScreenOffsetX % 256 + _x * 256,
-                                                                       this.MapControl.ScreenOffsetY % 256 + _y * 256,
-                                                                       CurrentVersion)).
+                                                                       this.MapControl.ScreenOffsetY % 256 + _y * 256)).
 
                                     ContinueWith(TileTask => PaintTile(TileTask.Result.Item1,
-                                                                        (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item1,
-                                                                        (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item2,
-                                                                        (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item3)));
+                                                                      (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item1,
+                                                                      (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item2)));
 
                             }
 
                         }
 
-                        Task.Factory.ContinueWhenAll(ListOfTasks.ToArray(), Tasks =>
-                            this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
-                                foreach (var Image in VeryOldTilesToDelete)
-                                    this.Children.Remove(Image);
-                            })));
+                        //Task.Factory.ContinueWhenAll(ListOfTasks.ToArray(), Tasks =>
+                        //    this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+                        //    {
+                        //        var Listi = new List<Image>();
+                        //        foreach (Image ImageChild in this.Children)
+                        //            if (!TilesOnMap.Contains(ImageChild))
+                        //                Listi.Add(ImageChild);
 
-                   // });
+                        //        Listi.ForEach(ll => this.Children.Remove(ll));
+                        //        //    this.Children.Remove(Image);
+                        //    })));
 
-                    #endregion
+                        // });
 
-                    Monitor.Exit(LockObject);
+                        #endregion
+
+                    }
+
+                    finally
+                    {
+                        Monitor.Exit(AutoTilesRefreshLock);
+                    }
 
                 }
 
@@ -352,55 +369,228 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-
-        private void PaintTile(Byte[] Tile, Int64 ScreenX, Int64 ScreenY, UInt64 PaintingVersion)
+        private Double Normalize(Double Value, Int32 Factor)
         {
 
-            if (Tile == null || Tile.Length == 0)
-                return;
+            var _ActualXTile = Value % Factor;
 
-            if (PaintingVersion < CurrentVersion)
-                return;
-
-            var _BitmapImage = new BitmapImage();
-            _BitmapImage.BeginInit();
-            _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
-            _BitmapImage.StreamSource = new MemoryStream(Tile);
-            _BitmapImage.EndInit();
-            _BitmapImage.Freeze(); // To allow access from UI thread!
-
-            //ScreenX = 100;
-            //ScreenY = 100;
-
-            this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)(_ImageSource =>
-            {
-
-                try
-                {
-
-                    var _Image = new Image() {
-                      //  Stretch = Stretch.Uniform,
-                        Source  = _ImageSource as ImageSource,
-                        Width   = 256,
-                        Height  = 256,//(_ImageSource as BitmapImage).PixelWidth
-                        DataContext = PaintingVersion
-                    };
-
-                    //_Image
-                    this.Children.Add(_Image);
-                    TilesOnMap.Push(_Image);
-
-                    Canvas.SetLeft(_Image, ScreenX);
-                    Canvas.SetTop (_Image, ScreenY);
-
-                }
-                catch (NotSupportedException)
-                {
-                }
-
-            }), _BitmapImage);
+            return (_ActualXTile < 0) ? _ActualXTile += Factor : _ActualXTile;
 
         }
+
+        public override void Move(Double X_Movement, Double Y_Movement)
+        {
+
+            #region Move tiles and delete those outside the visible canvas
+
+            var ToDelete = new List<Image>();
+            var List = new List<String>();
+
+            foreach (Image Tile in this.Children)
+            {
+
+                var NewX = Canvas.GetLeft(Tile) + X_Movement;
+                var NewY = Canvas.GetTop (Tile) + Y_Movement;
+
+                List.Add(Canvas.GetLeft(Tile) + " / " + Canvas.GetTop(Tile));
+
+                // Find all tiles outside the visible canvas
+                if (NewX < -256 || NewX > this.ActualWidth ||
+                    NewY < -256 || NewY > this.ActualHeight)
+                    ToDelete.Add(Tile);
+
+                else
+                {
+                    // Move tiles within the visible canvas
+                    Canvas.SetLeft(Tile, NewX);
+                    Canvas.SetTop(Tile, NewY);
+                }
+
+            }
+
+            // Delete all tiles outside the visible canvas
+            ToDelete.ForEach(Tile => this.Children.Remove(Tile));
+
+            #endregion
+
+            Redraw();
+
+        }
+
+        private void TilesAutoRefresh(Object State)
+        {
+
+            if (Monitor.TryEnter(AutoTilesRefreshLock))
+            {
+
+                var NumberOfXTiles            = (Int32) Math.Floor(base.ActualWidth  / 256) + 1;
+                var NumberOfYTiles            = (Int32) Math.Floor(base.ActualHeight / 256) + 1;
+                var NumberOfTilesAtZoomLevel  = (Int32) Math.Pow(2, this.MapControl.ZoomLevel);
+                var LeftUpperTile             = new Point(this.MapControl.ScreenOffsetX % (NumberOfTilesAtZoomLevel * 256) / 256,
+                                                          this.MapControl.ScreenOffsetY % (NumberOfTilesAtZoomLevel * 256) / 256);
+
+                var _NumberOfXTiles = (Normalize(LeftUpperTile.X, NumberOfTilesAtZoomLevel) == 0) ? NumberOfXTiles : NumberOfXTiles + 1;
+                var _NumberOfYTiles = (Normalize(LeftUpperTile.Y, NumberOfTilesAtZoomLevel) == 0) ? NumberOfYTiles : NumberOfYTiles + 1;
+
+                    this.Dispatcher.Invoke(DispatcherPriority.Send, (Action)(() => {
+                        if (this.Children.Count != (_NumberOfXTiles * _NumberOfYTiles))
+                            Redraw();
+                    }));
+
+                Monitor.Exit(AutoTilesRefreshLock);
+
+            }
+
+        }
+
+
+        #region Redraw()
+
+        /// <summary>
+        /// Paints the tiles layer.
+        /// </summary>
+        /// <returns>True if the map was repainted; false otherwise.</returns>
+        public override Boolean Redraw()
+        {
+
+            if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
+            {
+
+                var _NumberOfXTiles = 0;
+                var _NumberOfYTiles = 0;
+
+                var NumberOfXTiles            = (Int32) Math.Floor(base.ActualWidth  / 256) + 1;
+                var NumberOfYTiles            = (Int32) Math.Floor(base.ActualHeight / 256) + 1;
+                var NumberOfTilesAtZoomLevel  = (Int32) Math.Pow(2, this.MapControl.ZoomLevel);
+                var LeftUpperTile             = new Point(this.MapControl.ScreenOffsetX % (NumberOfTilesAtZoomLevel * 256) / 256,
+                                                          this.MapControl.ScreenOffsetY % (NumberOfTilesAtZoomLevel * 256) / 256);
+
+                var UselessTilesOnScreen = new List<Image>();
+
+                foreach (Image Tile in this.Children)
+                    UselessTilesOnScreen.Add(Tile);
+
+
+                for (var CurrentX = 0; CurrentX < NumberOfXTiles + 1; CurrentX++)
+                {
+
+                    for (var CurrentY = 0; CurrentY < NumberOfYTiles + 1; CurrentY++)
+                    {
+
+                        var NewX = this.MapControl.ScreenOffsetX % 256 + CurrentX * 256;
+                        var NewY = this.MapControl.ScreenOffsetY % 256 + CurrentY * 256;
+
+                        #region Is this tile already on the screen?
+
+                        var FoundAndHowOften = 0;
+
+                        foreach (Image Tile in this.Children)
+                        {
+
+                            if (NewX == Canvas.GetLeft(Tile) &&
+                                NewY == Canvas.GetTop(Tile))
+                            {
+                                if (FoundAndHowOften == 0)
+                                {
+                                    FoundAndHowOften = 1;
+                                    UselessTilesOnScreen.Remove(Tile);
+                                }
+                                else
+                                    FoundAndHowOften++;
+                            }
+
+                        }
+
+                        #endregion
+
+                        if (FoundAndHowOften == 0)
+
+                            TileClient.GetTile(this.MapControl.ZoomLevel,
+                                               (UInt32) Normalize(CurrentX - LeftUpperTile.X, NumberOfTilesAtZoomLevel),
+                                               (UInt32) Normalize(CurrentY - LeftUpperTile.Y, NumberOfTilesAtZoomLevel),
+                                               new Tuple<Int64, Int64>(
+                                                   NewX,
+                                                   NewY)).
+
+                                ContinueWith(TileTask => PaintTile(TileTask.Result.Item1,
+                                                                  (TileTask.Result.Item2 as Tuple<Int64, Int64>).Item1,
+                                                                  (TileTask.Result.Item2 as Tuple<Int64, Int64>).Item2));
+
+                    }
+
+                }
+
+                Debug.WriteLine("Deleting tiles: " + UselessTilesOnScreen.Count);
+
+                foreach (var Tile in UselessTilesOnScreen)
+                    this.Children.Remove(Tile);
+
+                _NumberOfXTiles = (Normalize(LeftUpperTile.X, NumberOfTilesAtZoomLevel) == 0) ? NumberOfXTiles : NumberOfXTiles + 1;
+                _NumberOfYTiles = (Normalize(LeftUpperTile.Y, NumberOfTilesAtZoomLevel) == 0) ? NumberOfYTiles : NumberOfYTiles + 1;
+
+                Debug.WriteLine("Number of visible tiles: " + this.Children.Count + " (" + (_NumberOfXTiles * _NumberOfYTiles) + ")");
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region (private) PaintTile(TileStream, ScreenX, ScreenY)
+
+        private void PaintTile(MemoryStream TileStream, Int64 ScreenX, Int64 ScreenY)
+        {
+
+            if (TileStream == null || TileStream.Length == 0)
+                return;
+
+            try
+            {
+
+                var _BitmapImage = new BitmapImage();
+                _BitmapImage.BeginInit();
+                _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
+                _BitmapImage.StreamSource = TileStream;
+                _BitmapImage.EndInit();
+                _BitmapImage.Freeze(); // To allow access from UI thread!
+
+                this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)(_ImageSource =>
+                {
+
+                    //Debug.WriteLine(Thread.CurrentThread.ManagedThreadId + "-paint->" + this.Children.Count);
+
+                    try
+                    {
+
+                        var _Image = new Image() {
+                            Source = _ImageSource as ImageSource,
+                            Width  = 256,
+                            Height = 256,
+                        };
+
+                        this.Children.Add(_Image);
+
+                        Canvas.SetLeft(_Image, ScreenX);
+                        Canvas.SetTop(_Image, ScreenY);
+
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                }), _BitmapImage);
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("PaintTile: " + e.Message);
+            }
+
+        }
+
+        #endregion
 
 
     }

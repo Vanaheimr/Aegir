@@ -52,8 +52,7 @@ namespace eu.Vanaheimr.Aegir.Controls
         private Double LastClickPositionX;
         private Double LastClickPositionY;
 
-        private Double LastMousePositionDuringMovementX;
-        private Double LastMousePositionDuringMovementY;
+        private Point  LastMousePositionDuringMovement;
 
         /// <summary>
         /// The stepping when moving the map
@@ -93,6 +92,15 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// Invert the keyboard commands for moving the map.
         /// </summary>
         public Boolean InvertedKeyBoard { get; set; }
+
+        #endregion
+
+        #region MapCenter
+
+        /// <summary>
+        /// The geo coordinates of the map center;
+        /// </summary>
+        public GeoCoordinate MapCenter { get; private set; }
 
         #endregion
 
@@ -150,15 +158,13 @@ namespace eu.Vanaheimr.Aegir.Controls
 
         #endregion
 
-        #region MapControl()
+        #region Constructor(s)
 
         /// <summary>
         /// Initialize the Aegir map control.
         /// </summary>
         public MapControl()
         {
-
-            #region Initialize the map control
 
             InitializeComponent();
 
@@ -170,8 +176,6 @@ namespace eu.Vanaheimr.Aegir.Controls
             this.InvertedKeyBoard         = false;
 
             this.KeyDown                 += new KeyEventHandler(ProcessKeyboardEvents);
-
-            #endregion
 
         }
 
@@ -233,11 +237,11 @@ namespace eu.Vanaheimr.Aegir.Controls
             Int64 MapSizeAtZoomLevel;
             var MousePosition = MouseEventArgs.GetPosition(this);
 
-            if (LastMousePositionDuringMovementX != MousePosition.X ||
-                LastMousePositionDuringMovementY != MousePosition.Y)
+            if (LastMousePositionDuringMovement.X != MousePosition.X ||
+                LastMousePositionDuringMovement.Y != MousePosition.Y)
             {
 
-                #region Send GeoPositionChanged event
+                #region Send current mouse position as geo position
 
                 if (GeoPositionChanged != null)
                 {
@@ -248,15 +252,7 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                 #endregion
 
-
-                var NewMapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffsetX,
-                                                                            MousePosition.Y - this.ScreenOffsetY,
-                                                                            this.ZoomLevel);
-
-                var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(NewMapCenter.Latitude, NewMapCenter.Longitude, this.ZoomLevel);
-
-
-                #region The left mouse button is still pressed => dragging the map!
+                #region The left mouse button is pressed => drag the map!
 
                 if (MouseEventArgs.LeftButton == MouseButtonState.Pressed &&
                     !this.ForegroundLayer.Equals(Sender))
@@ -271,6 +267,13 @@ namespace eu.Vanaheimr.Aegir.Controls
                     this.ScreenOffsetY = (Int32) (Math.Round(ScreenOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomLevel);
 
                     AvoidEndlessVerticalScrolling();
+
+                    MapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffsetX,
+                                                                         MousePosition.Y - this.ScreenOffsetY,
+                                                                         this.ZoomLevel);
+
+                    MapLayers.Values.ForEach(MapLayer => MapLayer.Move(MousePosition.X - LastMousePositionDuringMovement.X,
+                                                                       MousePosition.Y - LastMousePositionDuringMovement.Y));
 
                     MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
 
@@ -287,8 +290,7 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                 #endregion
 
-                LastMousePositionDuringMovementX = MousePosition.X;
-                LastMousePositionDuringMovementY = MousePosition.Y;
+                LastMousePositionDuringMovement = MousePosition;
 
             }
 
@@ -586,7 +588,6 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             AvoidEndlessVerticalScrolling();
 
-//            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, ScreenOffsetX, ScreenOffsetY));
             MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
 
             #region Send MapViewChanged events

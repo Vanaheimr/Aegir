@@ -21,10 +21,15 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+
+using eu.Vanaheimr.Illias.Commons;
+using eu.Vanaheimr.Illias.Commons.Collections;
 
 #endregion
 
@@ -37,12 +42,37 @@ namespace eu.Vanaheimr.Aegir.Tiles
     public class MapTilesProvider
     {
 
+        public class TileJob
+        {
+
+            public UInt32 ZoomLevel { get; private set; }
+            public UInt32 X { get; private set; }
+            public UInt32 Y { get; private set; }
+
+            public TileJob(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
+            {
+                this.ZoomLevel = ZoomLevel;
+                this.X = X;
+                this.Y = Y;
+            }
+
+            public override int GetHashCode()
+            {
+                return (ZoomLevel.ToString()+X.ToString()+Y.ToString()).GetHashCode();
+            }
+
+        }
+
         #region Data
 
         /// <summary>
         /// The stored tiles.
         /// </summary>
-        protected Byte[][][][] TileCache;
+        protected MemoryStream[][][] TileCache;
+
+        private ConcurrentDictionary<TileJob, Object> FetchIt;
+
+        private ConcurrentDictionary<String, String> UrlHashes;
 
         #endregion
 
@@ -195,7 +225,10 @@ namespace eu.Vanaheimr.Aegir.Tiles
             else
                 this.Hosts = new List<String>();
 
-            TileCache = new Byte[23][][][];
+            TileCache = new MemoryStream[23][][];
+
+            this.FetchIt = new ConcurrentDictionary<TileJob, Object>();
+            this.UrlHashes = new ConcurrentDictionary<String, String>();
 
         }
 
@@ -213,79 +246,90 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="X">The tile x-value.</param>
         /// <param name="Y">The tile y-value.</param>
         /// <returns>A stream containing the tile.</returns>
-        public virtual Task<Tuple<Byte[], Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
+        public virtual Task<Tuple<MemoryStream, Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
         {
 
-            return Task.Factory.StartNew<Tuple<Byte[], Object>>(Data => {
+            MemoryStream[] YCache = null;
 
-                var _ZoomLevel = (Data as Tuple<UInt32, UInt32, UInt32, Object>).Item1;
-                var _X         = (Data as Tuple<UInt32, UInt32, UInt32, Object>).Item2;
-                var _Y         = (Data as Tuple<UInt32, UInt32, UInt32, Object>).Item3;
+            var XCache = TileCache[ZoomLevel];
 
-                Byte[][] YCache = null;
+            if (XCache == null)
+                XCache = TileCache[ZoomLevel] = new MemoryStream[(Int32) Math.Pow(2, ZoomLevel)][];
 
-                var XCache = TileCache[_ZoomLevel];
+            YCache = XCache[X];
 
-                if (XCache == null)
-                    XCache = TileCache[_ZoomLevel] = new Byte[(Int32) Math.Pow(2, _ZoomLevel)][][];
+            if (YCache == null)
+                YCache = XCache[X] = new MemoryStream[(Int32) Math.Pow(2, ZoomLevel)];
 
+            if (YCache[Y] == null)
+            {
 
-                try
-                {
+                YCache[Y] = new MemoryStream();
 
-                    YCache = XCache[_X];
+                var Urls = Hosts.Select(Host => Host + UriPattern.Replace("{zoom}", ZoomLevel.ToString()).
+                                                                  Replace("{x}",    X.        ToString()).
+                                                                  Replace("{y}",    Y.        ToString())).ToArray();
 
-                    if (YCache == null)
-                        YCache = XCache[_X] = new Byte[(Int32) Math.Pow(2, _ZoomLevel)][];
+                #region Fetch Tiles
 
+                return Task.Factory.StartNew<Tuple<MemoryStream, Object>>(Data => {
 
-                    if (YCache[_Y] == null)
+                    var _Urls          = (Data as Tuple<String[], MemoryStream, Object>).Item1;
+                    var _MemoryStream  = (Data as Tuple<String[], MemoryStream, Object>).Item2;
+                    var _State         = (Data as Tuple<String[], MemoryStream, Object>).Item3;
+                    var TileBytes      = new Byte[0];
+
+                    foreach (var Url in _Urls)
+                    {
+
+                        try
                         {
-         //                   YCache[_Y] = new Byte[0];
 
-                            foreach (var ActualHost in Hosts)
-                            {
+                            TileBytes = new WebClient() { Proxy = null }.
+                                DownloadData(Url);
 
-                                var _Url = ActualHost +
-                                            UriPattern.Replace("{zoom}", _ZoomLevel.ToString()).
-                                                       Replace("{x}",    _X.ToString()).
-                                                       Replace("{y}",    _Y.ToString());
+                            Debug.WriteLine("Fetched: " + Url);
 
-                                //Debug.WriteLine("Fetching: " + _Url);
+                            break;
 
-                                try
-                                {
+                        }
+                        catch (Exception e)
+                        {
 
-                                    YCache[_Y] = new WebClient() { Proxy = null }.
-                                        DownloadData(_Url);
+                            Debug.WriteLine("MapTilesProvider Exception: " + e);
 
-                                }
-                                catch (Exception e)
-                                {
-
-                                    Debug.WriteLine("MapTilesProvider Exception: " + e);
-
-                                    // Try next host...
-                                    continue;
-
-                                }
-
-                                Debug.WriteLine("Fetched: " + _Url);
-                                break;
-
-                            }
+                            // Try next host...
+                            continue;
 
                         }
 
-                    return new Tuple<Byte[], Object>(YCache[_Y], State);
+                    }
 
-                }
-                catch (IndexOutOfRangeException e)
-                {
-                    return null;
-                }
+                    _MemoryStream.Write(TileBytes, 0, TileBytes.Length);
 
-            }, new Tuple<UInt32, UInt32, UInt32, Object>(ZoomLevel, X, Y, State));
+                    return new Tuple<MemoryStream, Object>(_MemoryStream, _State);
+
+                    },
+                    new Tuple<String[], MemoryStream, Object>(Urls, YCache[Y], State),
+                    TaskCreationOptions.AttachedToParent);
+
+                #endregion
+
+            }
+
+            else
+                return Task.Factory.StartNew<Tuple<MemoryStream, Object>>(Data => {
+
+                    var _MemoryStream  = (Data as Tuple<MemoryStream, Object>).Item1;
+                    var _State         = (Data as Tuple<MemoryStream, Object>).Item2;
+
+                    _MemoryStream.Seek(0, SeekOrigin.Begin);
+
+                    return new Tuple<MemoryStream, Object>(_MemoryStream, _State);
+
+                    },
+                    new Tuple<MemoryStream, Object>(YCache[Y], State),
+                    TaskCreationOptions.AttachedToParent);
 
         }
 

@@ -176,6 +176,10 @@ namespace eu.Vanaheimr.Aegir
 
         //#endregion
 
+        public virtual void Move(Double X, Double Y)
+        {
+        }
+
         #region (virtual) Redraw()
 
         /// <summary>

@@ -266,7 +266,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
         /// <returns>The requested tile as an array of bytes.</returns>
-        public Task<Tuple<Byte[], Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
+        public Task<Tuple<MemoryStream, Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
         {
             return CurrentProvider.GetTile(ZoomLevel, X, Y, State);
         }
@@ -284,7 +284,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
         /// <returns>The requested tile as an array of bytes.</returns>
-        public Task<Tuple<Byte[], Object>> GetTile(String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
+        public Task<Tuple<MemoryStream, Object>> GetTile(String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
         {
 
             MapTilesProvider MapProvider = null;
