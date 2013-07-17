@@ -24,6 +24,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -31,9 +32,9 @@ namespace eu.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// An abstract map provider.
+    /// A map tiles provider.
     /// </summary>
-    public abstract class AMapProvider : IMapProvider
+    public class MapTilesProvider
     {
 
         #region Data
@@ -47,10 +48,10 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Properties
 
-        #region Name
+        #region Id
 
         /// <summary>
-        /// The unique name of this map provider.
+        /// The unique identification of this map provider.
         /// </summary>
         public String Id
         {
@@ -158,12 +159,12 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Constructor(s)
 
-        #region AMapProvider(Name, Description, Copyright, IsMemoryCacheable, MemoryCacheEnabled, UriPattern, Hosts = null)
+        #region MapTilesProvider(Id, Description, Copyright, IsMemoryCacheable, MemoryCacheEnabled, UriPattern, Hosts = null)
 
         /// <summary>
         /// Creates an abstract map provider.
         /// </summary>
-        /// <param name="Name">The unique name of this map provider.</param>
+        /// <param name="Id">The unique name of this map provider.</param>
         /// <param name="Description">The description of this map provider.</param>
         /// <param name="InfoUri">An Uri to retrieve more information on this map provider.</param>
         /// <param name="Copyright">Copyright information on the content provided by this map provider.</param>
@@ -171,17 +172,17 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="MemoryCacheEnabled">Whether the memory cache is in use or not.</param>
         /// <param name="UriPattern">The Uri pattern of this map provider. This hase to contain placeholders for "zoom", "x" and "y".</param>
         /// <param name="Hosts">An enumeration of all hosts serving this mapping service.</param>
-        public AMapProvider(String              Name,
-                            String              Description,
-                            String              InfoUri,
-                            String              Copyright,
-                            Boolean             IsMemoryCacheable,
-                            Boolean             MemoryCacheEnabled,
-                            String              UriPattern,
-                            IEnumerable<String> Hosts = null)
+        public MapTilesProvider(String               Id,
+                                String               Description,
+                                String               InfoUri,
+                                String               Copyright,
+                                Boolean              IsMemoryCacheable,
+                                Boolean              MemoryCacheEnabled,
+                                String               UriPattern,
+                                IEnumerable<String>  Hosts = null)
         {
 
-            this.Id               = Name;
+            this.Id                 = Id;
             this.Description        = Description;
             this.InfoUri            = InfoUri;
             this.Copyright          = Copyright;
@@ -212,92 +213,80 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="X">The tile x-value.</param>
         /// <param name="Y">The tile y-value.</param>
         /// <returns>A stream containing the tile.</returns>
-        public virtual Byte[] GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
+        public virtual Task<Tuple<Byte[], Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
         {
 
-            Byte[][] YCache = null;
-            var ThreadZoomLevel = new ThreadLocal<UInt32>(() => ZoomLevel);
-            var ThreadX         = new ThreadLocal<UInt32>(() => X);
-            var ThreadY         = new ThreadLocal<UInt32>(() => Y);
+            return Task.Factory.StartNew<Tuple<Byte[], Object>>(Data => {
 
-            var XCache = TileCache[ThreadZoomLevel.Value];
-            if (XCache == null)
-            {
-                XCache                     = new Byte[(Int32) Math.Pow(2, ThreadZoomLevel.Value)][][];
-                TileCache[ThreadZoomLevel.Value] = XCache;
-            }
+                var _ZoomLevel = (Data as Tuple<UInt32, UInt32, UInt32, Object>).Item1;
+                var _X         = (Data as Tuple<UInt32, UInt32, UInt32, Object>).Item2;
+                var _Y         = (Data as Tuple<UInt32, UInt32, UInt32, Object>).Item3;
 
-            try
-            {
+                Byte[][] YCache = null;
 
-                YCache = XCache[ThreadX.Value];
+                var XCache = TileCache[_ZoomLevel];
 
-                if (YCache == null)
-                {
-                    YCache                = new Byte[(Int32) Math.Pow(2, ThreadZoomLevel.Value)][];
-                    XCache[ThreadX.Value] = YCache;
-                }
+                if (XCache == null)
+                    XCache = TileCache[_ZoomLevel] = new Byte[(Int32) Math.Pow(2, _ZoomLevel)][][];
 
-                if (YCache[ThreadY.Value] == null)
+
+                try
                 {
 
-                    foreach (var ActualHost in Hosts)
-                    {
+                    YCache = XCache[_X];
 
-                        var _Url = ActualHost +
-                                   UriPattern.Replace("{zoom}", ThreadZoomLevel.ToString()).
-                                              Replace("{x}",            ThreadX.ToString()).
-                                              Replace("{y}",            ThreadY.ToString());
+                    if (YCache == null)
+                        YCache = XCache[_X] = new Byte[(Int32) Math.Pow(2, _ZoomLevel)][];
 
-                        //Debug.WriteLine("Fetching: " + _Url);
 
-                        try
+                    if (YCache[_Y] == null)
                         {
-                            var WebClient = new WebClient();
-                            WebClient.Proxy = null;
-                            YCache[ThreadY.Value] = WebClient.DownloadData(_Url);
+         //                   YCache[_Y] = new Byte[0];
+
+                            foreach (var ActualHost in Hosts)
+                            {
+
+                                var _Url = ActualHost +
+                                            UriPattern.Replace("{zoom}", _ZoomLevel.ToString()).
+                                                       Replace("{x}",    _X.ToString()).
+                                                       Replace("{y}",    _Y.ToString());
+
+                                //Debug.WriteLine("Fetching: " + _Url);
+
+                                try
+                                {
+
+                                    YCache[_Y] = new WebClient() { Proxy = null }.
+                                        DownloadData(_Url);
+
+                                }
+                                catch (Exception e)
+                                {
+
+                                    Debug.WriteLine("MapTilesProvider Exception: " + e);
+
+                                    // Try next host...
+                                    continue;
+
+                                }
+
+                                Debug.WriteLine("Fetched: " + _Url);
+                                break;
+
+                            }
+
                         }
-                        catch (Exception e)
-                        {
 
-                            Debug.WriteLine("AMapProvider Exception: " + e);
-                        
-                            // Try next host...
-                            continue;
-
-                        }
-
-                        Debug.WriteLine("Fetched: " + _Url);
-                        break;
-
-                    }
+                    return new Tuple<Byte[], Object>(YCache[_Y], State);
 
                 }
+                catch (IndexOutOfRangeException e)
+                {
+                    return null;
+                }
 
-                return YCache[ThreadY.Value];
+            }, new Tuple<UInt32, UInt32, UInt32, Object>(ZoomLevel, X, Y, State));
 
-            }
-            catch (IndexOutOfRangeException)
-            {
-                return null;
-            }
-
-        }
-
-        #endregion
-
-        #region (virtual) GetTileStream(ZoomLevel, X, Y)
-
-        /// <summary>
-        /// Return the tile for the given ZoomLevel, X and Y coordinates.
-        /// </summary>
-        /// <param name="ZoomLevel">The zoom level.</param>
-        /// <param name="X">The tile x-value.</param>
-        /// <param name="Y">The tile y-value.</param>
-        /// <returns>A stream containing the tile.</returns>
-        public virtual Stream GetTileStream(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
-        {
-            return new MemoryStream(GetTile(ZoomLevel, X, Y));
         }
 
         #endregion

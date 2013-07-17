@@ -51,7 +51,7 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// </summary>
         /// <param name="Layer">A map layer.</param>
         /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
-        public void AddLayer(IMapLayer Layer, Visibility Visibility = Visibility.Visible)
+        public void AddLayer(AMapLayer Layer, Visibility Visibility = Visibility.Visible)
         {
 
             #region Initial checks
@@ -71,7 +71,7 @@ namespace eu.Vanaheimr.Aegir.Controls
                 throw new ApplicationException("The MapControl of the 'Layer' must be set!");
 
             #endregion
-            
+
             var Checkbox = new CheckBox();
             Checkbox.Content   = Layer.Id;
             Checkbox.IsChecked = Visibility == Visibility.Visible;

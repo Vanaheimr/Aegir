@@ -34,6 +34,9 @@ using System.Windows.Threading;
 using eu.Vanaheimr.Illias.Commons;
 using eu.Vanaheimr.Aegir.Tiles;
 using eu.Vanaheimr.Aegir.Controls;
+using System.Collections.Generic;
+using System.Threading;
+using System.Diagnostics;
 
 
 #endregion
@@ -52,9 +55,13 @@ namespace eu.Vanaheimr.Aegir
         /// <summary>
         /// An internal collection of all reflected map providers.
         /// </summary>
-        private AutoDiscovery<IMapProvider> MapProviders;
+//        private AutoDiscovery<IMapTilesProvider> MapProviders;
 
         private readonly ConcurrentStack<Image> TilesOnMap;
+
+        private Object LockObject;
+
+        private UInt64 CurrentVersion = 0;
 
         #endregion
 
@@ -66,23 +73,21 @@ namespace eu.Vanaheimr.Aegir
         /// The TileClient to use for fetching the
         /// map tiles from the image providers.
         /// </summary>
-        public IAegirTilesClient TileClient { get; set; }
+        public AegirTilesClient TileClient { get; set; }
 
         #endregion
 
         #region MapProvider
-
-        private String CurrentMapProvider;
 
         /// <summary>
         /// The map tiles provider for this map.
         /// </summary>
         public String MapProvider
         {
-            
+
             get
             {
-                return CurrentMapProvider;
+                return this.TileClient.CurrentProviderId;
             }
 
             set
@@ -91,14 +96,14 @@ namespace eu.Vanaheimr.Aegir
                 if (value != null && value != "")
                 {
 
-                    var OldMapProvider = CurrentMapProvider;
+                    var OldMapProvider = this.TileClient.CurrentProviderId;
 
-                    CurrentMapProvider = value;
+                    this.TileClient.CurrentProviderId = value;
 
                     Redraw();
 
                     if (MapProviderChanged != null)
-                        MapProviderChanged(this, OldMapProvider, CurrentMapProvider);
+                        MapProviderChanged(this, OldMapProvider, this.TileClient.CurrentProviderId);
 
                 }
 
@@ -132,18 +137,18 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region TilesLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region TilesLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing a map based of tiles.
         /// </summary>
-        public TilesLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
-            : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        public TilesLayer(String Id, MapControl MapControl, Int32 ZIndex)
+            : base(Id, MapControl, ZIndex)
         {
 
+            this.LockObject         = new Object();
             this.Background         = new SolidColorBrush(Colors.Transparent);
             this.TilesOnMap         = new ConcurrentStack<Image>();
-            this.CurrentMapProvider = eu.Vanaheimr.Aegir.Tiles.ArcGIS_WorldImagery_Provider.Name;
 
             #region Register mouse events
 
@@ -154,34 +159,41 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
+            this.SizeChanged += (s, o) => Redraw();
+
             #region Find map providers and add context menu
 
             this.ContextMenu = new ContextMenu();
 
             // Find map providers via reflection
-            MapProviders = new AutoDiscovery<IMapProvider>(Autostart: true,
-                                                           IdentificatorFunc: (MapProviderClass) => MapProviderClass.Id);
+            //MapProviders = 
+            //    //new AutoDiscovery<IMapTilesProvider>(Autostart: true,
+            //    //                                                IdentificatorFunc: (MapProviderClass) => MapProviderClass.Id);
 
-            // Add all map providers to the mapping canvas context menu
-            foreach (var _MapProvider in MapProviders.RegisteredNames)
-            {
+            //// Add all map providers to the mapping canvas context menu
+            //foreach (var _MapProvider in MapProviders.RegisteredNames)
+            //{
 
-                var _MapProviderMenuItem = new MenuItem()
-                {
-                    Header = _MapProvider,
-                    HeaderStringFormat = _MapProvider,
-                    IsCheckable = true
-                };
+            //    var _MapProviderMenuItem = new MenuItem()
+            //    {
+            //        Header = _MapProvider,
+            //        HeaderStringFormat = _MapProvider,
+            //        IsCheckable = true
+            //    };
 
-                _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
+            //    _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
 
-                this.ContextMenu.Items.Add(_MapProviderMenuItem);
+            //    this.ContextMenu.Items.Add(_MapProviderMenuItem);
 
-            }
+            //}
 
-            ChangeMapProvider(MapProvider);
+            //ChangeMapProvider(MapProvider);
 
             #endregion
+
+
+            this.TileClient = new AegirTilesClient();
+            this.TileClient.Register(new OSMProvider());
 
         }
 
@@ -251,16 +263,15 @@ namespace eu.Vanaheimr.Aegir
         public override Boolean Redraw()
         {
 
-            if (this.IsVisible && !IsCurrentlyPainting)
+            if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
             {
 
-                IsCurrentlyPainting = true;
-
-                if (!DesignerProperties.GetIsInDesignMode(this))
+                if (Monitor.TryEnter(LockObject))
                 {
 
-                    if (this.TileClient == null)
-                        this.TileClient = new AegirTilesClient();
+                    CurrentVersion++;
+
+                    Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
 
                     #region Collect old tiles for deletion
 
@@ -271,15 +282,17 @@ namespace eu.Vanaheimr.Aegir
 
                     #region Paint new map as background task
 
-                    Task.Factory.StartNew(() => {
+                    //Task.Factory.StartNew(() =>
+                    //{
 
-                        var _NumberOfXTiles = (Int32) Math.Floor(base.ActualWidth  / 256);
-                        var _NumberOfYTiles = (Int32) Math.Floor(base.ActualHeight / 256);
-                        var _NumberOfTiles  = (Int32) Math.Pow(2, ZoomLevel);
-                        var ___x = (Int32) ScreenOffsetX % (_NumberOfTiles * 256) / 256;
-                        var ___y = (Int32) ScreenOffsetY % (_NumberOfTiles * 256) / 256;
+                        var _NumberOfXTiles = (Int32)Math.Floor(base.ActualWidth / 256);
+                        var _NumberOfYTiles = (Int32)Math.Floor(base.ActualHeight / 256);
+                        var _NumberOfTiles  = (Int32)Math.Pow(2, this.MapControl.ZoomLevel);
+                        var ___x = (Int32)this.MapControl.ScreenOffsetX % (_NumberOfTiles * 256) / 256;
+                        var ___y = (Int32)this.MapControl.ScreenOffsetY % (_NumberOfTiles * 256) / 256;
+                        var ListOfTasks = new List<Task>();
 
-                        Parallel.For(-1, _NumberOfXTiles + 2, _x =>
+                        for (var _x = -1; _x < _NumberOfXTiles + 2; _x++)
                         {
 
                             Int32 _ActualXTile;
@@ -288,70 +301,44 @@ namespace eu.Vanaheimr.Aegir
                             _ActualXTile = ((_x - ___x) % _NumberOfTiles);
                             if (_ActualXTile < 0) _ActualXTile += _NumberOfTiles;
 
-                            Parallel.For(-1, _NumberOfYTiles + 2, _y => 
+                            for (var _y = -1; _y < _NumberOfYTiles + 2; _y++)
                             {
 
-                                _ActualYTile = (Int32) ((_y - ___y) % _NumberOfTiles);
+                                _ActualYTile = (Int32)((_y - ___y) % _NumberOfTiles);
                                 if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
 
-                                var _Tile = TileClient.GetTile(MapProvider, ZoomLevel, (UInt32) _ActualXTile, (UInt32) _ActualYTile);
+                                ListOfTasks.Add(TileClient.GetTile(this.MapControl.ZoomLevel,
+                                                                   (UInt32)_ActualXTile,
+                                                                   (UInt32)_ActualYTile,
+                                                                   new Tuple<Int64, Int64, UInt64>(
+                                                                       this.MapControl.ScreenOffsetX % 256 + _x * 256,
+                                                                       this.MapControl.ScreenOffsetY % 256 + _y * 256,
+                                                                       CurrentVersion)).
 
-                                if (_Tile != null)
-                                {
+                                    ContinueWith(TileTask => PaintTile(TileTask.Result.Item1,
+                                                                        (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item1,
+                                                                        (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item2,
+                                                                        (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item3)));
 
-                                    var _BitmapImage = new BitmapImage();
-                                    _BitmapImage.BeginInit();
-                                    _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
-                                    _BitmapImage.StreamSource = new MemoryStream(_Tile);
-                                    _BitmapImage.EndInit();
-                                    _BitmapImage.Freeze(); // To allow access from UI thread!
+                            }
 
-                                    this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)((_ImageSource) =>
-                                    {
+                        }
 
-                                        try
-                                        {
+                        Task.Factory.ContinueWhenAll(ListOfTasks.ToArray(), (jj) =>
 
-                                            var _Image = new Image()
-                                            {
-                                                Stretch = Stretch.Uniform,
-                                                Source = _ImageSource as ImageSource,
-                                                Width = (_ImageSource as BitmapImage).PixelWidth
-                                            };
-
-                                            //_Image
-
-                                            this.Children.Add(_Image);
-                                            TilesOnMap.Push(_Image);
-
-                                            Canvas.SetLeft(_Image, ScreenOffsetX % 256 + _x * 256);
-                                            Canvas.SetTop (_Image, ScreenOffsetY % 256 + _y * 256);
-
-                                        }
-                                        catch (NotSupportedException)
-                                        {
-                                        }
-
-                                    }), _BitmapImage as ImageSource);
-
-                                }
-
-                            });
-
-                        });
-
-                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
+                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+                        {
                             foreach (var Image in OldTilesToDelete)
                                 this.Children.Remove(Image);
-                            }));
+                        })));
 
-                    });
+                   // });
 
                     #endregion
 
-                }
+                    Monitor.Exit(LockObject);
 
-                IsCurrentlyPainting = false;
+                }
 
                 return true;
 
@@ -362,6 +349,57 @@ namespace eu.Vanaheimr.Aegir
         }
 
         #endregion
+
+
+
+        private void PaintTile(Byte[] Tile, Int64 ScreenX, Int64 ScreenY, UInt64 PaintingVersion)
+        {
+
+            if (Tile == null || Tile.Length == 0)
+                return;
+
+            if (PaintingVersion < CurrentVersion)
+                return;
+
+            var _BitmapImage = new BitmapImage();
+            _BitmapImage.BeginInit();
+            _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
+            _BitmapImage.StreamSource = new MemoryStream(Tile);
+            _BitmapImage.EndInit();
+            _BitmapImage.Freeze(); // To allow access from UI thread!
+
+            //ScreenX = 100;
+            //ScreenY = 100;
+
+            this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)(_ImageSource =>
+            {
+
+                try
+                {
+
+                    var _Image = new Image() {
+                      //  Stretch = Stretch.Uniform,
+                        Source  = _ImageSource as ImageSource,
+                        Width   = 256,
+                        Height  = 256,//(_ImageSource as BitmapImage).PixelWidth
+                        DataContext = PaintingVersion
+                    };
+
+                    //_Image
+                    this.Children.Add(_Image);
+                    TilesOnMap.Push(_Image);
+
+                    Canvas.SetLeft(_Image, ScreenX);
+                    Canvas.SetTop (_Image, ScreenY);
+
+                }
+                catch (NotSupportedException)
+                {
+                }
+
+            }), _BitmapImage);
+
+        }
 
 
     }

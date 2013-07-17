@@ -30,10 +30,13 @@ namespace eu.Vanaheimr.Aegir.Tiles
     /// <summary>
     /// The common interface for all Aegir tiles servers.
     /// </summary>
-    public interface IAegirTilesServer : IAegirTilesClient
+    public interface IAegirTilesServer
     {
 
-        
+        IEnumerable<String> RegisteredMapProviderIds { get; }
+
+        IDictionary<String, IMapTilesProvider> RegisteredMapProviders { get; }
+
     }
 
 }

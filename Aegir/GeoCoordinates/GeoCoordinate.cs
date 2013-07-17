@@ -170,7 +170,7 @@ namespace eu.Vanaheimr.Aegir
         /// <summary>
         /// The Latitude (south to nord).
         /// </summary>
-        public Latitude Latitude { get; private set; }
+        public Latitude     Latitude    { get; private set; }
 
         #endregion
 
@@ -179,7 +179,16 @@ namespace eu.Vanaheimr.Aegir
         /// <summary>
         /// The Longitude (parallel to equator).
         /// </summary>
-        public Longitude Longitude { get; private set; }
+        public Longitude    Longitude   { get; private set; }
+
+        #endregion
+
+        #region Altitude
+
+        /// <summary>
+        /// The Altitude.
+        /// </summary>
+        public Altitude     Altitude    { get; private set; }
 
         #endregion
 
@@ -195,6 +204,20 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="Latitude">The Latitude (south to nord).</param>
         /// <param name="Longitude">The Longitude (parallel to equator).</param>
         public GeoCoordinate(Latitude Latitude, Longitude Longitude)
+            : this(Latitude, Longitude, new Altitude(0))
+        { }
+
+        #endregion
+
+        #region GeoCoordinate(Latitude, Longitude, Altitude)
+
+        /// <summary>
+        /// Create a new geographical coordinate or position on a map.
+        /// </summary>
+        /// <param name="Latitude">The Latitude (south to nord).</param>
+        /// <param name="Longitude">The Longitude (parallel to equator).</param>
+        /// <param name="Altitude">The Altitude.</param>
+        public GeoCoordinate(Latitude Latitude, Longitude Longitude, Altitude Altitude)
         {
 
             #region Initial checks
@@ -213,8 +236,9 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
-            this.Latitude  = Latitude;
-            this.Longitude = Longitude;
+            this.Latitude   = Latitude;
+            this.Longitude  = Longitude;
+            this.Altitude   = Altitude;
 
         }
 

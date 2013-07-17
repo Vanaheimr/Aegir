@@ -38,19 +38,16 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region ShapeLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region ShapeLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing map features.
         /// </summary>
         /// <param name="Name">The identification string of this feature layer.</param>
-        /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public ShapeLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
-            : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        public ShapeLayer(String Id, MapControl MapControl, Int32 ZIndex)
+            : base(Id, MapControl, ZIndex)
         {
 
             #region Register mouse events
@@ -76,7 +73,7 @@ namespace eu.Vanaheimr.Aegir
 
             // The position and size on the map will be set within the PaintMap() method!
             this.Children.Add(AShape);
-            AShape.ZoomLevel = ZoomLevel;
+            AShape.ZoomLevel = this.MapControl.ZoomLevel;
 
             return AShape;
 
@@ -91,7 +88,7 @@ namespace eu.Vanaheimr.Aegir
         public Feature AddPath(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
         {
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
+            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, this.MapControl.ZoomLevel);
 
             var PathGeometry1 = PathGeometry.Parse("M51,42c-5-4-11-7-19-7c-6,0-12,1-20,5l10-35c20-8,30-4,39,2l-10,35z");
             var PathGeometry2 = PathGeometry.Parse("M106,13c-21,9-31,4-40-2l-10,35c9,6,20,11,40,2l10-35z");
@@ -153,10 +150,10 @@ namespace eu.Vanaheimr.Aegir
                     this.Children.
                          ForEach<GeoShape>(AShape => {
 
-                            AShape.ZoomLevel = ZoomLevel;
+                            AShape.ZoomLevel = this.MapControl.ZoomLevel;
 
-                            Canvas.SetLeft(AShape, ScreenOffsetX + (Int64) AShape.OnScreenUpperLeft.X);
-                            Canvas.SetTop (AShape, ScreenOffsetY + (Int64) AShape.OnScreenLowerRight.Y);
+                            Canvas.SetLeft(AShape, this.MapControl.ScreenOffsetX + (Int64) AShape.OnScreenUpperLeft.X);
+                            Canvas.SetTop (AShape, this.MapControl.ScreenOffsetY + (Int64) AShape.OnScreenLowerRight.Y);
 
                             AShape.Width  = AShape.OnScreenWidth;
                             AShape.Height = AShape.OnScreenHeight;

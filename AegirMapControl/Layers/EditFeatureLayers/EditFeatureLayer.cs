@@ -40,19 +40,16 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region EditFeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region EditFeatureLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new edit feature layer for adding, editing and visualizing map features.
         /// </summary>
         /// <param name="Name">The identification string of this feature layer.</param>
-        /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public EditFeatureLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
-            : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        public EditFeatureLayer(String Id, MapControl MapControl, Int32 ZIndex)
+            : base(Id, MapControl, ZIndex)
         {
 
             this.Background = new SolidColorBrush(Colors.Transparent);
@@ -112,9 +109,11 @@ namespace eu.Vanaheimr.Aegir
             
             var Mouse = MouseEventArgs.GetPosition(this);
 
-            AddFeature("jfgdh", GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.ScreenOffsetX,
-                                                                         Mouse.Y - this.ScreenOffsetY,
-                                                                         this.ZoomLevel), 5, 5, Colors.Blue);
+            AddFeature("jfgdh", GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.MapControl.ScreenOffsetX,
+                                                                         Mouse.Y - this.MapControl.ScreenOffsetY,
+                                                                         this.MapControl.ZoomLevel),
+                                                                         5, 5,
+                                                                         Colors.Blue);
 
             Redraw();
 

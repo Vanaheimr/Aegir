@@ -40,19 +40,16 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region HeatmapLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region HeatmapLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing a heatmap.
         /// </summary>
         /// <param name="Name">The identification string of this feature layer.</param>
-        /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public HeatmapLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
-            : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        public HeatmapLayer(String Id, MapControl MapControl, Int32 ZIndex)
+            : base(Id, MapControl, ZIndex)
         {
 
             #region Register mouse events
@@ -63,7 +60,7 @@ namespace eu.Vanaheimr.Aegir
             this.MouseWheel                 += MapControl.ProcessMouseWheel;
 
             #endregion
-        
+
         }
 
         #endregion
@@ -88,7 +85,7 @@ namespace eu.Vanaheimr.Aegir
             radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
             radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoordinate.Latitude, GeoCoordinate.Longitude, ZoomLevel);
+            var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoordinate.Latitude, GeoCoordinate.Longitude, this.MapControl.ZoomLevel);
 
             var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
             Feature.Id               = Id;

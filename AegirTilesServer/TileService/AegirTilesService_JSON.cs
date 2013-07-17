@@ -130,8 +130,8 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// </example>
         public HTTPResponse ShowMapProviderInformation(String Provider)
         {
-            
-            IMapProvider _MapProvider;
+
+            IMapTilesProvider _MapProvider;
 
             if (TilesServer.RegisteredMapProviders.TryGetValue(Provider, out _MapProvider))
             {

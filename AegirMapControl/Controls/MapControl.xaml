@@ -16,18 +16,25 @@
         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
             <Grid Name="LayerGrid">
 
-                <Canvas Name="BackgroundLayer" ClipToBounds="True" SnapsToDevicePixels="True" Panel.ZIndex="-100" Background="Transparent"
-                          PreviewMouseMove           = "ProcessMouseMove"
-                          MouseLeftButtonDown        = "ProcessMouseLeftButtonDown"
-                          PreviewMouseLeftButtonDown = "ProcessMouseLeftDoubleClick"
-                          MouseWheel                 = "ProcessMouseWheel">
+                <Canvas Name                        = "BackgroundLayer"
+                        ClipToBounds                = "True"
+                        SnapsToDevicePixels         = "True"
+                        Panel.ZIndex                = "-100"
+                        Background                  = "Transparent"
+                        PreviewMouseMove            = "ProcessMouseMove"
+                        MouseLeftButtonDown         = "ProcessMouseLeftButtonDown"
+                        PreviewMouseLeftButtonDown  = "ProcessMouseLeftDoubleClick"
+                        MouseWheel                  = "ProcessMouseWheel">
                 </Canvas>
 
-                <Canvas Name="ForegroundLayer" ClipToBounds="True" SnapsToDevicePixels="True" Panel.ZIndex="100"
-                          PreviewMouseMove           = "ProcessMouseMove"
-                          MouseLeftButtonDown        = "ProcessMouseLeftButtonDown"
-                          PreviewMouseLeftButtonDown = "ProcessMouseLeftDoubleClick"
-                          MouseWheel                 = "ProcessMouseWheel">
+                <Canvas Name                        = "ForegroundLayer"
+                        ClipToBounds                = "True"
+                        SnapsToDevicePixels         = "True"
+                        Panel.ZIndex                = "100"
+                        PreviewMouseMove            = "ProcessMouseMove"
+                        MouseLeftButtonDown         = "ProcessMouseLeftButtonDown"
+                        PreviewMouseLeftButtonDown  = "ProcessMouseLeftDoubleClick"
+                        MouseWheel                  = "ProcessMouseWheel">
 
                     <Canvas.Resources>
                         <ControlTemplate x:Key="ZoomButtonTemplate" TargetType="{x:Type Button}">
@@ -63,7 +70,7 @@
                     <Button Name="ZoomOutButton" Height="23" Width="23" Content="-" Canvas.Left="5" Canvas.Top="38" Canvas.ZIndex="99" Click="ZoomOutButton_Click" Template="{StaticResource ZoomButtonTemplate}" />
 
                     <AegirControls:LayerPanel x:Name="LayerPanel1" Title="Map Layers" Width="150" Canvas.Right="7" Canvas.Top="10" />
-                    
+
                 </Canvas>
 
             </Grid>

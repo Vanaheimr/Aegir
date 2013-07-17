@@ -26,9 +26,9 @@ namespace eu.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
-    /// An Open Street Map Provider
+    /// An ArcGIS WorldImagery provider
     /// </summary>
-    public class OSMProvider : AMapProvider
+    public class ArcGIS_WorldImagery_Provider : MapTilesProvider
     {
 
         #region Data
@@ -36,26 +36,26 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// The well-known name for this map provider.
         /// </summary>
-        public static String Name = "OSM";
+        public static String Name = "ArcGIS_WorldImagery";
 
         #endregion
 
         #region Constructor(s)
 
-        #region OSMProvider()
+        #region ArcGIS_WorldImagery_Provider()
 
         /// <summary>
-        /// Creates a new OpenStreetMap map provider.
+        /// Creates a new ArcGIS WorldImagery provider.
         /// </summary>
-        public OSMProvider()
-            : base(Name:               Name,
-                   Description:        "OpenStreetMap maps",
-                   InfoUri:            "",
-                   Copyright:          "CC",
+        public ArcGIS_WorldImagery_Provider()
+            : base(Id:               Name,
+                   Description:        "ArcGIS WorldImagery",
+                   InfoUri:            "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+                   Copyright:          "",
                    IsMemoryCacheable:  true,
                    MemoryCacheEnabled: true,
-                   UriPattern:         "/{zoom}/{x}/{y}.png",
-                   Hosts:              new String[1] { "http://tile.openstreetmap.org" })
+                   UriPattern:         "/ArcGIS/rest/services/World_Imagery/MapServer/tile/{zoom}/{y}/{x}",
+                   Hosts:              new String[1] { "http://server.arcgisonline.com" })
         { }
 
         #endregion

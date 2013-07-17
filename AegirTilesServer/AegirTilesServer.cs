@@ -41,10 +41,10 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Data
 
-        private readonly AutoDiscovery<IMapProvider> AutoMapProviders;
+        private readonly AutoDiscovery<IMapTilesProvider> AutoMapProviders;
 
         #endregion
-        
+
         #region Properties
 
         #region DefaultServerName
@@ -84,7 +84,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// Return an enumeration of all registered map providers.
         /// </summary>
-        public IDictionary<String, IMapProvider> RegisteredMapProviders
+        public IDictionary<String, IMapTilesProvider> RegisteredMapProviders
         {
             get
             {
@@ -109,7 +109,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
+            AutoMapProviders = new AutoDiscovery<IMapTilesProvider>(true, Mapprovider => Mapprovider.Id);
 
             base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
@@ -129,7 +129,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
+            AutoMapProviders = new AutoDiscovery<IMapTilesProvider>(true, Mapprovider => Mapprovider.Id);
 
             base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
@@ -150,7 +150,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
+            AutoMapProviders = new AutoDiscovery<IMapTilesProvider>(true, Mapprovider => Mapprovider.Id);
 
             base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
@@ -170,7 +170,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         {
 
             ServerName       = DefaultServerName;
-            AutoMapProviders = new AutoDiscovery<IMapProvider>(true, Mapprovider => Mapprovider.Id);
+            AutoMapProviders = new AutoDiscovery<IMapTilesProvider>(true, Mapprovider => Mapprovider.Id);
 
             base.OnNewHTTPService += TilesService => { TilesService.TilesServer = this; };
 
@@ -194,7 +194,8 @@ namespace eu.Vanaheimr.Aegir.Tiles
         public Byte[] GetTile(String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y)
         {
 
-            IMapProvider _MapProvider = null;
+            IMapTilesProvider _MapProvider = null;
+
             if (AutoMapProviders.TryGetInstance(MapProviderId, out _MapProvider))
             {
                 return _MapProvider.GetTile(ZoomLevel, X, Y);

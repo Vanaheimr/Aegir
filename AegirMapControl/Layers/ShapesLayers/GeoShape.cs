@@ -325,7 +325,7 @@ namespace eu.Vanaheimr.Aegir
                 throw new ArgumentNullException("The given object must not be null!");
 
             // Check if the given object is a feature.
-            var Feature = Object as IFeature;
+            var Feature = Object as Feature;
             if ((Object) Feature == null)
                 throw new ArgumentException("The given object is not a map feature!");
 
@@ -359,7 +359,7 @@ namespace eu.Vanaheimr.Aegir
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Identifier">An object to compare with.</param>
-        public Int32 CompareTo(IFeature Feature)
+        public Int32 CompareTo(Feature Feature)
         {
 
             if ((Object) Feature == null)
@@ -389,7 +389,7 @@ namespace eu.Vanaheimr.Aegir
                 return false;
 
             // Check if the given object is a feature.
-            var Feature = Object as IFeature;
+            var Feature = Object as Feature;
             if ((Object) Feature == null)
                 return false;
 
@@ -425,7 +425,7 @@ namespace eu.Vanaheimr.Aegir
         /// </summary>
         /// <param name="FeatureLayer">A feature to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(IFeature Feature)
+        public Boolean Equals(Feature Feature)
         {
 
             if ((Object) Feature == null)

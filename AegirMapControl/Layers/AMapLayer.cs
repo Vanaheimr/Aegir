@@ -36,20 +36,15 @@ namespace eu.Vanaheimr.Aegir
     /// <summary>
     /// The base functionality of all map layers.
     /// </summary>
-    public abstract class AMapLayer : Canvas, IMapLayer
+    public abstract class AMapLayer : Canvas
     {
 
         #region Data
 
-        protected Int64  ScreenOffsetX;
-        protected Int64  ScreenOffsetY;
-        protected Int64  DrawingOffset_AtMovementStart_X;
-        protected Int64  DrawingOffset_AtMovementStart_Y;
+        protected          Double   LastClickPositionX;
+        protected          Double   LastClickPositionY;
 
-        protected Double LastClickPositionX;
-        protected Double LastClickPositionY;
-
-        protected volatile Boolean IsCurrentlyPainting;
+        protected volatile Boolean  IsCurrentlyPainting;
 
         #endregion
 
@@ -61,12 +56,6 @@ namespace eu.Vanaheimr.Aegir
         /// The identification string of this feature layer.
         /// </summary>
         public String Id { get; private set; }
-
-        #endregion
-
-        #region ZoomLevel
-
-        public UInt32 ZoomLevel { get; private set; }
 
         #endregion
 
@@ -104,29 +93,21 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region AMapLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region AMapLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing map features.
         /// </summary>
         /// <param name="Id">The name or identification of this feature layer.</param>
-        /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The hosting map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public AMapLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
+        public AMapLayer(String Id, MapControl MapControl, Int32 ZIndex)
             : this()
         {
 
-            this.Id            = Id;
-            this.ZoomLevel     = ZoomLevel;
-            this.ScreenOffsetX = ScreenOffsetX;
-            this.ScreenOffsetY = ScreenOffsetY;
-            this.MapControl    = MapControl;
-            this.ZIndex        = ZIndex;
-
-      //      this.MapControl.ZoomLevelChanged += (s, o, n) => SetZoomLevel(n);
+            this.Id          = Id;
+            this.MapControl  = MapControl;
+            this.ZIndex      = ZIndex;
 
         }
 
@@ -151,49 +132,49 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        #region ZoomTo(ZoomLevel, ScreenOffsetX, ScreenOffsetY)
+        //#region ZoomTo(ZoomLevel, ScreenOffsetX, ScreenOffsetY)
 
-        /// <summary>
-        /// Set the zoom level and screen offset of this map layer.
-        /// </summary>
-        /// <param name="ZoomLevel">The desired zoom level.</param>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        public IMapLayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY)
-        {
+        ///// <summary>
+        ///// Set the zoom level and screen offset of this map layer.
+        ///// </summary>
+        ///// <param name="ZoomLevel">The desired zoom level.</param>
+        ///// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
+        ///// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
+        //public AMapLayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY)
+        //{
 
-            this.ZoomLevel     = ZoomLevel;
-            this.ScreenOffsetX = ScreenOffsetX;
-            this.ScreenOffsetY = ScreenOffsetY;
+        //    //this.ZoomLevel      = ZoomLevel;
+        //    //this.ScreenOffsetX  = ScreenOffsetX;
+        //    //this.ScreenOffsetY  = ScreenOffsetY;
 
-            Redraw();
+        //    Redraw();
 
-            return this;
+        //    return this;
 
-        }
+        //}
 
-        #endregion
+        //#endregion
 
-        #region SetDisplayOffset(OffsetX, OffsetY)
+        //#region SetDisplayOffset(OffsetX, OffsetY)
 
-        /// <summary>
-        /// Set the screen offset of this map layer.
-        /// </summary>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        public IMapLayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
-        {
+        ///// <summary>
+        ///// Set the screen offset of this map layer.
+        ///// </summary>
+        ///// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
+        ///// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
+        //public AMapLayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
+        //{
 
-            this.ScreenOffsetX = ScreenOffsetX;
-            this.ScreenOffsetY = ScreenOffsetY;
+        //    this.ScreenOffsetX  = ScreenOffsetX;
+        //    this.ScreenOffsetY  = ScreenOffsetY;
 
-            Redraw();
+        //    Redraw();
 
-            return this;
+        //    return this;
 
-        }
+        //}
 
-        #endregion
+        //#endregion
 
         #region (virtual) Redraw()
 
@@ -223,10 +204,10 @@ namespace eu.Vanaheimr.Aegir
                         if (Feature != null)
                         {
 
-                            ScreenXY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, ZoomLevel);
+                            ScreenXY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, this.MapControl.ZoomLevel);
 
-                            Canvas.SetLeft(Feature, ScreenOffsetX + ScreenXY.X);
-                            Canvas.SetTop (Feature, ScreenOffsetY + ScreenXY.Y);
+                            Canvas.SetLeft(Feature, this.MapControl.ScreenOffsetX + ScreenXY.X);
+                            Canvas.SetTop (Feature, this.MapControl.ScreenOffsetY + ScreenXY.Y);
 
                             //if (Feature.GeoWidth != 0)
                             //    Feature.Width = 
@@ -266,7 +247,7 @@ namespace eu.Vanaheimr.Aegir
                 throw new ArgumentNullException("The given object must not be null!");
 
             // Check if the given object is a feature layer identifier.
-            var FeatureLayer = Object as IMapLayer;
+            var FeatureLayer = Object as AMapLayer;
             if ((Object) FeatureLayer == null)
                 throw new ArgumentException("The given object is not an IFeatureLayer!");
 
@@ -300,7 +281,7 @@ namespace eu.Vanaheimr.Aegir
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Identifier">An object to compare with.</param>
-        public Int32 CompareTo(IMapLayer FeatureLayer)
+        public Int32 CompareTo(AMapLayer FeatureLayer)
         {
 
             if ((Object) FeatureLayer == null)
@@ -330,7 +311,7 @@ namespace eu.Vanaheimr.Aegir
                 return false;
 
             // Check if the given object is a feature layer.
-            var FeatureLayer = Object as IMapLayer;
+            var FeatureLayer = Object as AMapLayer;
             if ((Object)FeatureLayer == null)
                 return false;
 
@@ -366,7 +347,7 @@ namespace eu.Vanaheimr.Aegir
         /// </summary>
         /// <param name="FeatureLayer">A feature layer to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(IMapLayer FeatureLayer)
+        public Boolean Equals(AMapLayer FeatureLayer)
         {
 
             if ((Object) FeatureLayer == null)

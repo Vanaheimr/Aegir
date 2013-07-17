@@ -44,10 +44,10 @@ namespace eu.Vanaheimr.Aegir.Controls
         public const UInt32 MinZoomLevel = 1;
         public const UInt32 MaxZoomLevel = 23;
 
-        private Int64  ScreenOffsetX;
-        private Int64  ScreenOffsetY;
-        private Int64  ScreenOffset_AtMovementStart_X;
-        private Int64  ScreenOffset_AtMovementStart_Y;
+        public  Int64  ScreenOffsetX                    { get; private set; }
+        public  Int64  ScreenOffsetY                    { get; private set; }
+        public  Int64  ScreenOffset_AtMovementStart_X   { get; private set; }
+        public  Int64  ScreenOffset_AtMovementStart_Y   { get; private set; }
 
         private Double LastClickPositionX;
         private Double LastClickPositionY;
@@ -61,7 +61,7 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// </summary>
         private readonly UInt32 KeyboardStepping;
 
-        private readonly Dictionary<String, IMapLayer> MapLayers;
+        private readonly Dictionary<String, AMapLayer> MapLayers;
 
         private readonly StackPanel LayerPanel;
 
@@ -162,7 +162,7 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             InitializeComponent();
 
-            this.MapLayers                = new Dictionary<String, IMapLayer>();
+            this.MapLayers                = new Dictionary<String, AMapLayer>();
             this.ZoomOutButton.IsEnabled  = false;
             this.ZoomLevel                = MinZoomLevel;
             this.Focusable                = true;
@@ -190,7 +190,12 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// <param name="RoutedEventArgs">The event arguments.</param>
         public void ZoomInButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-            ZoomIn(this.ActualWidth / 2, this.ActualHeight / 2);
+
+            if (this.ActualHeight != 0 && this.ActualWidth != 00)
+                ZoomIn(this.ActualWidth / 2, this.ActualHeight / 2);
+
+            RoutedEventArgs.Handled = true;
+
         }
 
         #endregion
@@ -205,7 +210,12 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// <param name="RoutedEventArgs">The event arguments.</param>
         public void ZoomOutButton_Click(Object Sender, RoutedEventArgs RoutedEventArgs)
         {
-            ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
+
+            if (this.ActualHeight != 0 && this.ActualWidth != 00)
+                ZoomOut(this.ActualWidth / 2, this.ActualHeight / 2);
+
+            RoutedEventArgs.Handled = true;
+
         }
 
         #endregion
@@ -248,7 +258,8 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                 #region The left mouse button is still pressed => dragging the map!
 
-                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed)
+                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed &&
+                    !this.ForegroundLayer.Equals(Sender))
                 {
 
                     MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
@@ -261,14 +272,14 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                     AvoidEndlessVerticalScrolling();
 
-                    MapLayers.Values.ForEach(Canvas => Canvas.SetDisplayOffset(ScreenOffsetX, ScreenOffsetY));
+                    MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
 
                     #region Send MapViewChanged events
 
                     MapMovements++;
 
                     if (MapViewChanged != null)
-                        MapViewChanged(this, this.ScreenOffsetX, this.ScreenOffsetY, this.MapMovements);
+                        MapViewChanged(this, ScreenOffsetX, ScreenOffsetY, this.MapMovements);
 
                     #endregion
 
@@ -295,7 +306,6 @@ namespace eu.Vanaheimr.Aegir.Controls
         public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
 
-            // We'll need this for when the Form starts to move
             var MousePosition = MouseButtonEventArgs.GetPosition(this);
             LastClickPositionX = MousePosition.X;
             LastClickPositionY = MousePosition.Y;
@@ -507,7 +517,8 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             AvoidEndlessVerticalScrolling();
 
-            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, this.ScreenOffsetX, this.ScreenOffsetY));
+//            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, this.ScreenOffsetX, this.ScreenOffsetY));
+            MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
 
             #region Send MapViewChanged events
 
@@ -575,7 +586,8 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             AvoidEndlessVerticalScrolling();
 
-            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, ScreenOffsetX, ScreenOffsetY));
+//            MapLayers.Values.ForEach(Canvas => Canvas.ZoomTo(this.ZoomLevel, ScreenOffsetX, ScreenOffsetY));
+            MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
 
             #region Send MapViewChanged events
 
@@ -696,7 +708,7 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
         /// <param name="AddToLayerPanel">Wether to add this map layer to the layer panel or not.</param>
         public T AddLayer<T>(String Id, Int32 ZIndex, Visibility Visibility = Visibility.Visible, Boolean AddToLayerPanel = true)
-            where T : class, IMapLayer
+            where T : AMapLayer
         {
 
             // Find the constructor of the map layer
@@ -704,9 +716,6 @@ namespace eu.Vanaheimr.Aegir.Controls
                                                             null,
                                                             new Type[] {
                                                                 typeof(String),
-                                                                typeof(UInt32),
-                                                                typeof(Int64),
-                                                                typeof(Int64),
                                                                 typeof(MapControl),
                                                                 typeof(Int32)
                                                             },
@@ -716,7 +725,7 @@ namespace eu.Vanaheimr.Aegir.Controls
                 throw new ArgumentException("A appropriate constructor for type '" + typeof(T).Name + "' could not be found!");
 
             // Invoke the constructor of the map layer
-            var _MapLayer = _ConstructorInfo.Invoke(new Object[] { Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, this, ZIndex }) as IMapLayer;
+            var _MapLayer = _ConstructorInfo.Invoke(new Object[] { Id, this, ZIndex }) as AMapLayer;
 
             if (_MapLayer != null)
                 AddLayer(_MapLayer, Visibility, AddToLayerPanel);
@@ -735,7 +744,7 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// <param name="Layer">A map layer.</param>
         /// <param name="Visibility">The map layer is visible or not at the start of the application.</param>
         /// <param name="AddToLayerPanel">Wether to add this map layer to the layer panel or not.</param>
-        public IMapLayer AddLayer(IMapLayer Layer, Visibility Visibility = Visibility.Visible, Boolean AddToLayerPanel = true)
+        public AMapLayer AddLayer(AMapLayer Layer, Visibility Visibility = Visibility.Visible, Boolean AddToLayerPanel = true)
         {
 
             #region Initial checks

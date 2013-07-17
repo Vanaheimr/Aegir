@@ -28,7 +28,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
     /// <summary>
     /// An ArcGIS WorldStreetMap provider
     /// </summary>
-    public class ArcGIS_WorldStreetMap_Provider : AMapProvider
+    public class ArcGIS_WorldStreetMap_Provider : MapTilesProvider
     {
 
         #region Data
@@ -48,7 +48,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// Creates a new ArcGIS WorldStreetMap provider.
         /// </summary>
         public ArcGIS_WorldStreetMap_Provider()
-            : base(Name:               Name,
+            : base(Id:               Name,
                    Description:        "ArcGIS WorldStreetMap",
                    InfoUri:            "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",
                    Copyright:          "",

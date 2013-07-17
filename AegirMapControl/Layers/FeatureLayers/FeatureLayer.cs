@@ -40,19 +40,16 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region FeatureLayer(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        #region FeatureLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing map features.
         /// </summary>
         /// <param name="Name">The identification string of this feature layer.</param>
-        /// <param name="ZoomLevel">The the zoom level of this feature layer.</param>
-        /// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        /// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
         /// <param name="MapControl">The parent map control.</param>
         /// <param name="ZIndex">The z-index of this feature layer.</param>
-        public FeatureLayer(String Id, UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY, MapControl MapControl, Int32 ZIndex)
-            : base(Id, ZoomLevel, ScreenOffsetX, ScreenOffsetY, MapControl, ZIndex)
+        public FeatureLayer(String Id, MapControl MapControl, Int32 ZIndex)
+            : base(Id, MapControl, ZIndex)
         {
 
             #region Register mouse events
@@ -73,10 +70,14 @@ namespace eu.Vanaheimr.Aegir
 
         #region AddFeature
 
-
         public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
         {
             return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
+        }
+
+        public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Altitude Altitude, Double Width, Double Height, Color Color)
+        {
+            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude, Altitude), Width, Height, Color);
         }
 
         public Feature AddFeature(String Id, GeoCoordinate GeoCoordinate, Double Width, Double Height, Color Color)
@@ -86,6 +87,7 @@ namespace eu.Vanaheimr.Aegir
             Feature.Id               = Id;
             Feature.Latitude         = GeoCoordinate.Latitude;
             Feature.Longitude        = GeoCoordinate.Longitude;
+            Feature.Altitude         = GeoCoordinate.Altitude;
             Feature.Stroke           = new SolidColorBrush(Colors.Black);
             Feature.StrokeThickness  = 1;
             Feature.Width            = Width;
