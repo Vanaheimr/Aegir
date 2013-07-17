@@ -58,6 +58,8 @@ namespace eu.Vanaheimr.Aegir
 //        private AutoDiscovery<IMapTilesProvider> MapProviders;
 
         private readonly ConcurrentStack<Image> TilesOnMap;
+        private Image[] VeryOldTilesToDelete = new Image[0];
+        private Image[] OldTilesToDelete = new Image[0];
 
         private Object LockObject;
 
@@ -275,7 +277,8 @@ namespace eu.Vanaheimr.Aegir
 
                     #region Collect old tiles for deletion
 
-                    var OldTilesToDelete = TilesOnMap.ToArray();
+                    VeryOldTilesToDelete = OldTilesToDelete;
+                    OldTilesToDelete = TilesOnMap.ToArray();
                     TilesOnMap.Clear();
 
                     #endregion
@@ -324,13 +327,11 @@ namespace eu.Vanaheimr.Aegir
 
                         }
 
-                        Task.Factory.ContinueWhenAll(ListOfTasks.ToArray(), (jj) =>
-
-                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
-                        {
-                            foreach (var Image in OldTilesToDelete)
-                                this.Children.Remove(Image);
-                        })));
+                        Task.Factory.ContinueWhenAll(ListOfTasks.ToArray(), Tasks =>
+                            this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
+                                foreach (var Image in VeryOldTilesToDelete)
+                                    this.Children.Remove(Image);
+                            })));
 
                    // });
 
