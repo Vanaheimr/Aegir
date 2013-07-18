@@ -152,8 +152,8 @@ namespace eu.Vanaheimr.Aegir
 
                             AShape.ZoomLevel = this.MapControl.ZoomLevel;
 
-                            Canvas.SetLeft(AShape, this.MapControl.ScreenOffsetX + (Int64) AShape.OnScreenUpperLeft.X);
-                            Canvas.SetTop (AShape, this.MapControl.ScreenOffsetY + (Int64) AShape.OnScreenLowerRight.Y);
+                            Canvas.SetLeft(AShape, this.MapControl.ScreenOffset.X + (Int64) AShape.OnScreenUpperLeft.X);
+                            Canvas.SetTop (AShape, this.MapControl.ScreenOffset.Y + (Int64) AShape.OnScreenLowerRight.Y);
 
                             AShape.Width  = AShape.OnScreenWidth;
                             AShape.Height = AShape.OnScreenHeight;

@@ -109,8 +109,8 @@ namespace eu.Vanaheimr.Aegir
             
             var Mouse = MouseEventArgs.GetPosition(this);
 
-            AddFeature("jfgdh", GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.MapControl.ScreenOffsetX,
-                                                                         Mouse.Y - this.MapControl.ScreenOffsetY,
+            AddFeature("jfgdh", GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.MapControl.ScreenOffset.X,
+                                                                         Mouse.Y - this.MapControl.ScreenOffset.Y,
                                                                          this.MapControl.ZoomLevel),
                                                                          5, 5,
                                                                          Colors.Blue);

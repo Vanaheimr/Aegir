@@ -44,14 +44,10 @@ namespace eu.Vanaheimr.Aegir.Controls
         public const UInt32 MinZoomLevel = 1;
         public const UInt32 MaxZoomLevel = 23;
 
-        public  Int64  ScreenOffsetX                    { get; private set; }
-        public  Int64  ScreenOffsetY                    { get; private set; }
-        public  Int64  ScreenOffset_AtMovementStart_X   { get; private set; }
-        public  Int64  ScreenOffset_AtMovementStart_Y   { get; private set; }
+        public  Point  ScreenOffset                     { get; private set; }
+        public  Point  ScreenOffset_AtMovementStart     { get; private set; }
 
-        private Double LastClickPositionX;
-        private Double LastClickPositionY;
-
+        private Point  LastMouseClickPosition;
         private Point  LastMousePositionDuringMovement;
 
         /// <summary>
@@ -61,8 +57,6 @@ namespace eu.Vanaheimr.Aegir.Controls
         private readonly UInt32 KeyboardStepping;
 
         private readonly Dictionary<String, AMapLayer> MapLayers;
-
-        private readonly StackPanel LayerPanel;
 
         #endregion
 
@@ -146,7 +140,7 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// An event handler getting fired whenever the
         /// view of the map changed.
         /// </summary>
-        public delegate void MapViewChangedEventHandler(MapControl Sender, Int64 DisplayOffsetX, Int64 DisplayOffsetY, UInt64 Movements);
+        public delegate void MapViewChangedEventHandler(MapControl Sender, Point ScreenOffset, UInt64 Movements);
 
         /// <summary>
         /// An event getting fired whenever the view
@@ -241,17 +235,6 @@ namespace eu.Vanaheimr.Aegir.Controls
                 LastMousePositionDuringMovement.Y != MousePosition.Y)
             {
 
-                #region Send current mouse position as geo position
-
-                if (GeoPositionChanged != null)
-                {
-                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffsetX,
-                                                                                      MousePosition.Y - this.ScreenOffsetY,
-                                                                                      ZoomLevel));
-                }
-
-                #endregion
-
                 #region The left mouse button is pressed => drag the map!
 
                 if (MouseEventArgs.LeftButton == MouseButtonState.Pressed &&
@@ -260,16 +243,16 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                     MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-                    this.ScreenOffset_AtMovementStart_X = this.ScreenOffset_AtMovementStart_X % MapSizeAtZoomLevel;
-                    this.ScreenOffset_AtMovementStart_Y = this.ScreenOffset_AtMovementStart_Y % MapSizeAtZoomLevel;
+                    this.ScreenOffset_AtMovementStart = new Point(this.ScreenOffset_AtMovementStart.X % MapSizeAtZoomLevel,
+                                                                  this.ScreenOffset_AtMovementStart.Y % MapSizeAtZoomLevel);
 
-                    this.ScreenOffsetX = (Int32) (Math.Round(ScreenOffset_AtMovementStart_X + MousePosition.X - LastClickPositionX) % MapSizeAtZoomLevel);
-                    this.ScreenOffsetY = (Int32) (Math.Round(ScreenOffset_AtMovementStart_Y + MousePosition.Y - LastClickPositionY) % MapSizeAtZoomLevel);
+                    this.ScreenOffset = new Point((Math.Round(ScreenOffset_AtMovementStart.X + MousePosition.X - LastMouseClickPosition.X) % MapSizeAtZoomLevel),
+                                                  (Math.Round(ScreenOffset_AtMovementStart.Y + MousePosition.Y - LastMouseClickPosition.Y) % MapSizeAtZoomLevel));
 
                     AvoidEndlessVerticalScrolling();
 
-                    MapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffsetX,
-                                                                         MousePosition.Y - this.ScreenOffsetY,
+                    MapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffset.X,
+                                                                         MousePosition.Y - this.ScreenOffset.Y,
                                                                          this.ZoomLevel);
 
                     MapLayers.Values.ForEach(MapLayer => MapLayer.Move(MousePosition.X - LastMousePositionDuringMovement.X,
@@ -282,9 +265,22 @@ namespace eu.Vanaheimr.Aegir.Controls
                     MapMovements++;
 
                     if (MapViewChanged != null)
-                        MapViewChanged(this, ScreenOffsetX, ScreenOffsetY, this.MapMovements);
+                        MapViewChanged(this, ScreenOffset, this.MapMovements);
 
                     #endregion
+
+                }
+
+                #endregion
+
+                #region Send current mouse position as geo position
+
+                if (GeoPositionChanged != null)
+                {
+
+                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffset.X,
+                                                                                      MousePosition.Y - this.ScreenOffset.Y,
+                                                                                      ZoomLevel));
 
                 }
 
@@ -308,12 +304,8 @@ namespace eu.Vanaheimr.Aegir.Controls
         public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
 
-            var MousePosition = MouseButtonEventArgs.GetPosition(this);
-            LastClickPositionX = MousePosition.X;
-            LastClickPositionY = MousePosition.Y;
-
-            ScreenOffset_AtMovementStart_X = ScreenOffsetX;
-            ScreenOffset_AtMovementStart_Y = ScreenOffsetY;
+            LastMouseClickPosition        = MouseButtonEventArgs.GetPosition(this);
+            ScreenOffset_AtMovementStart  = ScreenOffset;
 
             this.Focus();
 
@@ -389,9 +381,9 @@ namespace eu.Vanaheimr.Aegir.Controls
                 case Key.Left:
 
                     if (InvertedKeyBoard)
-                        MoveTo(this.ScreenOffsetX - KeyboardStepping, this.ScreenOffsetY);
+                        MoveTo(this.ScreenOffset.X - KeyboardStepping, this.ScreenOffset.Y);
                     else
-                        MoveTo(this.ScreenOffsetX + KeyboardStepping, this.ScreenOffsetY);
+                        MoveTo(this.ScreenOffset.X + KeyboardStepping, this.ScreenOffset.Y);
 
                     KeyEventArgs.Handled = true;
                     break;
@@ -399,9 +391,9 @@ namespace eu.Vanaheimr.Aegir.Controls
                 case Key.Up:
 
                     if (InvertedKeyBoard)
-                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY + KeyboardStepping);
+                        MoveTo(this.ScreenOffset.X, this.ScreenOffset.Y + KeyboardStepping);
                     else
-                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY - KeyboardStepping);
+                        MoveTo(this.ScreenOffset.X, this.ScreenOffset.Y - KeyboardStepping);
 
                     KeyEventArgs.Handled = true;
                     break;
@@ -409,9 +401,9 @@ namespace eu.Vanaheimr.Aegir.Controls
                 case Key.Right:
 
                     if (InvertedKeyBoard)
-                        MoveTo(this.ScreenOffsetX + KeyboardStepping, this.ScreenOffsetY);
+                        MoveTo(this.ScreenOffset.X + KeyboardStepping, this.ScreenOffset.Y);
                     else
-                        MoveTo(this.ScreenOffsetX - KeyboardStepping, this.ScreenOffsetY);
+                        MoveTo(this.ScreenOffset.X - KeyboardStepping, this.ScreenOffset.Y);
 
                     KeyEventArgs.Handled = true;
                     break;
@@ -419,9 +411,9 @@ namespace eu.Vanaheimr.Aegir.Controls
                 case Key.Down:
 
                     if (InvertedKeyBoard)
-                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY - KeyboardStepping);
+                        MoveTo(this.ScreenOffset.X, this.ScreenOffset.Y - KeyboardStepping);
                     else
-                        MoveTo(this.ScreenOffsetX, this.ScreenOffsetY + KeyboardStepping);
+                        MoveTo(this.ScreenOffset.X, this.ScreenOffset.Y + KeyboardStepping);
 
                     KeyEventArgs.Handled = true;
                     break;
@@ -509,13 +501,13 @@ namespace eu.Vanaheimr.Aegir.Controls
         /// </summary>
         /// <param name="ScreenOffsetX">The new x parameter of the screen offset.</param>
         /// <param name="ScreenOffsetY">The new y parameter of the screen offset.</param>
-        public void MoveTo(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
+        public void MoveTo(Double ScreenOffsetX, Double ScreenOffsetY)
         {
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, this.ZoomLevel) * 256);
 
-            this.ScreenOffsetX = ScreenOffsetX % MapSizeAtZoomLevel;
-            this.ScreenOffsetY = ScreenOffsetY % MapSizeAtZoomLevel;
+            this.ScreenOffset = new Point(ScreenOffsetX % MapSizeAtZoomLevel,
+                                          ScreenOffsetY % MapSizeAtZoomLevel);
 
             AvoidEndlessVerticalScrolling();
 
@@ -527,7 +519,7 @@ namespace eu.Vanaheimr.Aegir.Controls
             MapMovements++;
 
             if (MapViewChanged != null)
-                MapViewChanged(this, this.ScreenOffsetX, this.ScreenOffsetY, this.MapMovements);
+                MapViewChanged(this, this.ScreenOffset, this.MapMovements);
 
             #endregion
 
@@ -580,11 +572,8 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-            this.ScreenOffsetX = (Int64) (-((Int64) NewOffset.X) + ForegroundLayer.ActualWidth  / 2);
-            this.ScreenOffsetY = (Int64) (-((Int64) NewOffset.Y) + ForegroundLayer.ActualHeight / 2);
-
-            this.ScreenOffsetX = this.ScreenOffsetX % MapSizeAtZoomLevel;
-            this.ScreenOffsetY = this.ScreenOffsetY % MapSizeAtZoomLevel;
+            this.ScreenOffset = new Point((-((Int64) NewOffset.X) + ForegroundLayer.ActualWidth  / 2) % MapSizeAtZoomLevel,
+                                          (-((Int64) NewOffset.Y) + ForegroundLayer.ActualHeight / 2) % MapSizeAtZoomLevel);
 
             AvoidEndlessVerticalScrolling();
 
@@ -595,7 +584,7 @@ namespace eu.Vanaheimr.Aegir.Controls
             MapMovements++;
 
             if (MapViewChanged != null)
-                MapViewChanged(this, this.ScreenOffsetX, this.ScreenOffsetY, this.MapMovements);
+                MapViewChanged(this, this.ScreenOffset, this.MapMovements);
 
             #endregion
 
@@ -639,8 +628,8 @@ namespace eu.Vanaheimr.Aegir.Controls
             if (this.ZoomLevel < MaxZoomLevel)
             {
 
-                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffsetX,
-                                                                ScreenY - this.ScreenOffsetY,
+                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffset.X,
+                                                                ScreenY - this.ScreenOffset.Y,
                                                                 this.ZoomLevel),
                        this.ZoomLevel + 1);
 
@@ -663,8 +652,8 @@ namespace eu.Vanaheimr.Aegir.Controls
             if (this.ZoomLevel > MinZoomLevel)
             {
 
-                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffsetX,
-                                                                ScreenY - this.ScreenOffsetY,
+                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffset.X,
+                                                                ScreenY - this.ScreenOffset.Y,
                                                                 this.ZoomLevel),
                        this.ZoomLevel - 1);
 
@@ -685,11 +674,11 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             var MapVerticalStart = (Int32) (Math.Pow(2, ZoomLevel) * -256 + this.ActualHeight + 1);
 
-            if (this.ScreenOffsetY < MapVerticalStart)
-                this.ScreenOffsetY = MapVerticalStart;
+            if (this.ScreenOffset.Y < MapVerticalStart)
+                this.ScreenOffset = new Point(this.ScreenOffset.X, MapVerticalStart);
 
-            if (this.ScreenOffsetY > 0)
-                this.ScreenOffsetY = 0;
+            if (this.ScreenOffset.Y > 0)
+                this.ScreenOffset = new Point(this.ScreenOffset.X, 0);
 
         }
 

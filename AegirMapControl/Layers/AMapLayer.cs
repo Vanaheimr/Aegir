@@ -210,8 +210,8 @@ namespace eu.Vanaheimr.Aegir
 
                             ScreenXY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, this.MapControl.ZoomLevel);
 
-                            Canvas.SetLeft(Feature, this.MapControl.ScreenOffsetX + ScreenXY.X);
-                            Canvas.SetTop (Feature, this.MapControl.ScreenOffsetY + ScreenXY.Y);
+                            Canvas.SetLeft(Feature, this.MapControl.ScreenOffset.X + ScreenXY.X);
+                            Canvas.SetTop (Feature, this.MapControl.ScreenOffset.Y + ScreenXY.Y);
 
                             //if (Feature.GeoWidth != 0)
                             //    Feature.Width = 

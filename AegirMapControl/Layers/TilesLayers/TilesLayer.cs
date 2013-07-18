@@ -22,22 +22,18 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Collections.Concurrent;
-
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-
-using eu.Vanaheimr.Illias.Commons;
-using eu.Vanaheimr.Aegir.Tiles;
-using eu.Vanaheimr.Aegir.Controls;
 using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+
+using eu.Vanaheimr.Aegir.Tiles;
+using eu.Vanaheimr.Aegir.Controls;
 
 #endregion
 
@@ -60,6 +56,8 @@ namespace eu.Vanaheimr.Aegir
         private readonly List<Image> TilesOnMap;
         private Image[] VeryOldTilesToDelete = new Image[0];
         private Image[] OldTilesToDelete = new Image[0];
+
+        private Int64 VersionCounter = 0;
 
         private Object AutoTilesRefreshLock;
 
@@ -261,114 +259,6 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        #region RedrawLayer()
-
-        public Boolean lala_old()
-        {
-
-            if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
-            {
-
-                if (Monitor.TryEnter(AutoTilesRefreshLock))
-                {
-
-                    try
-                    {
-
-                        Debug.WriteLine(Thread.CurrentThread.ManagedThreadId + "-" + this.Children.Count);
-
-                        #region Collect old tiles for deletion
-
-                        //VeryOldTilesToDelete = OldTilesToDelete;
-                        //OldTilesToDelete = TilesOnMap.ToArray();
-                        //TilesOnMap.Clear();
-
-                        //this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
-                        //    {
-                        //        this.Children.Clear();
-                        //    }));
-
-                        #endregion
-
-                        #region Paint new map as background task
-
-                        //Task.Factory.StartNew(() =>
-                        //{
-
-                        var _NumberOfXTiles = (Int32) Math.Floor(base.ActualWidth / 256) + 1;
-                        var _NumberOfYTiles = (Int32) Math.Floor(base.ActualHeight / 256) + 1;
-                        var _NumberOfTiles  = (Int32) Math.Pow(2, this.MapControl.ZoomLevel);
-                        var ___x = (Int32) this.MapControl.ScreenOffsetX % (_NumberOfTiles * 256) / 256;
-                        var ___y = (Int32) this.MapControl.ScreenOffsetY % (_NumberOfTiles * 256) / 256;
-                        var ListOfTasks = new List<Task>();
-                  //      this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => TilesOnMap.Clear()));
-
-                        for (var _x = 0; _x < _NumberOfXTiles + 1; _x++)
-                        {
-
-                            Int32 _ActualXTile;
-                            Int32 _ActualYTile;
-
-                            _ActualXTile = ((_x - ___x) % _NumberOfTiles);
-                            if (_ActualXTile < 0) _ActualXTile += _NumberOfTiles;
-
-                            for (var _y = 0; _y < _NumberOfYTiles + 1; _y++)
-                            {
-
-                                _ActualYTile = (Int32)((_y - ___y) % _NumberOfTiles);
-                                if (_ActualYTile < 0) _ActualYTile += _NumberOfTiles;
-
-                                ListOfTasks.Add(TileClient.GetTile(this.MapControl.ZoomLevel,
-                                                                   (UInt32)_ActualXTile,
-                                                                   (UInt32)_ActualYTile,
-                                                                   new Tuple<Int64, Int64>(
-                                                                       this.MapControl.ScreenOffsetX % 256 + _x * 256,
-                                                                       this.MapControl.ScreenOffsetY % 256 + _y * 256)).
-
-                                    ContinueWith(TileTask => PaintTile(TileTask.Result.Item1,
-                                                                      (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item1,
-                                                                      (TileTask.Result.Item2 as Tuple<Int64, Int64, UInt64>).Item2)));
-
-                            }
-
-                        }
-
-                        //Task.Factory.ContinueWhenAll(ListOfTasks.ToArray(), Tasks =>
-                        //    this.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
-                        //    {
-                        //        var Listi = new List<Image>();
-                        //        foreach (Image ImageChild in this.Children)
-                        //            if (!TilesOnMap.Contains(ImageChild))
-                        //                Listi.Add(ImageChild);
-
-                        //        Listi.ForEach(ll => this.Children.Remove(ll));
-                        //        //    this.Children.Remove(Image);
-                        //    })));
-
-                        // });
-
-                        #endregion
-
-                    }
-
-                    finally
-                    {
-                        Monitor.Exit(AutoTilesRefreshLock);
-                    }
-
-                }
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        #endregion
-
-
         private Double Normalize(Double Value, Int32 Factor)
         {
 
@@ -426,8 +316,8 @@ namespace eu.Vanaheimr.Aegir
                 var NumberOfXTiles            = (Int32) Math.Floor(base.ActualWidth  / 256) + 1;
                 var NumberOfYTiles            = (Int32) Math.Floor(base.ActualHeight / 256) + 1;
                 var NumberOfTilesAtZoomLevel  = (Int32) Math.Pow(2, this.MapControl.ZoomLevel);
-                var LeftUpperTile             = new Point(this.MapControl.ScreenOffsetX % (NumberOfTilesAtZoomLevel * 256) / 256,
-                                                          this.MapControl.ScreenOffsetY % (NumberOfTilesAtZoomLevel * 256) / 256);
+                var LeftUpperTile             = new Point(this.MapControl.ScreenOffset.X % (NumberOfTilesAtZoomLevel * 256) / 256,
+                                                          this.MapControl.ScreenOffset.Y % (NumberOfTilesAtZoomLevel * 256) / 256);
 
                 var _NumberOfXTiles = (Normalize(LeftUpperTile.X, NumberOfTilesAtZoomLevel) == 0) ? NumberOfXTiles : NumberOfXTiles + 1;
                 var _NumberOfYTiles = (Normalize(LeftUpperTile.Y, NumberOfTilesAtZoomLevel) == 0) ? NumberOfYTiles : NumberOfYTiles + 1;
@@ -456,14 +346,16 @@ namespace eu.Vanaheimr.Aegir
             if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
             {
 
+                Interlocked.Increment(ref VersionCounter);
+
                 var _NumberOfXTiles = 0;
                 var _NumberOfYTiles = 0;
 
                 var NumberOfXTiles            = (Int32) Math.Floor(base.ActualWidth  / 256) + 1;
                 var NumberOfYTiles            = (Int32) Math.Floor(base.ActualHeight / 256) + 1;
                 var NumberOfTilesAtZoomLevel  = (Int32) Math.Pow(2, this.MapControl.ZoomLevel);
-                var LeftUpperTile             = new Point(this.MapControl.ScreenOffsetX % (NumberOfTilesAtZoomLevel * 256) / 256,
-                                                          this.MapControl.ScreenOffsetY % (NumberOfTilesAtZoomLevel * 256) / 256);
+                var LeftUpperTile             = new Point(this.MapControl.ScreenOffset.X % (NumberOfTilesAtZoomLevel * 256) / 256,
+                                                          this.MapControl.ScreenOffset.Y % (NumberOfTilesAtZoomLevel * 256) / 256);
 
                 var UselessTilesOnScreen = new List<Image>();
 
@@ -477,8 +369,8 @@ namespace eu.Vanaheimr.Aegir
                     for (var CurrentY = 0; CurrentY < NumberOfYTiles + 1; CurrentY++)
                     {
 
-                        var NewX = this.MapControl.ScreenOffsetX % 256 + CurrentX * 256;
-                        var NewY = this.MapControl.ScreenOffsetY % 256 + CurrentY * 256;
+                        var NewX = this.MapControl.ScreenOffset.X % 256 + CurrentX * 256;
+                        var NewY = this.MapControl.ScreenOffset.Y % 256 + CurrentY * 256;
 
                         #region Is this tile already on the screen?
 
@@ -508,13 +400,15 @@ namespace eu.Vanaheimr.Aegir
                             TileClient.GetTile(this.MapControl.ZoomLevel,
                                                (UInt32) Normalize(CurrentX - LeftUpperTile.X, NumberOfTilesAtZoomLevel),
                                                (UInt32) Normalize(CurrentY - LeftUpperTile.Y, NumberOfTilesAtZoomLevel),
-                                               new Tuple<Int64, Int64>(
+                                               new Tuple<Double, Double, Int64>(
                                                    NewX,
-                                                   NewY)).
+                                                   NewY,
+                                                   VersionCounter)).
 
                                 ContinueWith(TileTask => PaintTile(TileTask.Result.Item1,
-                                                                  (TileTask.Result.Item2 as Tuple<Int64, Int64>).Item1,
-                                                                  (TileTask.Result.Item2 as Tuple<Int64, Int64>).Item2));
+                                                                  (TileTask.Result.Item2 as Tuple<Double, Double, Int64>).Item1,
+                                                                  (TileTask.Result.Item2 as Tuple<Double, Double, Int64>).Item2,
+                                                                  (TileTask.Result.Item2 as Tuple<Double, Double, Int64>).Item3));
 
                     }
 
@@ -540,10 +434,13 @@ namespace eu.Vanaheimr.Aegir
 
         #region (private) PaintTile(TileStream, ScreenX, ScreenY)
 
-        private void PaintTile(MemoryStream TileStream, Int64 ScreenX, Int64 ScreenY)
+        private void PaintTile(MemoryStream TileStream, Double ScreenX, Double ScreenY, Int64 CurrentVersionCounter)
         {
 
             if (TileStream == null || TileStream.Length == 0)
+                return;
+
+            if (VersionCounter-1 > CurrentVersionCounter)
                 return;
 
             try
