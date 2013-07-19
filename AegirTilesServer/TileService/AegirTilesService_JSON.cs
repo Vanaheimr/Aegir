@@ -100,16 +100,15 @@ namespace eu.Vanaheimr.Aegir.Tiles
         {
 
             var _Content = Encoding.UTF8.GetBytes(new JObject(
-                               new JProperty(__MapProviders, TilesServer.RegisteredMapProviderIds)
+                               new JProperty(__MapProviders, TilesServer.ProviderIds)
                            ).ToString());
 
-            return new HTTPResponseBuilder()
-                {
-                    HTTPStatusCode = HTTPStatusCode.OK,
-                    CacheControl   = "no-cache",
-                    ContentType    = HTTPContentType.JSON_UTF8,
-                    Content        = _Content
-                };
+            return new HTTPResponseBuilder() {
+                HTTPStatusCode  = HTTPStatusCode.OK,
+                CacheControl    = "no-cache",
+                ContentType     = HTTPContentType.JSON_UTF8,
+                Content         = _Content
+            };
 
         }
 
@@ -131,29 +130,24 @@ namespace eu.Vanaheimr.Aegir.Tiles
         public HTTPResponse ShowMapProviderInformation(String Provider)
         {
 
-            IMapTilesProvider _MapProvider;
+            MapTilesProvider _MapProvider;
 
-            if (TilesServer.RegisteredMapProviders.TryGetValue(Provider, out _MapProvider))
+            if (TilesServer.TryGetProvider(Provider, out _MapProvider))
             {
 
                 var _Content = Encoding.UTF8.GetBytes(new JObject(
-                                   new JProperty(__MapProviderId,        _MapProvider.Id),
-                                   new JProperty(__MapProviderDescription, _MapProvider.Description),
-                                   new JProperty(__MapProviderUriPattern,  _MapProvider.UriPattern),
-                                   new JProperty(__MapProviderHosts,       new JArray(
-                                                                               from   _Host
-                                                                               in     _MapProvider.Hosts
-                                                                               select _Host))
+                                   new JProperty(__MapProviderId,           _MapProvider.Id),
+                                   new JProperty(__MapProviderDescription,  _MapProvider.Description),
+                                   new JProperty(__MapProviderUriPatterns,  new JArray(_MapProvider.UriPatterns))
                                ).ToString());
 
-                return new HTTPResponseBuilder()
-                    {
-                        HTTPStatusCode = HTTPStatusCode.OK,
-                        CacheControl   = "no-cache",
-                        ContentLength  = (UInt64) _Content.Length,
-                        ContentType    = HTTPContentType.JSON_UTF8,
-                        Content        = _Content
-                    };
+                return new HTTPResponseBuilder() {
+                    HTTPStatusCode  = HTTPStatusCode.OK,
+                    CacheControl    = "no-cache",
+                    ContentLength   = (UInt64) _Content.Length,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = _Content
+                };
 
             }
 

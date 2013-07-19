@@ -48,7 +48,6 @@
     <Compile Include="MapTilesProviders\ArcGIS\ArcGIS_WorldImagery_Provider.cs" />
     <Compile Include="MapTilesProviders\ArcGIS\ArcGIS_WorldStreetMap_Provider.cs" />
     <Compile Include="MapTilesProviders\DebugProvider.cs" />
-    <Compile Include="MapTilesProviders\IMapTilesProvider.cs" />
     <Compile Include="MapTilesProviders\OSMProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AegirTilesClient.cs" />

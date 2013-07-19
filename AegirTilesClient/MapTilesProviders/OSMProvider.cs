@@ -20,6 +20,8 @@
 
 using System;
 
+using eu.Vanaheimr.Illias.Commons;
+
 #endregion
 
 namespace eu.Vanaheimr.Aegir.Tiles
@@ -48,14 +50,14 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// Creates a new OpenStreetMap map provider.
         /// </summary>
         public OSMProvider()
-            : base(Id:               Name,
+            : base(Id:                 Name,
                    Description:        "OpenStreetMap maps",
                    InfoUri:            "",
                    Copyright:          "CC",
                    IsMemoryCacheable:  true,
                    MemoryCacheEnabled: true,
-                   UriPattern:         "/{zoom}/{x}/{y}.png",
-                   Hosts:              new String[1] { "http://tile.openstreetmap.org" })
+                   ZoomRange:          new Range<Byte>(0, 23),
+                   UriPatterns:        new String[1] { "http://tile.openstreetmap.org/{zoom}/{x}/{y}.png" })
         { }
 
         #endregion

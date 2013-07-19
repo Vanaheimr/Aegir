@@ -40,7 +40,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// The associated Aegir tiles server.
         /// </summary>
-        IAegirTilesServer TilesServer { get; set; }
+        AegirTilesServer TilesServer { get; set; }
 
         #endregion
 

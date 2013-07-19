@@ -22,14 +22,11 @@ using System;
 using System.IO;
 using System.Net;
 using System.Linq;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using eu.Vanaheimr.Illias.Commons;
-using eu.Vanaheimr.Illias.Commons.Collections;
 
 #endregion
 
@@ -42,37 +39,12 @@ namespace eu.Vanaheimr.Aegir.Tiles
     public class MapTilesProvider
     {
 
-        public class TileJob
-        {
-
-            public UInt32 ZoomLevel { get; private set; }
-            public UInt32 X { get; private set; }
-            public UInt32 Y { get; private set; }
-
-            public TileJob(UInt32 ZoomLevel, UInt32 X, UInt32 Y)
-            {
-                this.ZoomLevel = ZoomLevel;
-                this.X = X;
-                this.Y = Y;
-            }
-
-            public override int GetHashCode()
-            {
-                return (ZoomLevel.ToString()+X.ToString()+Y.ToString()).GetHashCode();
-            }
-
-        }
-
         #region Data
 
         /// <summary>
-        /// The stored tiles.
+        /// The cached map tiles.
         /// </summary>
         protected MemoryStream[][][] TileCache;
-
-        private ConcurrentDictionary<TileJob, Object> FetchIt;
-
-        private ConcurrentDictionary<String, String> UrlHashes;
 
         #endregion
 
@@ -83,11 +55,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// The unique identification of this map provider.
         /// </summary>
-        public String Id
-        {
-            get;
-            private set;
-        }
+        public String Id    { get; private set; }
 
         #endregion
 
@@ -96,11 +64,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// The description of this map provider.
         /// </summary>
-        public String Description
-        {
-            get;
-            private set;
-        }
+        public String Description   { get; private set; }
 
         #endregion
 
@@ -110,11 +74,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// Copyright information on the content
         /// provided by this map provider.
         /// </summary>
-        public String Copyright
-        {
-            get;
-            private set;
-        }
+        public String Copyright     { get; private set; }
 
         #endregion
 
@@ -123,11 +83,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// An Uri to retrieve more information on this map provider.
         /// </summary>
-        public String InfoUri
-        {
-            get;
-            private set;
-        }
+        public String InfoUri   { get; private set; }
 
         #endregion
 
@@ -137,11 +93,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// Whether this map provider allows to cache
         /// the retrieved tiles in memory or not.
         /// </summary>
-        public Boolean IsMemoryCacheable
-        {
-            get;
-            private set;
-        }
+        public Boolean IsMemoryCacheable    { get; private set; }
 
         #endregion
 
@@ -150,38 +102,27 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <summary>
         /// Whether the memory cache is in use or not.
         /// </summary>
-        public Boolean MemoryCacheEnabled
-        {
-            get;
-            set;
-        }
+        public Boolean MemoryCacheEnabled   { get; set; }
 
         #endregion
 
-        #region UriPattern
+        #region ZoomRange
 
         /// <summary>
-        /// The Uri pattern of this map provider.
-        /// This hase to contain placeholders for "zoom", "x" and "y".
+        /// The valid range of zoom levels for this map.
         /// </summary>
-        public String UriPattern
-        {
-            get;
-            private set;
-        }
+        public Range<Byte> ZoomRange { get; private set; }
 
         #endregion
 
-        #region Hosts
+        #region UriPatterns
 
         /// <summary>
-        /// An enumeration of all hosts serving this mapping service.
+        /// An enumeration of all URIs serving this map tiles service.
+        /// These strings should contain placeholders for the "zoom", "x" and "y" parameters.
         /// </summary>
-        public IEnumerable<String> Hosts
-        {
-            get;
-            private set;
-        }
+        /// <example>http://tile.openstreetmap.org/{zoom}/{x}/{y}.png</example>
+        public IEnumerable<String> UriPatterns  { get; private set; }
 
         #endregion
 
@@ -189,7 +130,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Constructor(s)
 
-        #region MapTilesProvider(Id, Description, Copyright, IsMemoryCacheable, MemoryCacheEnabled, UriPattern, Hosts = null)
+        #region MapTilesProvider(Id, Description, InfoUri, Copyright, IsMemoryCacheable, MemoryCacheEnabled, ZoomRange, UriPatterns)
 
         /// <summary>
         /// Creates an abstract map provider.
@@ -200,35 +141,29 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="Copyright">Copyright information on the content provided by this map provider.</param>
         /// <param name="IsMemoryCacheable">Whether this map provider allows to cache the retrieved tiles in memory or not.</param>
         /// <param name="MemoryCacheEnabled">Whether the memory cache is in use or not.</param>
-        /// <param name="UriPattern">The Uri pattern of this map provider. This hase to contain placeholders for "zoom", "x" and "y".</param>
-        /// <param name="Hosts">An enumeration of all hosts serving this mapping service.</param>
+        /// <param name="ZoomRange">The valid range of zoom levels for this map.</param>
+        /// <param name="UriPatterns">An enumeration of all URIs serving this map tiles service. hese strings should contain placeholders for the "zoom", "x" and "y" parameters.</param>
         public MapTilesProvider(String               Id,
                                 String               Description,
                                 String               InfoUri,
                                 String               Copyright,
                                 Boolean              IsMemoryCacheable,
                                 Boolean              MemoryCacheEnabled,
-                                String               UriPattern,
-                                IEnumerable<String>  Hosts = null)
+                                Range<Byte>          ZoomRange,
+                                IEnumerable<String>  UriPatterns)
+
         {
 
-            this.Id                 = Id;
-            this.Description        = Description;
-            this.InfoUri            = InfoUri;
-            this.Copyright          = Copyright;
-            this.IsMemoryCacheable  = IsMemoryCacheable;
-            this.MemoryCacheEnabled = MemoryCacheEnabled;
-            this.UriPattern         = UriPattern;
+            this.Id                  = Id;
+            this.Description         = Description;
+            this.InfoUri             = InfoUri;
+            this.Copyright           = Copyright;
+            this.IsMemoryCacheable   = IsMemoryCacheable;
+            this.MemoryCacheEnabled  = MemoryCacheEnabled;
+            this.ZoomRange           = ZoomRange;
+            this.UriPatterns         = (UriPatterns != null) ? UriPatterns : new List<String>();
 
-            if (Hosts != null)
-                this.Hosts = Hosts;
-            else
-                this.Hosts = new List<String>();
-
-            TileCache = new MemoryStream[23][][];
-
-            this.FetchIt = new ConcurrentDictionary<TileJob, Object>();
-            this.UrlHashes = new ConcurrentDictionary<String, String>();
+            this.TileCache           = new MemoryStream[ZoomRange.Max][][];
 
         }
 
@@ -237,7 +172,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        #region (virtual) GetTile(ZoomLevel, X, Y)
+        #region (virtual) GetTile<T>(ZoomLevel, X, Y)
 
         /// <summary>
         /// Return the tile for the given ZoomLevel, X and Y coordinates.
@@ -245,8 +180,12 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The tile x-value.</param>
         /// <param name="Y">The tile y-value.</param>
+        /// <param name="State">Some state to be returned with the tile, e.g. the screen coordinate where to paint it.</param>
         /// <returns>A stream containing the tile.</returns>
-        public virtual Task<Tuple<MemoryStream, Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
+        public virtual Task<Tuple<MemoryStream, T>> GetTile<T>(UInt32  ZoomLevel,
+                                                               UInt32  X,
+                                                               UInt32  Y,
+                                                               T       State = default(T))
         {
 
             MemoryStream[] YCache = null;
@@ -266,17 +205,17 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
                 YCache[Y] = new MemoryStream();
 
-                var Urls = Hosts.Select(Host => Host + UriPattern.Replace("{zoom}", ZoomLevel.ToString()).
-                                                                  Replace("{x}",    X.        ToString()).
-                                                                  Replace("{y}",    Y.        ToString())).ToArray();
+                var Urls = UriPatterns.Select(Uri => Uri.Replace("{zoom}", ZoomLevel.ToString()).
+                                                         Replace("{x}",    X.        ToString()).
+                                                         Replace("{y}",    Y.        ToString())).ToArray();
 
                 #region Fetch Tiles
 
-                return Task.Factory.StartNew<Tuple<MemoryStream, Object>>(Data => {
+                return Task.Factory.StartNew<Tuple<MemoryStream, T>>(Data => {
 
-                    var _Urls          = (Data as Tuple<String[], MemoryStream, Object>).Item1;
-                    var _MemoryStream  = (Data as Tuple<String[], MemoryStream, Object>).Item2;
-                    var _State         = (Data as Tuple<String[], MemoryStream, Object>).Item3;
+                    var _Urls          = (Data as Tuple<String[], MemoryStream, T>).Item1;
+                    var _MemoryStream  = (Data as Tuple<String[], MemoryStream, T>).Item2;
+                    var _State         = (Data as Tuple<String[], MemoryStream, T>).Item3;
                     var TileBytes      = new Byte[0];
 
                     foreach (var Url in _Urls)
@@ -307,10 +246,10 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
                     _MemoryStream.Write(TileBytes, 0, TileBytes.Length);
 
-                    return new Tuple<MemoryStream, Object>(_MemoryStream, _State);
+                    return new Tuple<MemoryStream, T>(_MemoryStream, _State);
 
                     },
-                    new Tuple<String[], MemoryStream, Object>(Urls, YCache[Y], State),
+                    new Tuple<String[], MemoryStream, T>(Urls, YCache[Y], State),
                     TaskCreationOptions.AttachedToParent);
 
                 #endregion
@@ -318,17 +257,17 @@ namespace eu.Vanaheimr.Aegir.Tiles
             }
 
             else
-                return Task.Factory.StartNew<Tuple<MemoryStream, Object>>(Data => {
+                return Task.Factory.StartNew<Tuple<MemoryStream, T>>(Data => {
 
-                    var _MemoryStream  = (Data as Tuple<MemoryStream, Object>).Item1;
-                    var _State         = (Data as Tuple<MemoryStream, Object>).Item2;
+                    var _MemoryStream  = (Data as Tuple<MemoryStream, T>).Item1;
+                    var _State         = (Data as Tuple<MemoryStream, T>).Item2;
 
                     _MemoryStream.Seek(0, SeekOrigin.Begin);
 
-                    return new Tuple<MemoryStream, Object>(_MemoryStream, _State);
+                    return new Tuple<MemoryStream, T>(_MemoryStream, _State);
 
                     },
-                    new Tuple<MemoryStream, Object>(YCache[Y], State),
+                    new Tuple<MemoryStream, T>(YCache[Y], State),
                     TaskCreationOptions.AttachedToParent);
 
         }

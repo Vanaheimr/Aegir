@@ -57,7 +57,7 @@ namespace eu.Vanaheimr.Aegir
         private Image[] VeryOldTilesToDelete = new Image[0];
         private Image[] OldTilesToDelete = new Image[0];
 
-        private Int64 VersionCounter = 0;
+        private Int64 GlobalVersionCounter = 0;
 
         private Object AutoTilesRefreshLock;
 
@@ -346,7 +346,7 @@ namespace eu.Vanaheimr.Aegir
             if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
             {
 
-                Interlocked.Increment(ref VersionCounter);
+                Interlocked.Increment(ref GlobalVersionCounter);
 
                 var _NumberOfXTiles = 0;
                 var _NumberOfYTiles = 0;
@@ -369,8 +369,8 @@ namespace eu.Vanaheimr.Aegir
                     for (var CurrentY = 0; CurrentY < NumberOfYTiles + 1; CurrentY++)
                     {
 
-                        var NewX = this.MapControl.ScreenOffset.X % 256 + CurrentX * 256;
-                        var NewY = this.MapControl.ScreenOffset.Y % 256 + CurrentY * 256;
+                        var NewPosition = new Point(this.MapControl.ScreenOffset.X % 256 + CurrentX * 256,
+                                                    this.MapControl.ScreenOffset.Y % 256 + CurrentY * 256);
 
                         #region Is this tile already on the screen?
 
@@ -379,8 +379,8 @@ namespace eu.Vanaheimr.Aegir
                         foreach (Image Tile in this.Children)
                         {
 
-                            if (NewX == Canvas.GetLeft(Tile) &&
-                                NewY == Canvas.GetTop(Tile))
+                            if (NewPosition.X == Canvas.GetLeft(Tile) &&
+                                NewPosition.Y == Canvas.GetTop(Tile))
                             {
                                 if (FoundAndHowOften == 0)
                                 {
@@ -400,15 +400,13 @@ namespace eu.Vanaheimr.Aegir
                             TileClient.GetTile(this.MapControl.ZoomLevel,
                                                (UInt32) Normalize(CurrentX - LeftUpperTile.X, NumberOfTilesAtZoomLevel),
                                                (UInt32) Normalize(CurrentY - LeftUpperTile.Y, NumberOfTilesAtZoomLevel),
-                                               new Tuple<Double, Double, Int64>(
-                                                   NewX,
-                                                   NewY,
-                                                   VersionCounter)).
+                                               new Tuple<Point, Int64>(
+                                                   NewPosition,
+                                                   GlobalVersionCounter)).
 
                                 ContinueWith(TileTask => PaintTile(TileTask.Result.Item1,
-                                                                  (TileTask.Result.Item2 as Tuple<Double, Double, Int64>).Item1,
-                                                                  (TileTask.Result.Item2 as Tuple<Double, Double, Int64>).Item2,
-                                                                  (TileTask.Result.Item2 as Tuple<Double, Double, Int64>).Item3));
+                                                                  (TileTask.Result.Item2 as Tuple<Point, Int64>).Item1,
+                                                                  (TileTask.Result.Item2 as Tuple<Point, Int64>).Item2));
 
                     }
 
@@ -432,52 +430,50 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region (private) PaintTile(TileStream, ScreenX, ScreenY)
+        #region (private) PaintTile(TileStream, Position, VersionCounter)
 
-        private void PaintTile(MemoryStream TileStream, Double ScreenX, Double ScreenY, Int64 CurrentVersionCounter)
+        private void PaintTile(MemoryStream TileStream, Point Position, Int64 VersionCounter)
         {
 
             if (TileStream == null || TileStream.Length == 0)
                 return;
 
-            if (VersionCounter-1 > CurrentVersionCounter)
+            if (this.GlobalVersionCounter-1 > VersionCounter)
                 return;
 
             try
             {
 
-                var _BitmapImage = new BitmapImage();
-                _BitmapImage.BeginInit();
-                _BitmapImage.CacheOption  = BitmapCacheOption.OnLoad;
-                _BitmapImage.StreamSource = TileStream;
-                _BitmapImage.EndInit();
-                _BitmapImage.Freeze(); // To allow access from UI thread!
+                var TileBitmap = new BitmapImage();
+                TileBitmap.BeginInit();
+                TileBitmap.CacheOption  = BitmapCacheOption.OnLoad;
+                TileBitmap.StreamSource = TileStream;
+                TileBitmap.EndInit();
+                TileBitmap.Freeze(); // To allow access from UI thread!
 
                 this.Dispatcher.Invoke(DispatcherPriority.Send, (Action<Object>)(_ImageSource =>
                 {
 
-                    //Debug.WriteLine(Thread.CurrentThread.ManagedThreadId + "-paint->" + this.Children.Count);
-
                     try
                     {
 
-                        var _Image = new Image() {
+                        var TileImage = new Image() {
                             Source = _ImageSource as ImageSource,
                             Width  = 256,
                             Height = 256,
                         };
 
-                        this.Children.Add(_Image);
+                        this.Children.Add(TileImage);
 
-                        Canvas.SetLeft(_Image, ScreenX);
-                        Canvas.SetTop(_Image, ScreenY);
+                        Canvas.SetLeft(TileImage, Position.X);
+                        Canvas.SetTop (TileImage, Position.Y);
 
                     }
                     catch (NotSupportedException)
                     {
                     }
 
-                }), _BitmapImage);
+                }), TileBitmap);
 
             }
             catch (Exception e)
@@ -488,7 +484,6 @@ namespace eu.Vanaheimr.Aegir
         }
 
         #endregion
-
 
     }
 

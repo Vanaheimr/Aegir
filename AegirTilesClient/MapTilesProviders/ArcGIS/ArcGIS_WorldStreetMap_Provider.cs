@@ -20,6 +20,8 @@
 
 using System;
 
+using eu.Vanaheimr.Illias.Commons;
+
 #endregion
 
 namespace eu.Vanaheimr.Aegir.Tiles
@@ -42,23 +44,19 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Constructor(s)
 
-        #region ArcGIS_WorldStreetMap_Provider()
-
         /// <summary>
         /// Creates a new ArcGIS WorldStreetMap provider.
         /// </summary>
         public ArcGIS_WorldStreetMap_Provider()
-            : base(Id:               Name,
-                   Description:        "ArcGIS WorldStreetMap",
-                   InfoUri:            "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",
-                   Copyright:          "",
-                   IsMemoryCacheable:  true,
-                   MemoryCacheEnabled: true,
-                   UriPattern:         "/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{zoom}/{y}/{x}",
-                   Hosts:              new String[1] { "http://server.arcgisonline.com" })
+            : base(Id:                  Name,
+                   Description:         "ArcGIS WorldStreetMap",
+                   InfoUri:             "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",
+                   Copyright:           "",
+                   IsMemoryCacheable:   true,
+                   MemoryCacheEnabled:  true,
+                   ZoomRange:           new Range<Byte>(0, 23),
+                   UriPatterns:         new String[1] { "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{zoom}/{y}/{x}" })
         { }
-
-        #endregion
 
         #endregion
 

@@ -41,19 +41,18 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Data
 
-        protected const String __MapProvider            = "MapProvider";
-        protected const String __MapProviders           = "MapProviders";
+        protected const String __MapProvider                = "MapProvider";
+        protected const String __MapProviders               = "MapProviders";
 
-        protected const String __MapProviderId        = "Name";
-        protected const String __MapProviderDescription = "Description";
-        protected const String __MapProviderUriPattern  = "UriPattern";
-        protected const String __MapProviderHosts       = "Hosts";
+        protected const String __MapProviderId              = "Id";
+        protected const String __MapProviderDescription     = "Description";
+        protected const String __MapProviderUriPatterns     = "UriPatterns";
 
         #endregion
 
         #region Properties
 
-        public IAegirTilesServer TilesServer { get; set; }
+        public AegirTilesServer TilesServer { get; set; }
 
         #endregion
 

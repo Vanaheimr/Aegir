@@ -21,10 +21,10 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using eu.Vanaheimr.Illias.Commons;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -45,10 +45,13 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Properties
 
-        #region Current_MapTilesProvider
+        #region CurrentProvider
 
         private MapTilesProvider _CurrentProvider;
 
+        /// <summary>
+        /// The current map tiles provider.
+        /// </summary>
         public MapTilesProvider CurrentProvider
         {
 
@@ -68,6 +71,9 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region CurrentProviderId
 
+        /// <summary>
+        /// The unique identification of the current map tiles provider.
+        /// </summary>
         public String CurrentProviderId
         {
 
@@ -85,31 +91,33 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #endregion
 
-        #region RegisteredMapProviderIds
+        #region Providers
 
         /// <summary>
         /// Return an enumeration of all registered map provider identifications.
         /// </summary>
-        public IEnumerable<String> RegisteredMapProviderIds
+        public IEnumerable<MapTilesProvider> Providers
         {
             get
             {
-                return MapProviders.Select(MapProvider => MapProvider.Key);
+                return MapProviders.
+                           Select(MapProvider => MapProvider.Value);
             }
         }
 
         #endregion
 
-        #region RegisteredMapProviders
+        #region ProviderIds
 
         /// <summary>
-        /// Return an enumeration of all registered map providers.
+        /// Return an enumeration of all registered map provider identifications.
         /// </summary>
-        public IDictionary<String, MapTilesProvider> RegisteredMapProviders
+        public IEnumerable<String> ProviderIds
         {
             get
             {
-                return MapProviders;
+                return MapProviders.
+                           Select(MapProvider => MapProvider.Key);
             }
         }
 
@@ -186,8 +194,6 @@ namespace eu.Vanaheimr.Aegir.Tiles
             if (MapProviders.Count() > 0)
                 CurrentProviderId = MapProviders.First().Id;
 
-            //AutoMapProviders = new AutoDiscovery<IMapTilesProvider>(true, Mapprovider => Mapprovider.Id);
-
         }
 
         #endregion
@@ -195,42 +201,104 @@ namespace eu.Vanaheimr.Aegir.Tiles
         #endregion
 
 
-        public AegirTilesClient Register(MapTilesProvider MapProvider, Boolean Activate = false)
+        #region Register(MapTilesProvider, Activate = false)
+
+        /// <summary>
+        /// Register a new map tiles provider.
+        /// </summary>
+        /// <param name="MapTilesProvider">A map tiles provider.</param>
+        /// <param name="Activate">Set the new map tiles provider as default.</param>
+        public AegirTilesClient Register(MapTilesProvider  MapTilesProvider,
+                                         Boolean           Activate = false)
         {
 
-            if (MapProviders.ContainsKey(MapProvider.Id))
+            if (MapProviders.ContainsKey(MapTilesProvider.Id))
                 throw new ArgumentException("Duplicate map tiles provider!");
 
-            MapProviders.Add(MapProvider.Id, MapProvider);
+            MapProviders.Add(MapTilesProvider.Id, MapTilesProvider);
 
             if (MapProviderAdded != null)
-                MapProviderAdded(this, MapProvider);
+                MapProviderAdded(this, MapTilesProvider);
 
             if (Activate || MapProviders.Count == 1)
-                SetMapProvider(MapProvider);
+                SetMapProvider(MapTilesProvider);
 
             return this;
 
         }
 
-        public void Remove(String MapProviderId)
+        #endregion
+
+
+        public MapTilesProvider GetProvider(String Id)
         {
 
-            if (!MapProviders.ContainsKey(MapProviderId))
+            MapTilesProvider MapTilesProvider;
+
+            if (this.MapProviders.TryGetValue(Id, out MapTilesProvider))
+                return MapTilesProvider;
+
+            return null;
+
+        }
+
+        public Boolean TryGetProvider(String Id, out MapTilesProvider MapTilesProvider)
+        {
+
+            return this.MapProviders.TryGetValue(Id, out MapTilesProvider);
+
+            //if (this.MapProviders.TryGetValue(Id, out MapTilesProvider))
+            //    return true;
+
+            //MapTilesProvider = null;
+            //return false;
+
+        }
+
+        #region Remove(MapTilesProviderId)
+
+        public void Remove(String MapTilesProviderId)
+        {
+
+            if (!MapProviders.ContainsKey(MapTilesProviderId))
                 throw new ArgumentException("Unknown map tiles provider!");
 
-            var OldProvider  = _CurrentProvider;
+            var MapTilesProvider = MapProviders[MapTilesProviderId];
 
-            MapProviders.Remove(MapProviderId);
+            MapProviders.Remove(MapTilesProviderId);
 
             if (MapProviderRemoved != null)
-                MapProviderRemoved(this, OldProvider);
+                MapProviderRemoved(this, MapTilesProvider);
 
             if (MapProviders.Count > 0)
                 SetMapProvider(MapProviders.First().Value);
 
         }
 
+        #endregion
+
+        #region Remove(MapTilesProvider)
+
+        public void Remove(MapTilesProvider MapTilesProvider)
+        {
+
+            if (!MapProviders.ContainsValue(MapTilesProvider))
+                throw new ArgumentException("Unknown map tiles provider!");
+
+            MapProviders.Remove(MapTilesProvider.Id);
+
+            if (MapProviderRemoved != null)
+                MapProviderRemoved(this, MapTilesProvider);
+
+            if (MapProviders.Count > 0)
+                SetMapProvider(MapProviders.First().Value);
+
+        }
+
+        #endregion
+
+
+        #region (private) SetMapProvider(MapProvider)
 
         private void SetMapProvider(MapTilesProvider MapProvider)
         {
@@ -246,6 +314,10 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         }
 
+        #endregion
+
+        #region (private) SetMapProvider(MapProviderId)
+
         private void SetMapProvider(String MapProviderId)
         {
 
@@ -256,8 +328,10 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         }
 
+        #endregion
 
-        #region GetTile(ZoomLevel, X, Y)
+
+        #region GetTile(ZoomLevel, X, Y, State = default(T))
 
         /// <summary>
         /// Return the tile for the given parameters.
@@ -265,16 +339,18 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
-        /// <returns>The requested tile as an array of bytes.</returns>
-        public Task<Tuple<MemoryStream, Object>> GetTile(UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
+        /// <param name="State">Some state to be returned with the tile, e.g. the screen coordinate where to paint it.</param>
+        public Task<Tuple<MemoryStream, T>> GetTile<T>(UInt32 ZoomLevel,
+                                                       UInt32 X,
+                                                       UInt32 Y,
+                                                       T      State = default(T))
         {
-            return CurrentProvider.GetTile(ZoomLevel, X, Y, State);
+            return CurrentProvider.GetTile<T>(ZoomLevel, X, Y, State);
         }
 
         #endregion
 
-
-        #region GetTile(MapProviderId, Zoom, X, Y)
+        #region GetTile(MapProviderId, ZoomLevel, X, Y, State = default(T))
 
         /// <summary>
         /// Return the tile for the given parameters.
@@ -283,8 +359,12 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="ZoomLevel">The zoom level.</param>
         /// <param name="X">The x coordinate of the tile.</param>
         /// <param name="Y">The y coordinate of the tile.</param>
-        /// <returns>The requested tile as an array of bytes.</returns>
-        public Task<Tuple<MemoryStream, Object>> GetTile(String MapProviderId, UInt32 ZoomLevel, UInt32 X, UInt32 Y, Object State = null)
+        /// <param name="State">Some state to be returned with the tile, e.g. the screen coordinate where to paint it.</param>
+        public Task<Tuple<MemoryStream, T>> GetTile<T>(String  MapProviderId,
+                                                       UInt32  ZoomLevel,
+                                                       UInt32  X,
+                                                       UInt32  Y,
+                                                       T       State = default(T))
         {
 
             MapTilesProvider MapProvider = null;
@@ -301,6 +381,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         #endregion
 
 
+        #region GetEnumerator()
 
         public IEnumerator<MapTilesProvider> GetEnumerator()
         {
@@ -319,6 +400,8 @@ namespace eu.Vanaheimr.Aegir.Tiles
                             GetEnumerator();
 
         }
+
+        #endregion
 
     }
 

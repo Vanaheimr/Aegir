@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IAegirTileServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileService\AAegirTileService.cs" />
     <Compile Include="TileService\IAegirTileService.cs" />
