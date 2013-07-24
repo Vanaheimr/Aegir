@@ -89,7 +89,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// Get an enumeration of all registered map providers.
         /// </summary>
         /// <example>
-        /// $ curl -X GET  -H "Accept: application/json" http://127.0.0.1:8182/MapProviders
+        /// $ curl -X GET  -H "Accept: application/json" http://127.0.0.1:8182/MapProvider
         /// {
         ///   "MapProviders": [
         ///     "OSM"

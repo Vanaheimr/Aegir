@@ -41,7 +41,7 @@ namespace eu.Vanaheimr.Aegir.Controls
 
         #region Data
 
-        public const UInt32 MinZoomLevel = 1;
+        public const UInt32 MinZoomLevel =  1;
         public const UInt32 MaxZoomLevel = 23;
 
         public  Point  ScreenOffset                     { get; private set; }

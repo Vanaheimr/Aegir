@@ -51,7 +51,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// Get an enumeration of all registered map providers.
         /// </summary>
         [NoAuthentication]
-        [HTTPMapping(HTTPMethods.GET, "/MapProviders")]
+        [HTTPMapping(HTTPMethods.GET, "/MapProvider")]
         HTTPResponse GET_MapProviders();
 
         #endregion
