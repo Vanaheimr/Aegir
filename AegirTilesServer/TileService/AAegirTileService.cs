@@ -100,7 +100,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="IHTTPConnection">The http connection for this request.</param>
         /// <param name="HTTPContentType">A content type.</param>
         public AAegirTileService(IHTTPConnection IHTTPConnection, HTTPContentType HTTPContentType)
-            : base(IHTTPConnection, HTTPContentType, "TileServer.resources.")
+            : base(IHTTPConnection, HTTPContentType)
         { }
 
         #endregion
@@ -113,7 +113,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="IHTTPConnection">The http connection for this request.</param>
         /// <param name="HTTPContentTypes">An enumeration of content types.</param>
         public AAegirTileService(IHTTPConnection IHTTPConnection, IEnumerable<HTTPContentType> HTTPContentTypes)
-            : base(IHTTPConnection, HTTPContentTypes, "TileServer.resources.")
+            : base(IHTTPConnection, HTTPContentTypes)
         { }
 
         #endregion

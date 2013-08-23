@@ -54,9 +54,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
         /// <param name="IHTTPConnection">The http connection for this request.</param>
         public AegirTileService_ALL(IHTTPConnection IHTTPConnection)
             : base(IHTTPConnection, HTTPContentType.ALL)
-        {
-            this.CallingAssembly = Assembly.GetExecutingAssembly();
-        }
+        { }
 
         #endregion
 

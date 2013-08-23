@@ -22,6 +22,7 @@ using System;
 
 using eu.Vanaheimr.Hermod.HTTP;
 using eu.Vanaheimr.Hermod.Datastructures;
+using eu.Vanaheimr.Hermod;
 
 #endregion
 
