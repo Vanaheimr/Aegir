@@ -237,38 +237,48 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                 #region The left mouse button is pressed => drag the map!
 
-                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed &&
-                    !this.ForegroundLayer.Equals(Sender))
+                if (MouseEventArgs.LeftButton == MouseButtonState.Pressed)
                 {
+                    if (Sender == BackgroundLayer &&
+                        LastMouseClickPosition.X != 0 &&
+                        LastMouseClickPosition.Y != 0)
+                    {
 
-                    MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
+                        MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
-                    this.ScreenOffset_AtMovementStart = new Point(this.ScreenOffset_AtMovementStart.X % MapSizeAtZoomLevel,
-                                                                  this.ScreenOffset_AtMovementStart.Y % MapSizeAtZoomLevel);
+                        this.ScreenOffset_AtMovementStart = new Point(this.ScreenOffset_AtMovementStart.X % MapSizeAtZoomLevel,
+                                                                      this.ScreenOffset_AtMovementStart.Y % MapSizeAtZoomLevel);
 
-                    this.ScreenOffset = new Point((Math.Round(ScreenOffset_AtMovementStart.X + MousePosition.X - LastMouseClickPosition.X) % MapSizeAtZoomLevel),
-                                                  (Math.Round(ScreenOffset_AtMovementStart.Y + MousePosition.Y - LastMouseClickPosition.Y) % MapSizeAtZoomLevel));
+                        this.ScreenOffset = new Point((Math.Round(ScreenOffset_AtMovementStart.X + MousePosition.X - LastMouseClickPosition.X) % MapSizeAtZoomLevel),
+                                                      (Math.Round(ScreenOffset_AtMovementStart.Y + MousePosition.Y - LastMouseClickPosition.Y) % MapSizeAtZoomLevel));
 
-                    AvoidEndlessVerticalScrolling();
+                        AvoidEndlessVerticalScrolling();
 
-                    MapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffset.X,
-                                                                         MousePosition.Y - this.ScreenOffset.Y,
-                                                                         this.ZoomLevel);
+                        MapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffset.X,
+                                                                             MousePosition.Y - this.ScreenOffset.Y,
+                                                                             this.ZoomLevel);
 
-                    MapLayers.Values.ForEach(MapLayer => MapLayer.Move(MousePosition.X - LastMousePositionDuringMovement.X,
-                                                                       MousePosition.Y - LastMousePositionDuringMovement.Y));
+                        MapLayers.Values.ForEach(MapLayer => MapLayer.Move(MousePosition.X - LastMousePositionDuringMovement.X,
+                                                                           MousePosition.Y - LastMousePositionDuringMovement.Y));
 
-                    MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
+                        MapLayers.Values.ForEach(MapLayer => MapLayer.Redraw());
 
-                    #region Send MapViewChanged events
+                        #region Send MapViewChanged events
 
-                    MapMovements++;
+                        MapMovements++;
 
-                    if (MapViewChanged != null)
-                        MapViewChanged(this, ScreenOffset, this.MapMovements);
+                        if (MapViewChanged != null)
+                            MapViewChanged(this, ScreenOffset, this.MapMovements);
 
-                    #endregion
+                        #endregion
 
+                    }
+                }
+
+                else
+                {
+                    LastMouseClickPosition.X = 0;
+                    LastMouseClickPosition.Y = 0;
                 }
 
                 #endregion
@@ -304,10 +314,15 @@ namespace eu.Vanaheimr.Aegir.Controls
         public void ProcessMouseLeftButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
         {
 
-            LastMouseClickPosition        = MouseButtonEventArgs.GetPosition(this);
-            ScreenOffset_AtMovementStart  = ScreenOffset;
+            if (Sender == BackgroundLayer)
+            {
 
-            this.Focus();
+                LastMouseClickPosition        = MouseButtonEventArgs.GetPosition(this);
+                ScreenOffset_AtMovementStart  = ScreenOffset;
+
+                this.Focus();
+
+            }
 
         }
 

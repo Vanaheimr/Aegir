@@ -46,18 +46,7 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="ZIndex">The z-index of this feature layer.</param>
         public HeatmapLayer(String Id, MapControl MapControl, Int32 ZIndex)
             : base(Id, MapControl, ZIndex)
-        {
-
-            #region Register mouse events
-
-            this.PreviewMouseMove           += MapControl.ProcessMouseMove;
-            this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
-            this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
-            this.MouseWheel                 += MapControl.ProcessMouseWheel;
-
-            #endregion
-
-        }
+        { }
 
         #endregion
 

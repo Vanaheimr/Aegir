@@ -20,7 +20,6 @@
 
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
@@ -48,20 +47,10 @@ namespace eu.Vanaheimr.Aegir
 
         #region Data
 
-        /// <summary>
-        /// An internal collection of all reflected map providers.
-        /// </summary>
-//        private AutoDiscovery<IMapTilesProvider> MapProviders;
-
-        private readonly List<Image> TilesOnMap;
-        private Image[] VeryOldTilesToDelete = new Image[0];
-        private Image[] OldTilesToDelete = new Image[0];
-
-        private Int64 GlobalVersionCounter = 0;
-
-        private Object AutoTilesRefreshLock;
-
-        private readonly Timer TilesRefreshTimer;
+        private readonly List<Image>  TilesOnMap;
+        private          Int64        GlobalVersionCounter = 0;
+        private          Object       AutoTilesRefreshLock;
+        private readonly Timer        TilesRefreshTimer;
 
         #endregion
 
@@ -147,18 +136,12 @@ namespace eu.Vanaheimr.Aegir
             : base(Id, MapControl, ZIndex)
         {
 
-            this.AutoTilesRefreshLock         = new Object();
-            this.Background         = new SolidColorBrush(Colors.Transparent);
-            this.TilesOnMap         = new List<Image>();
+            this.AutoTilesRefreshLock  = new Object();
+            this.Background            = new SolidColorBrush(Colors.Transparent);
+            this.TilesOnMap            = new List<Image>();
 
-            #region Register mouse events
-
-            this.PreviewMouseMove           += MapControl.ProcessMouseMove;
-            this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
-            this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
-            this.MouseWheel                 += MapControl.ProcessMouseWheel;
-
-            #endregion
+            // Do not react on mouse events!
+            this.IsHitTestVisible      = false;
 
             this.SizeChanged += (s, o) => Redraw();
 
@@ -192,11 +175,10 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
-
             this.TileClient = new AegirTilesClient();
-            this.TileClient.Register(new OSMProvider());
-
-            //this.Loaded += (s, o) => { PaintTiles(); PaintTiles(); };
+            //this.TileClient.Register(new OSMProvider());
+            //this.TileClient.Register(new ArcGIS_WorldImagery_Provider());
+            //this.TileClient.Register(new ArcGIS_WorldStreetMap_Provider());
 
             this.TilesRefreshTimer = new Timer(TilesAutoRefresh, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
 

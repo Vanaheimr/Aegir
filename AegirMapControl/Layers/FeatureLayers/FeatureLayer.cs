@@ -46,15 +46,7 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="ZIndex">The z-index of this feature layer.</param>
         public FeatureLayer(String Id, MapControl MapControl, Int32 ZIndex)
             : base(Id, MapControl, ZIndex)
-        {
-
-            // Register mouse events
-            this.PreviewMouseMove           += MapControl.ProcessMouseMove;
-            this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
-            this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
-            this.MouseWheel                 += MapControl.ProcessMouseWheel;
-
-        }
+        { }
 
         #endregion
 
