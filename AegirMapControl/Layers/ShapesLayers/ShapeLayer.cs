@@ -113,14 +113,14 @@ namespace eu.Vanaheimr.Aegir
                 TileMode = TileMode.None
             };
 
-            var Feature       = new Feature(new RectangleGeometry() { Rect = DrawingGroup.Bounds });
-            Feature.Id        = Id;
-            Feature.Latitude  = Latitude;
-            Feature.Longitude = Longitude;
-            Feature.Width     = DrawingGroup.Bounds.Width;
-            Feature.Height    = DrawingGroup.Bounds.Height;
-            Feature.Fill      = DrawingBrush;
-            Feature.ToolTip   = Id;
+            var Feature = new Feature(Id, new RectangleGeometry() { Rect = DrawingGroup.Bounds }) {
+                Latitude   = Latitude,
+                Longitude  = Longitude,
+                Width      = DrawingGroup.Bounds.Width,
+                Height     = DrawingGroup.Bounds.Height,
+                Fill       = DrawingBrush,
+                ToolTip    = Id
+            };
 
             // The position on the map will be set within the PaintMap() method!
             this.Children.Add(Feature);

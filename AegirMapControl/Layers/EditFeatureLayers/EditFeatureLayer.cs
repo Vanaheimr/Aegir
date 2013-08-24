@@ -19,13 +19,10 @@
 #region Usings
 
 using System;
-
 using System.Windows.Input;
 using System.Windows.Media;
 
 using eu.Vanaheimr.Aegir.Controls;
-using System.Windows.Shapes;
-using System.Windows;
 
 #endregion
 
@@ -35,7 +32,7 @@ namespace eu.Vanaheimr.Aegir
     /// <summary>
     /// A feature layer for adding, editing and visualizing map features.
     /// </summary>
-    public class EditFeatureLayer : AMapLayer
+    public class EditFeatureLayer : FeatureLayer
     {
 
         #region Constructor(s)
@@ -54,52 +51,12 @@ namespace eu.Vanaheimr.Aegir
 
             this.Background = new SolidColorBrush(Colors.Transparent);
 
-            #region Register mouse events
-
-            this.PreviewMouseMove            += MapControl.ProcessMouseMove;
-            this.MouseLeftButtonDown         += MapControl.ProcessMouseLeftButtonDown;
-            this.PreviewMouseLeftButtonDown  += MapControl.ProcessMouseLeftDoubleClick;
-            this.MouseWheel                  += MapControl.ProcessMouseWheel;
-
+            // Register mouse events
             this.PreviewMouseRightButtonDown += ProcessPreviewMouseRightButtonDown;
 
-            #endregion
-
         }
 
         #endregion
-
-        #endregion
-
-
-        #region AddFeature
-
-
-        public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
-        {
-            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
-        }
-
-        public Feature AddFeature(String Id, GeoCoordinate GeoCoordinate, Double Width, Double Height, Color Color)
-        {
-
-            var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
-            Feature.Id               = Id;
-            Feature.Latitude         = GeoCoordinate.Latitude;
-            Feature.Longitude        = GeoCoordinate.Longitude;
-            Feature.Stroke           = new SolidColorBrush(Colors.Black);
-            Feature.StrokeThickness  = 1;
-            Feature.Width            = Width;
-            Feature.Height           = Height;
-            Feature.Fill             = new SolidColorBrush(Color);
-            Feature.ToolTip          = Id;
-
-            // The position on the map will be set within the PaintMap() method!
-            this.Children.Add(Feature);
-            
-            return Feature;
-
-        }
 
         #endregion
 
@@ -109,11 +66,14 @@ namespace eu.Vanaheimr.Aegir
             
             var Mouse = MouseEventArgs.GetPosition(this);
 
-            AddFeature("jfgdh", GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.MapControl.ScreenOffset.X,
-                                                                         Mouse.Y - this.MapControl.ScreenOffset.Y,
-                                                                         this.MapControl.ZoomLevel),
-                                                                         5, 5,
-                                                                         Colors.Blue);
+            AddFeature("NewFeature",
+                       GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.MapControl.ScreenOffset.X,
+                                                                Mouse.Y - this.MapControl.ScreenOffset.Y,
+                                                                this.MapControl.ZoomLevel),
+                                                                5, 5,
+                                                                Brushes.Blue,
+                                                                Brushes.Black,
+                                                                1.0);
 
             Redraw();
 

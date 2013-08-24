@@ -19,13 +19,9 @@
 #region Usings
 
 using System;
-
-using System.Windows.Input;
 using System.Windows.Media;
 
 using eu.Vanaheimr.Aegir.Controls;
-using System.Windows.Shapes;
-using System.Windows;
 
 #endregion
 
@@ -52,15 +48,12 @@ namespace eu.Vanaheimr.Aegir
             : base(Id, MapControl, ZIndex)
         {
 
-            #region Register mouse events
-
+            // Register mouse events
             this.PreviewMouseMove           += MapControl.ProcessMouseMove;
             this.MouseLeftButtonDown        += MapControl.ProcessMouseLeftButtonDown;
             this.PreviewMouseLeftButtonDown += MapControl.ProcessMouseLeftDoubleClick;
             this.MouseWheel                 += MapControl.ProcessMouseWheel;
 
-            #endregion
-
         }
 
         #endregion
@@ -68,32 +61,106 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        #region AddFeature
+        #region AddFeature(Id, Latitude, Longitude, Width, Height, Fill, Stroke, StrokeThickness)
 
-        public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
+        /// <summary>
+        /// Add a map feature of the given dimensions at the given geo coordinate.
+        /// </summary>
+        /// <param name="Id">The unique identification of the feature.</param>
+        /// <param name="Latitude">The latitude of the feature.</param>
+        /// <param name="Longitude">The longitude of the feature.</param>
+        /// <param name="Width">The longitude of the feature.</param>
+        /// <param name="Height">The longitude of the feature.</param>
+        /// <param name="Fill">The fill brush of the feature.</param>
+        /// <param name="Stroke">The stroke brush of the feature.</param>
+        /// <param name="StrokeThickness">The thickness of the stroke.</param>
+        public Feature AddFeature(String     Id,
+                                  Latitude   Latitude,
+                                  Longitude  Longitude,
+                                  Double     Width,
+                                  Double     Height,
+                                  Brush      Fill,
+                                  Brush      Stroke,
+                                  Double     StrokeThickness)
+
         {
-            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
+
+            return AddFeature(Id,
+                              new GeoCoordinate(Latitude, Longitude),
+                              Width, Height,
+                              Fill, Stroke, StrokeThickness);
+
         }
 
-        public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Altitude Altitude, Double Width, Double Height, Color Color)
+        #endregion
+
+        #region AddFeature(Id, Latitude, Longitude, Altitude, Width, Height, Fill, Stroke, StrokeThickness)
+
+        /// <summary>
+        /// Add a map feature of the given dimensions at the given geo coordinate.
+        /// </summary>
+        /// <param name="Id">The unique identification of the feature.</param>
+        /// <param name="Latitude">The latitude of the feature.</param>
+        /// <param name="Longitude">The longitude of the feature.</param>
+        /// <param name="Altitude">The altitude of the feature.</param>
+        /// <param name="Width">The longitude of the feature.</param>
+        /// <param name="Height">The longitude of the feature.</param>
+        /// <param name="Fill">The fill brush of the feature.</param>
+        /// <param name="Stroke">The stroke brush of the feature.</param>
+        /// <param name="StrokeThickness">The thickness of the stroke.</param>
+        public Feature AddFeature(String Id,
+                                  Latitude   Latitude,
+                                  Longitude  Longitude,
+                                  Altitude   Altitude,
+                                  Double     Width,
+                                  Double     Height,
+                                  Brush      Fill,
+                                  Brush      Stroke,
+                                  Double     StrokeThickness)
+
         {
-            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude, Altitude), Width, Height, Color);
+
+            return AddFeature(Id,
+                              new GeoCoordinate(Latitude, Longitude, Altitude),
+                              Width, Height,
+                              Fill, Stroke, StrokeThickness);
+
         }
 
-        public Feature AddFeature(String Id, GeoCoordinate GeoCoordinate, Double Width, Double Height, Color Color)
+        #endregion
+
+        #region AddFeature(Id, GeoCoordinate, Width, Height, Fill, Stroke, StrokeThickness)
+
+        /// <summary>
+        /// Add a map feature of the given dimensions at the given geo coordinate.
+        /// </summary>
+        /// <param name="Id">The unique identification of the feature.</param>
+        /// <param name="GeoCoordinate">The geo coordinate of the feature.</param>
+        /// <param name="Width">The longitude of the feature.</param>
+        /// <param name="Height">The longitude of the feature.</param>
+        /// <param name="Fill">The fill brush of the feature.</param>
+        /// <param name="Stroke">The stroke brush of the feature.</param>
+        /// <param name="StrokeThickness">The thickness of the stroke.</param>
+        public Feature AddFeature(String         Id,
+                                  GeoCoordinate  GeoCoordinate,
+                                  Double         Width,
+                                  Double         Height,
+                                  Brush          Fill,
+                                  Brush          Stroke,
+                                  Double         StrokeThickness)
         {
 
-            var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
-            Feature.Id               = Id;
-            Feature.Latitude         = GeoCoordinate.Latitude;
-            Feature.Longitude        = GeoCoordinate.Longitude;
-            Feature.Altitude         = GeoCoordinate.Altitude;
-            Feature.Stroke           = new SolidColorBrush(Colors.Black);
-            Feature.StrokeThickness  = 1;
-            Feature.Width            = Width;
-            Feature.Height           = Height;
-            Feature.Fill             = new SolidColorBrush(Color);
-            Feature.ToolTip          = Id;
+            var Feature = new Feature(Id, new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 }) {
+                Latitude         = GeoCoordinate.Latitude,
+                Longitude        = GeoCoordinate.Longitude,
+                Altitude         = GeoCoordinate.Altitude,
+                Width            = Width,
+                Height           = Height,
+                Fill             = Fill,
+                Stroke           = Stroke,
+                StrokeThickness  = StrokeThickness,
+                ToolTip          = Id
+            };
 
             // The position on the map will be set within the PaintMap() method!
             this.Children.Add(Feature);

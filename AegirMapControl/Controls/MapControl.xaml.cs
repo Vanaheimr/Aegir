@@ -567,8 +567,7 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             var OldZoomLevel = this.ZoomLevel;
             this.ZoomLevel   = ZoomLevel;
-
-            var NewOffset = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, this.ZoomLevel);
+            var NewOffset    = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 

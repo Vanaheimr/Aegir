@@ -19,13 +19,9 @@
 #region Usings
 
 using System;
-
-using System.Windows.Input;
 using System.Windows.Media;
 
 using eu.Vanaheimr.Aegir.Controls;
-using System.Windows.Markup;
-using System.Windows.Shapes;
 
 #endregion
 
@@ -68,42 +64,116 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        #region AddFeature
+        #region AddFeature(Id, Latitude, Longitude, Width, Height, Color)
 
-        public Feature AddFeature(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
+        /// <summary>
+        /// Add a map feature of the given dimensions at the given geo coordinate.
+        /// </summary>
+        /// <param name="Id">The unique identification of the feature.</param>
+        /// <param name="Latitude">The latitude of the feature.</param>
+        /// <param name="Longitude">The longitude of the feature.</param>
+        /// <param name="Width">The longitude of the feature.</param>
+        /// <param name="Height">The longitude of the feature.</param>
+        /// <param name="Fill">The fill brush of the feature.</param>
+        /// <param name="Stroke">The stroke brush of the feature.</param>
+        /// <param name="StrokeThickness">The thickness of the stroke.</param>
+        public Feature AddFeature(String     Id,
+                                  Latitude   Latitude,
+                                  Longitude  Longitude,
+                                  Double     Width,
+                                  Double     Height,
+                                  Color      Color)
+
         {
-            return AddFeature(Id, new GeoCoordinate(Latitude, Longitude), Width, Height, Color);
+
+            return AddFeature(Id,
+                              new GeoCoordinate(Latitude, Longitude),
+                              Width, Height,
+                              Color);
+
         }
 
-        public Feature AddFeature(String Id, GeoCoordinate GeoCoordinate, Double Width, Double Height, Color Color)
+        #endregion
+
+        #region AddFeature(Id, Latitude, Longitude, Altitude, Width, Height, Color)
+
+        /// <summary>
+        /// Add a map feature of the given dimensions at the given geo coordinate.
+        /// </summary>
+        /// <param name="Id">The unique identification of the feature.</param>
+        /// <param name="Latitude">The latitude of the feature.</param>
+        /// <param name="Longitude">The longitude of the feature.</param>
+        /// <param name="Altitude">The altitude of the feature.</param>
+        /// <param name="Width">The longitude of the feature.</param>
+        /// <param name="Height">The longitude of the feature.</param>
+        /// <param name="Fill">The fill brush of the feature.</param>
+        /// <param name="Stroke">The stroke brush of the feature.</param>
+        /// <param name="StrokeThickness">The thickness of the stroke.</param>
+        public Feature AddFeature(String Id,
+                                  Latitude   Latitude,
+                                  Longitude  Longitude,
+                                  Altitude   Altitude,
+                                  Double     Width,
+                                  Double     Height,
+                                  Color      Color)
+
+        {
+
+            return AddFeature(Id,
+                              new GeoCoordinate(Latitude, Longitude, Altitude),
+                              Width, Height,
+                              Color);
+
+        }
+
+        #endregion
+
+        #region AddFeature(Id, GeoCoordinate, Width, Height, Color)
+
+        /// <summary>
+        /// Add a map feature of the given dimensions at the given geo coordinate.
+        /// </summary>
+        /// <param name="Id">The unique identification of the feature.</param>
+        /// <param name="GeoCoordinate">The geo coordinate of the feature.</param>
+        /// <param name="Width">The longitude of the feature.</param>
+        /// <param name="Height">The longitude of the feature.</param>
+        /// <param name="Color">The fill color of the feature.</param>
+        public Feature AddFeature(String         Id,
+                                  GeoCoordinate  GeoCoordinate,
+                                  Double         Width,
+                                  Double         Height,
+                                  Color          Color)
         {
 
             var radialBrush = new RadialGradientBrush();
-            var ColorHigh = Color; ColorHigh.A = 0xFF;
-            var ColorLow  = Color; ColorLow.A  = 0x00;
+            var ColorHigh   = Color; ColorHigh.A = 0xFF;
+            var ColorLow    = Color; ColorLow.A  = 0x00;
 
             radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
             radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
 
             var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoordinate.Latitude, GeoCoordinate.Longitude, this.MapControl.ZoomLevel);
 
-            var Feature              = new Feature(new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 });
-            Feature.Id               = Id;
-            Feature.Latitude         = GeoCoordinate.Latitude;
-            Feature.Longitude        = GeoCoordinate.Longitude;
-            Feature.Width            = Width;
-            Feature.Height           = Height;
-            Feature.Fill             = radialBrush;
-            Feature.ToolTip          = Id;
+
+            var Feature = new Feature(Id, new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 }) {
+                Latitude         = GeoCoordinate.Latitude,
+                Longitude        = GeoCoordinate.Longitude,
+                Altitude         = GeoCoordinate.Altitude,
+                Width            = Width,
+                Height           = Height,
+                Fill             = radialBrush,
+                ToolTip          = Id
+            };
 
             // The position on the map will be set within the PaintMap() method!
             this.Children.Add(Feature);
-            
+
             return Feature;
 
         }
 
         #endregion
+
 
     }
 

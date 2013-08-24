@@ -39,7 +39,14 @@ namespace eu.Vanaheimr.Aegir
 
         #region Properties
 
-        public String    Id         { get; set; }
+        #region Id
+
+        /// <summary>
+        /// The unique identification of this map feature.
+        /// </summary>
+        public String Id { get; private set; }
+
+        #endregion
 
         #region Latitude/Longitude/Altitude
 
@@ -58,10 +65,15 @@ namespace eu.Vanaheimr.Aegir
         /// </summary>
         public Altitude  Altitude   { get; set; }
 
+        #endregion
+
         #region Geometry
 
         private readonly Geometry Geometry;
 
+        /// <summary>
+        /// The geometry of the feature.
+        /// </summary>
         protected override Geometry DefiningGeometry
         {
             get
@@ -74,24 +86,39 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #endregion
-
         #region Constructor(s)
 
-        #region Feature()
+        #region Feature(Id)
 
-        public Feature()
+        /// <summary>
+        /// Create a new map feature.
+        /// </summary>
+        /// <param name="Id">The unique identification of this map feature.</param>
+        public Feature(String Id)
         {
-            this.Geometry = new EllipseGeometry();
+
+            this.Id        = Id;
+            this.Geometry  = new EllipseGeometry();
+
         }
 
         #endregion
 
-        #region Feature(Geometry)
+        #region Feature(Id, Geometry)
 
-        public Feature(Geometry Geometry)
+        /// <summary>
+        /// Create a new map feature.
+        /// </summary>
+        /// <param name="Id">The unique identification of this map feature.</param>
+        /// <param name="Geometry">The geometry of this feature.</param>
+        public Feature(String    Id,
+                       Geometry  Geometry)
+
         {
-            this.Geometry = Geometry;
+
+            this.Id        = Id;
+            this.Geometry  = Geometry;
+
         }
 
         #endregion
