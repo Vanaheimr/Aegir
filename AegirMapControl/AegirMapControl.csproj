@@ -58,7 +58,7 @@
       <DependentUpon>ExpandableStackPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LayerPanel.cs" />
-    <Compile Include="Layers\EditFeatureLayers\EditFeatureLayer.cs" />
+    <Compile Include="MapLayers\EditFeatureLayers\EditFeatureLayer.cs" />
     <Compile Include="Shapes\Germany\Bayern.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -71,19 +71,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Layers\ShapesLayers\GeoShape.cs" />
-    <Compile Include="Layers\AMapLayer.cs" />
-    <Compile Include="Layers\ShapesLayers\ShapeLayer.cs" />
-    <Compile Include="Layers\FeatureLayers\FeatureLayer.cs" />
-    <Compile Include="Layers\FeatureLayers\Feature.cs" />
-    <Compile Include="Layers\HeatmapLayers\HeatmapLayer.cs" />
+    <Compile Include="MapLayers\ShapesLayers\GeoShape.cs" />
+    <Compile Include="MapLayers\AMapLayer.cs" />
+    <Compile Include="MapLayers\ShapesLayers\ShapeLayer.cs" />
+    <Compile Include="MapLayers\FeatureLayers\FeatureLayer.cs" />
+    <Compile Include="MapLayers\FeatureLayers\Feature.cs" />
+    <Compile Include="MapLayers\HeatmapLayers\HeatmapLayer.cs" />
     <Compile Include="Controls\MapControl.xaml.cs">
       <DependentUpon>MapControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Layers\TilesLayers\TilesLayer.cs" />
+    <Compile Include="MapLayers\TilesLayers\TilesLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

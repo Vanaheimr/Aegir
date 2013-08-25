@@ -48,7 +48,9 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="ZIndex">The z-index of this feature layer.</param>
         public HeatmapLayer(String Id, MapControl MapControl, Int32 ZIndex)
             : base(Id, MapControl, ZIndex)
-        { }
+        {
+            this.IsHitTestVisible = false;
+        }
 
         #endregion
 
