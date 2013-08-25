@@ -54,49 +54,12 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region Lat/Lng/.../GeoWidth/GeoHeight/Altitude
+        #region GeoBoundingBox
 
         /// <summary>
-        /// The latitude of this shape.
+        /// The geo bounding box of this shape.
         /// </summary>
-        public Latitude  Latitude   { get; private set; }
-
-        /// <summary>
-        /// The longitude of this shape.
-        /// </summary>
-        public Longitude Longitude  { get; private set; }
-
-        /// <summary>
-        /// The altitude of this shape.
-        /// </summary>
-        public Altitude  Altitude   { get; private set; }
-
-
-        /// <summary>
-        /// The latitude2 of this shape.
-        /// </summary>
-        public Latitude  Latitude2  { get; private set; }
-
-        /// <summary>
-        /// The longitude2 of this shape.
-        /// </summary>
-        public Longitude Longitude2 { get; private set; }
-
-        /// <summary>
-        /// The altitude2 of this shape.
-        /// </summary>
-        public Altitude  Altitude2  { get; private set; }
-
-
-        /// <summary>
-        /// The geographical width of this shape.
-        /// </summary>
-        public Latitude  GeoWidth   { get; private set; }
-
-        /// <summary>
-        /// The geographical height of this shape.
-        /// </summary>
-        public Longitude GeoHeight  { get; private set; }
+        public GeoBoundingBox GeoBounding { get; private set; }
 
         #endregion
 
@@ -183,6 +146,45 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
+        public GeoShape(SDL             Geometries,
+                        GeoBoundingBox  GeoBoundingBox,
+                        Brush           Fill,
+                        Brush           Stroke,
+                        Double          StrokeThickness)
+
+        {
+
+            this.Id           = Id;
+            this.GeoBounding  = GeoBoundingBox;
+
+            var DrawingGroup  = new DrawingGroup();
+                DrawingGroup.Children.Add(new GeometryDrawing(Fill,
+                                                              new Pen(Stroke, StrokeThickness),
+                                                              PathGeometry.Parse(Geometries.Value)));
+
+            this.Fill = new DrawingBrush() {
+                Drawing  = DrawingGroup,
+                TileMode = TileMode.None,
+                Stretch  = Stretch.UniformToFill
+            };
+
+            Bounds = DrawingGroup.Bounds;
+
+        }
+
+        #endregion
+
+        #region GeoShape(Id, Latitude, Longitude, Altitude, GeoWidth, GeoHeight)
+
+        /// <summary>
+        /// Create a new polygon geo shape.
+        /// </summary>
+        /// <param name="Id">The Id of the shape.</param>
+        /// <param name="Latitude">The latitude of the shape center.</param>
+        /// <param name="Longitude">The longitude of the shape center.</param>
+        /// <param name="Altitude">The altitude of the shape center.</param>
+        /// <param name="GeoWidth">The geographical width of the shape center.</param>
+        /// <param name="GeoHeight">The geographical height of the shape center.</param>
         public GeoShape(String[]   Geometries,
                         Latitude   Latitude,
                         Longitude  Longitude,
@@ -195,22 +197,18 @@ namespace eu.Vanaheimr.Aegir
 
         {
 
-            this.Id         = Id;
-            this.Latitude   = Latitude;
-            this.Longitude  = Longitude;
-            this.Altitude   = Altitude;
-            this.Latitude2  = Latitude2;
-            this.Longitude2 = Longitude2;
+            this.Id           = Id;
+            this.GeoBounding  = new GeoBoundingBox(Latitude,  Longitude,  Altitude,
+                                                   Latitude2, Longitude2, Altitude);
 
-            this.GeoWidth   = new Latitude (Latitude2. Value - Latitude. Value);
-            this.GeoHeight  = new Longitude(Longitude2.Value - Longitude.Value);
+            var DrawingGroup  = new DrawingGroup();
+                DrawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(FillColor),
+                                                              new Pen(new SolidColorBrush(StrokeColor),
+                                                                      StrokeThickness),
+                                                              PathGeometry.Parse(Geometries[8])));
 
-            var DrawingGroup = new DrawingGroup();
-                DrawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(FillColor), new Pen(new SolidColorBrush(StrokeColor), StrokeThickness), PathGeometry.Parse(Geometries[8])));
-
-            this.Fill = new DrawingBrush() {
+            this.Fill         = new DrawingBrush() {
                 Drawing   = DrawingGroup,
-                //Viewport = new Rect(0, 0, 1, 1),
                 TileMode  = TileMode.None,
                 Stretch   = Stretch.UniformToFill
             };
@@ -237,52 +235,7 @@ namespace eu.Vanaheimr.Aegir
             this.Id               = Id;
             this.GeoCoordinates   = GeoCoordinates;
 
-            #region Get Min/Max-Values
-
-            var MinLat = Double.MaxValue;
-            var MaxLat = Double.MinValue;
-
-            var MinLng = Double.MaxValue;
-            var MaxLng = Double.MinValue;
-
-            var MinAlt = Double.MaxValue;
-            var MaxAlt = Double.MinValue;
-
-            foreach (var GeoCoordinate in GeoCoordinates)
-            {
-
-                if (GeoCoordinate.Latitude.Value  < MinLat)
-                    MinLat = GeoCoordinate.Latitude.Value;
-
-                if (GeoCoordinate.Longitude.Value < MinLng)
-                    MinLng = GeoCoordinate.Longitude.Value;
-
-                if (GeoCoordinate.Altitude.Value  < MinAlt)
-                    MinAlt = GeoCoordinate.Altitude.Value;
-
-
-                if (GeoCoordinate.Latitude.Value  > MaxLat)
-                    MaxLat = GeoCoordinate.Latitude.Value;
-
-                if (GeoCoordinate.Longitude.Value > MaxLng)
-                    MaxLng = GeoCoordinate.Longitude.Value;
-
-                if (GeoCoordinate.Altitude.Value  > MaxAlt)
-                    MaxAlt = GeoCoordinate.Altitude.Value;
-
-            }
-
-            this.Latitude   = new Latitude (MinLat);
-            this.Longitude  = new Longitude(MinLng);
-            this.Altitude   = new Altitude (MinAlt);
-            this.Latitude2  = new Latitude (MaxLat);
-            this.Longitude2 = new Longitude(MaxLng);
-            this.Altitude2  = new Altitude (MaxAlt);
-
-            #endregion
-
-            this.GeoWidth         = new Latitude (Latitude2. Value - Latitude. Value);
-            this.GeoHeight        = new Longitude(Longitude2.Value - Longitude.Value);
+            this.GeoBounding      = GeoCoordinates.GeoCoordinate2BoundingBox();
 
             this.FillColor        = FillColor;
             this.StrokeColor      = StrokeColor;
@@ -300,8 +253,8 @@ namespace eu.Vanaheimr.Aegir
         private void SetScreenGeometry()
         {
 
-            this.OnScreenUpperLeft  = GeoCalculations.GeoCoordinate2ScreenXY(Latitude,  Longitude,  _ZoomLevel);
-            this.OnScreenLowerRight = GeoCalculations.GeoCoordinate2ScreenXY(Latitude2, Longitude2, _ZoomLevel);
+            this.OnScreenUpperLeft  = GeoCalculations.GeoCoordinate2ScreenXY(GeoBounding.Latitude,  GeoBounding.Longitude,  _ZoomLevel);
+            this.OnScreenLowerRight = GeoCalculations.GeoCoordinate2ScreenXY(GeoBounding.Latitude2, GeoBounding.Longitude2, _ZoomLevel);
 
             this.OnScreenWidth      = (UInt64) Math.Abs(OnScreenLowerRight.X - OnScreenUpperLeft.X);
             this.OnScreenHeight     = (UInt64) Math.Abs(OnScreenLowerRight.Y - OnScreenUpperLeft.Y);

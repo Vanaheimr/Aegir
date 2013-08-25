@@ -46,10 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrowsAndPipes\GeoCoordinate2BoundingBox.cs" />
+    <Compile Include="ArrowsAndPipes\GaussKrueger2GeoCoordinate.cs" />
     <Compile Include="ArrowsAndPipes\TilesXY2GeoCoordinate.cs" />
     <Compile Include="ArrowsAndPipes\GeoCoordinate2ScreenXY.cs" />
     <Compile Include="ArrowsAndPipes\Mouse2GeoCoordinate.cs" />
     <Compile Include="ArrowsAndPipes\GeoCoordinate2TilesXY.cs" />
+    <Compile Include="GeoBoundingBox.cs" />
     <Compile Include="GeoCoordinates\TilesXY.cs" />
     <Compile Include="GeoCoordinates\Altitude.cs" />
     <Compile Include="GeoCoordinates\ScreenXY.cs" />

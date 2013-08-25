@@ -127,8 +127,11 @@ namespace eu.Vanaheimr.Aegir
                 StringBuilder.Append(" ");
             };
 
+            var GeoCoordinates2 = GeoCoordinates.ToArray();
+            var BoundingBox     = GeoCoordinates2.GeoCoordinate2BoundingBox();
 
-            GeoCoordinates.
+
+            GeoCoordinates2.
 
                 // Project the geo coordinate onto the current screen (without offset!)
                 Select(GeoCoordinate => GeoCalculations.GeoCoordinate2ScreenXY(GeoCoordinate, ZoomLevel)).
