@@ -71,7 +71,7 @@ namespace eu.Vanaheimr.Aegir
         /// Europe / Western Europe / Germany / Berlin
         /// </summary>
         public Berlin(Color StrokeColor, Double StrokeThickness, Color FillColor)
-            : base(GermanyPaths.Berlin, new Latitude(52.675022), new Longitude(13.093819), new Altitude(0), new Latitude(52.338722), new Longitude(13.768409), StrokeColor, StrokeThickness, FillColor)
+            : base(GermanyPaths.Berlin, new Latitude(52.675022), new Longitude(13.093819), new Altitude(0), new Latitude(52.338722), new Longitude(13.768409), FillColor, StrokeColor, StrokeThickness)
         { }
 
     }

@@ -22,6 +22,8 @@ using System;
 using System.Windows.Media;
 
 using eu.Vanaheimr.Aegir.Controls;
+using System.ComponentModel;
+using System.Windows.Controls;
 
 #endregion
 
@@ -162,6 +164,60 @@ namespace eu.Vanaheimr.Aegir
         }
 
         #endregion
+
+
+        #region (override) Move(X, Y)
+
+        /// <summary>
+        /// Move all the shapes on this mapping layer.
+        /// </summary>
+        /// <param name="X">X</param>
+        /// <param name="Y">Y</param>
+        public override void Move(Double X, Double Y)
+        {
+            Redraw();
+        }
+
+        #endregion
+
+        #region (override) Redraw()
+
+        /// <summary>
+        /// Redraws this mapping layer.
+        /// </summary>
+        public override void Redraw()
+        {
+
+            if (this.IsVisible && !IsCurrentlyPainting)
+            {
+
+                IsCurrentlyPainting = true;
+
+                if (!DesignerProperties.GetIsInDesignMode(this))
+                {
+
+                    this.Children.
+                         ForEach<Feature>(AFeature => {
+
+                             var ScreenXY = GeoCalculations.GeoCoordinate2ScreenXY(AFeature.Latitude,
+                                                                                   AFeature.Longitude,
+                                                                                   MapControl.ZoomLevel);
+
+                             Canvas.SetLeft(AFeature, this.MapControl.ScreenOffset.X + ScreenXY.X);
+                             Canvas.SetTop (AFeature, this.MapControl.ScreenOffset.Y + ScreenXY.Y);
+
+                         });
+
+                }
+
+                IsCurrentlyPainting = false;
+
+            }
+
+        }
+
+        #endregion
+
 
     }
 

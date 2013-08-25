@@ -20,6 +20,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
@@ -47,58 +48,125 @@ namespace eu.Vanaheimr.Aegir
 
         #region Data
 
-        private readonly List<Image>  TilesOnMap;
-        private          Int64        GlobalVersionCounter = 0;
-        private          Object       AutoTilesRefreshLock;
-        private readonly Timer        TilesRefreshTimer;
+        private          Int64   GlobalVersionCounter = 0;
+        private          Object  AutoTilesRefreshLock;
+        private readonly Timer   TilesRefreshTimer;
 
         #endregion
 
         #region Properties
 
-        #region TileClient
+        #region TilesClient
 
         /// <summary>
         /// The TileClient to use for fetching the
         /// map tiles from the image providers.
         /// </summary>
-        public AegirTilesClient TileClient { get; set; }
+        public AegirTilesClient TilesClient { get; private set; }
 
         #endregion
 
-        #region MapProvider
+        #region CurrentMapProvider
 
         /// <summary>
-        /// The map tiles provider for this map.
+        /// The map tiles provider for this tiles layer.
         /// </summary>
-        public String MapProvider
+        public MapTilesProvider CurrentMapProvider
         {
 
             get
             {
-                return this.TileClient.CurrentProviderId;
+                return this.TilesClient.CurrentProvider;
             }
 
             set
             {
 
-                if (value != null && value != "")
+                if (value != null)
                 {
 
-                    var OldMapProvider = this.TileClient.CurrentProviderId;
+                    var OldMapProvider = this.TilesClient.CurrentProvider;
 
-                    this.TileClient.CurrentProviderId = value;
+                    this.TilesClient.CurrentProvider = value;
 
                     this.Children.Clear();
                     Redraw();
 
                     if (MapProviderChanged != null)
-                        MapProviderChanged(this, OldMapProvider, this.TileClient.CurrentProviderId);
+                        MapProviderChanged(this, OldMapProvider, this.TilesClient.CurrentProvider);
 
                 }
 
             }
 
+        }
+
+        #endregion
+
+        #region CurrentMapProviderId
+
+        /// <summary>
+        /// The identification string of the map tiles
+        /// provider for this tiles layer.
+        /// </summary>
+        public String CurrentMapProviderId
+        {
+
+            get
+            {
+                return this.TilesClient.CurrentProviderId;
+            }
+
+            set
+            {
+
+                if (value != null && value.Trim() != "")
+                {
+
+                    var OldMapProvider = this.TilesClient.CurrentProvider;
+
+                    this.TilesClient.CurrentProviderId = value;
+
+                    this.Children.Clear();
+                    Redraw();
+
+                    if (MapProviderChanged != null)
+                        MapProviderChanged(this, OldMapProvider, this.TilesClient.CurrentProvider);
+
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region MapProviders
+
+        /// <summary>
+        /// Return an enumeration of all registered map provider identifications.
+        /// </summary>
+        public IEnumerable<MapTilesProvider> MapProviders
+        {
+            get
+            {
+                return TilesClient.Providers;
+            }
+        }
+
+        #endregion
+
+        #region MapProviderIds
+
+        /// <summary>
+        /// Return an enumeration of all registered map provider identifications.
+        /// </summary>
+        public IEnumerable<String> MapProviderIds
+        {
+            get
+            {
+                return TilesClient.ProviderIds;
+            }
         }
 
         #endregion
@@ -113,7 +181,7 @@ namespace eu.Vanaheimr.Aegir
         /// An event handler getting fired whenever the
         /// map provider of the map changed.
         /// </summary>
-        public delegate void MapProviderChangedEventHandler(TilesLayer Sender, String OldMapProvider, String NewMapProvider);
+        public delegate void MapProviderChangedEventHandler(TilesLayer Sender, MapTilesProvider OldMapProvider, MapTilesProvider NewMapProvider);
 
         /// <summary>
         /// An event getting fired whenever the map provider
@@ -127,116 +195,84 @@ namespace eu.Vanaheimr.Aegir
 
         #region Constructor(s)
 
+        #region (private) TilesLayer(Id, MapControl, ZIndex)
+
+        /// <summary>
+        /// Creates a new feature layer for visualizing a map based of tiles.
+        /// </summary>
+        /// <param name="Id">The unique identification of the layer.</param>
+        /// <param name="ZIndex">The Z-Index of the layer.</param>
+        /// <param name="MapControl">The MapControl of the layer.</param>
+        private TilesLayer(String      Id,
+                           Int32       ZIndex,
+                           MapControl  MapControl)
+
+            : base(Id, MapControl, ZIndex)
+
+        {
+
+            // Do not react on mouse events!
+            IsHitTestVisible      = false;
+            TilesClient           = new AegirTilesClient();
+            AutoTilesRefreshLock  = new Object();
+
+        }
+
+        #endregion
+
         #region TilesLayer(Id, MapControl, ZIndex)
 
         /// <summary>
         /// Creates a new feature layer for visualizing a map based of tiles.
         /// </summary>
-        public TilesLayer(String Id, MapControl MapControl, Int32 ZIndex)
-            : base(Id, MapControl, ZIndex)
+        /// <param name="Id">The unique identification of the layer.</param>
+        /// <param name="MapControl">The MapControl of the layer.</param>
+        /// <param name="ZIndex">The Z-Index of the layer.</param>
+        public TilesLayer(String Id,
+                          MapControl  MapControl,
+                          Int32       ZIndex)
+
+            : this(Id, ZIndex, MapControl)
+
         {
 
-            this.AutoTilesRefreshLock  = new Object();
-            this.Background            = new SolidColorBrush(Colors.Transparent);
-            this.TilesOnMap            = new List<Image>();
-
-            // Do not react on mouse events!
-            this.IsHitTestVisible      = false;
-
-            this.SizeChanged += (s, o) => Redraw();
-
-            #region Find map providers and add context menu
-
-            this.ContextMenu = new ContextMenu();
-
-            // Find map providers via reflection
-            //MapProviders = 
-            //    //new AutoDiscovery<IMapTilesProvider>(Autostart: true,
-            //    //                                                IdentificatorFunc: (MapProviderClass) => MapProviderClass.Id);
-
-            //// Add all map providers to the mapping canvas context menu
-            //foreach (var _MapProvider in MapProviders.RegisteredNames)
-            //{
-
-            //    var _MapProviderMenuItem = new MenuItem()
-            //    {
-            //        Header = _MapProvider,
-            //        HeaderStringFormat = _MapProvider,
-            //        IsCheckable = true
-            //    };
-
-            //    _MapProviderMenuItem.Click += new RoutedEventHandler(ChangeMapProvider);
-
-            //    this.ContextMenu.Items.Add(_MapProviderMenuItem);
-
-            //}
-
-            //ChangeMapProvider(MapProvider);
-
-            #endregion
-
-            this.TileClient = new AegirTilesClient();
-            //this.TileClient.Register(new OSMProvider());
-            //this.TileClient.Register(new ArcGIS_WorldImagery_Provider());
-            //this.TileClient.Register(new ArcGIS_WorldStreetMap_Provider());
-
-            this.TilesRefreshTimer = new Timer(TilesAutoRefresh, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+            TilesRefreshTimer  = new Timer(TilesAutoRefresh, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
 
         }
 
         #endregion
 
-        #endregion
-
-
-        #region (private) ChangeMapProvider(Sender, RoutedEventArgs)
+        #region TilesLayer(Id, MapControl, ZIndex, params MapTilesProviders)
 
         /// <summary>
-        /// Changes the current map provider.
+        /// Creates a new feature layer for visualizing a map based of tiles.
         /// </summary>
-        /// <param name="Sender">The sender of the event.</param>
-        /// <param name="RoutedEventArgs">The event arguments.</param>
-        private void ChangeMapProvider(Object Sender, RoutedEventArgs RoutedEventArgs)
+        /// <param name="Id">The unique identification of the layer.</param>
+        /// <param name="MapControl">The MapControl of the layer.</param>
+        /// <param name="ZIndex">The Z-Index of the layer.</param>
+        /// <param name="MapTilesProviders">A list of map providers. The first will be activated.</param>
+        public TilesLayer(String                     Id,
+                          MapControl                 MapControl,
+                          Int32                      ZIndex,
+                          params MapTilesProvider[]  MapTilesProviders)
+
+            : this(Id, ZIndex, MapControl)
+
         {
 
-            var MenuItem = Sender as MenuItem;
+            if (MapTilesProviders != null)
+                foreach (var MapTilesProvider in MapTilesProviders)
+                    TilesClient.Register(MapTilesProvider, Activate: false);
 
-            if (MenuItem != null)
-                ChangeMapProvider(MenuItem.HeaderStringFormat);
+            // Mark the firt MapProvider as 'active'
+            if (MapTilesProviders.Any())
+                TilesClient.CurrentProvider = MapTilesProviders.First();
+
+            TilesRefreshTimer  = new Timer(TilesAutoRefresh, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
 
         }
 
         #endregion
-
-        #region (private) ChangeMapProvider(MapProviderName)
-
-        /// <summary>
-        /// Changes the current map provider.
-        /// </summary>
-        /// <param name="MapProviderName">The well-known name of the map provider.</param>
-        private void ChangeMapProvider(String MapProviderName)
-        {
-
-            var OldMapProvider = MapProvider;
-
-            if (MapProviderName != null && MapProviderName != "")
-            {
-
-                foreach (var Item in this.ContextMenu.Items)
-                {
-
-                    var MenuItem = Item as MenuItem;
-
-                    if (MenuItem != null)
-                        MenuItem.IsChecked = (MenuItem.HeaderStringFormat == MapProviderName);
-
-                }
-
-                MapProvider = MapProviderName;
-
-            }
-
-        }
 
         #endregion
 
@@ -250,19 +286,24 @@ namespace eu.Vanaheimr.Aegir
 
         }
 
-        public override void Move(Double X_Movement, Double Y_Movement)
+        #region (override) Move(X, Y)
+
+        /// <summary>
+        /// Move tiles and delete those outside the visible canvas.
+        /// </summary>
+        /// <param name="X">X</param>
+        /// <param name="Y">Y</param>
+        public override void Move(Double X, Double Y)
         {
 
-            #region Move tiles and delete those outside the visible canvas
-
             var ToDelete = new List<Image>();
-            var List = new List<String>();
+            var List     = new List<String>();
 
             foreach (Image Tile in this.Children)
             {
 
-                var NewX = Canvas.GetLeft(Tile) + X_Movement;
-                var NewY = Canvas.GetTop (Tile) + Y_Movement;
+                var NewX = Canvas.GetLeft(Tile) + X;
+                var NewY = Canvas.GetTop (Tile) + Y;
 
                 List.Add(Canvas.GetLeft(Tile) + " / " + Canvas.GetTop(Tile));
 
@@ -275,7 +316,7 @@ namespace eu.Vanaheimr.Aegir
                 {
                     // Move tiles within the visible canvas
                     Canvas.SetLeft(Tile, NewX);
-                    Canvas.SetTop(Tile, NewY);
+                    Canvas.SetTop (Tile, NewY);
                 }
 
             }
@@ -283,11 +324,13 @@ namespace eu.Vanaheimr.Aegir
             // Delete all tiles outside the visible canvas
             ToDelete.ForEach(Tile => this.Children.Remove(Tile));
 
-            #endregion
-
             Redraw();
 
         }
+
+        #endregion
+
+
 
         private void TilesAutoRefresh(Object State)
         {
@@ -316,13 +359,13 @@ namespace eu.Vanaheimr.Aegir
         }
 
 
-        #region Redraw()
+        #region Redraw_old()
 
         /// <summary>
         /// Paints the tiles layer.
         /// </summary>
         /// <returns>True if the map was repainted; false otherwise.</returns>
-        public override Boolean Redraw()
+        public override void Redraw()
         {
 
             if (this.IsVisible && !DesignerProperties.GetIsInDesignMode(this))
@@ -379,7 +422,7 @@ namespace eu.Vanaheimr.Aegir
 
                         if (FoundAndHowOften == 0)
 
-                            TileClient.GetTile(this.MapControl.ZoomLevel,
+                            TilesClient.GetTile(this.MapControl.ZoomLevel,
                                                (UInt32) Normalize(CurrentX - LeftUpperTile.X, NumberOfTilesAtZoomLevel),
                                                (UInt32) Normalize(CurrentY - LeftUpperTile.Y, NumberOfTilesAtZoomLevel),
                                                new Tuple<Point, Int64>(
@@ -406,7 +449,7 @@ namespace eu.Vanaheimr.Aegir
 
             }
 
-            return true;
+//            return true;
 
         }
 

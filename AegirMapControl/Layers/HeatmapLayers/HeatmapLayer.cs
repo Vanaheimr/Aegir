@@ -22,6 +22,8 @@ using System;
 using System.Windows.Media;
 
 using eu.Vanaheimr.Aegir.Controls;
+using System.ComponentModel;
+using System.Windows.Controls;
 
 #endregion
 
@@ -141,7 +143,7 @@ namespace eu.Vanaheimr.Aegir
             radialBrush.GradientStops.Add(new GradientStop(ColorHigh, 0.0));
             radialBrush.GradientStops.Add(new GradientStop(ColorLow,  1.0));
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(GeoCoordinate.Latitude, GeoCoordinate.Longitude, this.MapControl.ZoomLevel);
+            var XY = GeoCalculations.GeoCoordinate2ScreenXY(GeoCoordinate, this.MapControl.ZoomLevel);
 
 
             var Feature = new Feature(Id, new EllipseGeometry() { RadiusX = Width/2, RadiusY = Height/2 }) {
@@ -158,6 +160,59 @@ namespace eu.Vanaheimr.Aegir
             this.Children.Add(Feature);
 
             return Feature;
+
+        }
+
+        #endregion
+
+
+        #region (override) Move(X, Y)
+
+        /// <summary>
+        /// Move all the shapes on this mapping layer.
+        /// </summary>
+        /// <param name="X">X</param>
+        /// <param name="Y">Y</param>
+        public override void Move(Double X, Double Y)
+        {
+            Redraw();
+        }
+
+        #endregion
+
+        #region (override) Redraw()
+
+        /// <summary>
+        /// Redraws this mapping layer.
+        /// </summary>
+        public override void Redraw()
+        {
+
+            if (this.IsVisible && !IsCurrentlyPainting)
+            {
+
+                IsCurrentlyPainting = true;
+
+                if (!DesignerProperties.GetIsInDesignMode(this))
+                {
+
+                    this.Children.
+                         ForEach<Feature>(AFeature => {
+
+                             var ScreenXY = GeoCalculations.GeoCoordinate2ScreenXY(AFeature.Latitude,
+                                                                                   AFeature.Longitude,
+                                                                                   MapControl.ZoomLevel);
+
+                             Canvas.SetLeft(AFeature, this.MapControl.ScreenOffset.X + ScreenXY.X);
+                             Canvas.SetTop (AFeature, this.MapControl.ScreenOffset.Y + ScreenXY.Y);
+
+                         });
+
+                }
+
+                IsCurrentlyPainting = false;
+
+            }
 
         }
 

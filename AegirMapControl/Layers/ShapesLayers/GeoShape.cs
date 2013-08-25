@@ -19,15 +19,10 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Collections.Generic;
-
-using eu.Vanaheimr.Aegir;
-using eu.Vanaheimr.Illias.Commons;
-using System.Text;
 
 #endregion
 
@@ -37,12 +32,14 @@ namespace eu.Vanaheimr.Aegir
     /// <summary>
     /// A polygon shape on an Aegir map.
     /// </summary>
-    public class GeoShape : Shape
+    public class GeoShape : Shape,
+                            IEquatable<GeoShape>, IComparable<GeoShape>,
+                            IEquatable<String>,   IComparable<String>
     {
 
         #region Data
 
-        private IEnumerable<GeoCoordinate> _GeoCoordinates;
+        private IEnumerable<GeoCoordinate> GeoCoordinates;
 
         #endregion
 
@@ -70,6 +67,12 @@ namespace eu.Vanaheimr.Aegir
         public Longitude Longitude  { get; private set; }
 
         /// <summary>
+        /// The altitude of this shape.
+        /// </summary>
+        public Altitude  Altitude   { get; private set; }
+
+
+        /// <summary>
         /// The latitude2 of this shape.
         /// </summary>
         public Latitude  Latitude2  { get; private set; }
@@ -80,6 +83,12 @@ namespace eu.Vanaheimr.Aegir
         public Longitude Longitude2 { get; private set; }
 
         /// <summary>
+        /// The altitude2 of this shape.
+        /// </summary>
+        public Altitude  Altitude2  { get; private set; }
+
+
+        /// <summary>
         /// The geographical width of this shape.
         /// </summary>
         public Latitude  GeoWidth   { get; private set; }
@@ -88,11 +97,6 @@ namespace eu.Vanaheimr.Aegir
         /// The geographical height of this shape.
         /// </summary>
         public Longitude GeoHeight  { get; private set; }
-
-        /// <summary>
-        /// The altitude of this shape.
-        /// </summary>
-        public Altitude  Altitude   { get; private set; }
 
         #endregion
 
@@ -179,7 +183,16 @@ namespace eu.Vanaheimr.Aegir
         /// <param name="Altitude">The altitude of the shape center.</param>
         /// <param name="GeoWidth">The geographical width of the shape center.</param>
         /// <param name="GeoHeight">The geographical height of the shape center.</param>
-        public GeoShape(String[] Geometries, Latitude Latitude, Longitude Longitude, Altitude Altitude, Latitude Latitude2, Longitude Longitude2, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        public GeoShape(String[]   Geometries,
+                        Latitude   Latitude,
+                        Longitude  Longitude,
+                        Altitude   Altitude,
+                        Latitude   Latitude2,
+                        Longitude  Longitude2,
+                        Color      FillColor,
+                        Color      StrokeColor,
+                        Double     StrokeThickness)
+
         {
 
             this.Id         = Id;
@@ -208,22 +221,23 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region GeoShape(Id, GeoCoordinates, StrokeColor, StrokeThickness, FillColor)
+        #region GeoShape(Id, GeoCoordinates, FillColor, StrokeColor, StrokeThickness)
 
         /// <summary>
         /// Create a new polygon geo shape.
         /// </summary>
         /// <param name="Id">The Id of the shape.</param>
-        public GeoShape(String Id, IEnumerable<GeoCoordinate> GeoCoordinates, Color StrokeColor, Double StrokeThickness, Color FillColor)
+        public GeoShape(String                      Id,
+                        IEnumerable<GeoCoordinate>  GeoCoordinates,
+                        Color                       FillColor,
+                        Color                       StrokeColor,
+                        Double                      StrokeThickness)
         {
 
-            this.FillColor        = FillColor;
-            this.StrokeColor      = StrokeColor;
-            this.StrokeThickness  = StrokeThickness;
-
             this.Id               = Id;
-            this.ToolTip          = Id;
-            this._GeoCoordinates  = GeoCoordinates;
+            this.GeoCoordinates   = GeoCoordinates;
+
+            #region Get Min/Max-Values
 
             var MinLat = Double.MaxValue;
             var MaxLat = Double.MinValue;
@@ -231,32 +245,48 @@ namespace eu.Vanaheimr.Aegir
             var MinLng = Double.MaxValue;
             var MaxLng = Double.MinValue;
 
+            var MinAlt = Double.MaxValue;
+            var MaxAlt = Double.MinValue;
+
             foreach (var GeoCoordinate in GeoCoordinates)
             {
 
-                if (GeoCoordinate.Latitude.Value < MinLat)
+                if (GeoCoordinate.Latitude.Value  < MinLat)
                     MinLat = GeoCoordinate.Latitude.Value;
-
-                if (GeoCoordinate.Latitude.Value > MaxLat)
-                    MaxLat = GeoCoordinate.Latitude.Value;
-
 
                 if (GeoCoordinate.Longitude.Value < MinLng)
                     MinLng = GeoCoordinate.Longitude.Value;
 
+                if (GeoCoordinate.Altitude.Value  < MinAlt)
+                    MinAlt = GeoCoordinate.Altitude.Value;
+
+
+                if (GeoCoordinate.Latitude.Value  > MaxLat)
+                    MaxLat = GeoCoordinate.Latitude.Value;
+
                 if (GeoCoordinate.Longitude.Value > MaxLng)
                     MaxLng = GeoCoordinate.Longitude.Value;
 
+                if (GeoCoordinate.Altitude.Value  > MaxAlt)
+                    MaxAlt = GeoCoordinate.Altitude.Value;
+
             }
 
-            this.Latitude   = new Latitude  (MinLat);
-            this.Longitude  = new Longitude (MinLng);
-            this.Altitude   = new Altitude  (0);
-            this.Latitude2  = new Latitude  (MaxLat);
-            this.Longitude2 = new Longitude (MaxLng);
+            this.Latitude   = new Latitude (MinLat);
+            this.Longitude  = new Longitude(MinLng);
+            this.Altitude   = new Altitude (MinAlt);
+            this.Latitude2  = new Latitude (MaxLat);
+            this.Longitude2 = new Longitude(MaxLng);
+            this.Altitude2  = new Altitude (MaxAlt);
 
-            this.GeoWidth   = new Latitude (Latitude2. Value - Latitude. Value);
-            this.GeoHeight  = new Longitude(Longitude2.Value - Longitude.Value);
+            #endregion
+
+            this.GeoWidth         = new Latitude (Latitude2. Value - Latitude. Value);
+            this.GeoHeight        = new Longitude(Longitude2.Value - Longitude.Value);
+
+            this.FillColor        = FillColor;
+            this.StrokeColor      = StrokeColor;
+            this.StrokeThickness  = StrokeThickness;
 
         }
 
@@ -270,31 +300,32 @@ namespace eu.Vanaheimr.Aegir
         private void SetScreenGeometry()
         {
 
-            this.OnScreenUpperLeft  = GeoCalculations.WorldCoordinates_2_Screen(Latitude,  Longitude,  _ZoomLevel);
-            this.OnScreenLowerRight = GeoCalculations.WorldCoordinates_2_Screen(Latitude2, Longitude2, _ZoomLevel);
+            this.OnScreenUpperLeft  = GeoCalculations.GeoCoordinate2ScreenXY(Latitude,  Longitude,  _ZoomLevel);
+            this.OnScreenLowerRight = GeoCalculations.GeoCoordinate2ScreenXY(Latitude2, Longitude2, _ZoomLevel);
 
             this.OnScreenWidth      = (UInt64) Math.Abs(OnScreenLowerRight.X - OnScreenUpperLeft.X);
             this.OnScreenHeight     = (UInt64) Math.Abs(OnScreenLowerRight.Y - OnScreenUpperLeft.Y);
 
-            if (_GeoCoordinates != null)
+            if (GeoCoordinates != null)
             {
 
                 var DrawingGroup = new DrawingGroup();
+
                 DrawingGroup.Children.Add(
                     new GeometryDrawing(
                         new SolidColorBrush(FillColor),
                         new Pen(new SolidColorBrush(StrokeColor),
                                 StrokeThickness),
-                        PathGeometry.Parse(_GeoCoordinates.GeoCoord2Shape(OnScreenUpperLeft, _ZoomLevel))
+                        PathGeometry.Parse(GeoCoordinates.GeoCoordinates2ShapeDefinition(OnScreenUpperLeft, _ZoomLevel, true).Value)
                     )
                 );
 
                 this.Fill = new DrawingBrush()
                 {
-                    Drawing = DrawingGroup,
+                    Drawing   = DrawingGroup,
                     //Viewport = new Rect(0, 0, 1, 1),
-                    TileMode = TileMode.None,
-                    Stretch = Stretch.UniformToFill
+                    TileMode  = TileMode.None,
+                    Stretch   = Stretch.UniformToFill
                 };
 
                 Bounds = DrawingGroup.Bounds;
@@ -310,30 +341,7 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        #region IComparable<Identifier> Members
-
-        #region CompareTo(Object)
-
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
-        {
-
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is a feature.
-            var Feature = Object as Feature;
-            if ((Object) Feature == null)
-                throw new ArgumentException("The given object is not a map feature!");
-
-            return this.Id.CompareTo(Feature.Id);
-
-        }
-
-        #endregion
+        #region IComparable<Identifier/GeoShape> Members
 
         #region CompareTo(Identifier)
 
@@ -353,19 +361,19 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region CompareTo(Feature)
+        #region CompareTo(GeoShape)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Identifier">An object to compare with.</param>
-        public Int32 CompareTo(Feature Feature)
+        public Int32 CompareTo(GeoShape GeoShape)
         {
 
-            if ((Object) Feature == null)
+            if ((Object) GeoShape == null)
                 throw new ArgumentNullException("The given feature must not be null!");
 
-            return this.Id.CompareTo(Feature.Id);
+            return this.Id.CompareTo(GeoShape.Id);
 
         }
 
@@ -373,31 +381,7 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region IEquatable<Identifier> Members
-
-        #region Equals(Object)
-
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public new Boolean Equals(Object Object)
-        {
-
-            if (Object == null)
-                return false;
-
-            // Check if the given object is a feature.
-            var Feature = Object as Feature;
-            if ((Object) Feature == null)
-                return false;
-
-            return this.Id.Equals(Feature.Id);
-
-        }
-
-        #endregion
+        #region IEquatable<Identifier/GeoShape> Members
 
         #region Equals(Identifier)
 
@@ -418,20 +402,20 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region Equals(Feature)
+        #region Equals(GeoShape)
 
         /// <summary>
         /// Compares two features for equality.
         /// </summary>
         /// <param name="FeatureLayer">A feature to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Feature Feature)
+        public Boolean Equals(GeoShape GeoShape)
         {
 
-            if ((Object) Feature == null)
+            if ((Object) GeoShape == null)
                 return false;
 
-            return this.Id.Equals(Feature.Id);
+            return this.Id.Equals(GeoShape.Id);
 
         }
 

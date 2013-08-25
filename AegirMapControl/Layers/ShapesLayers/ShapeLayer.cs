@@ -71,7 +71,7 @@ namespace eu.Vanaheimr.Aegir
         public GeoShape AddShape(GeoShape AShape)
         {
 
-            // The position and size on the map will be set within the PaintMap() method!
+            // The position and size on the map will be set within the Redraw() method!
             this.Children.Add(AShape);
             AShape.ZoomLevel = this.MapControl.ZoomLevel;
 
@@ -88,7 +88,7 @@ namespace eu.Vanaheimr.Aegir
         public Feature AddPath(String Id, Latitude Latitude, Longitude Longitude, Double Width, Double Height, Color Color)
         {
 
-            var XY = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, this.MapControl.ZoomLevel);
+            var XY = GeoCalculations.GeoCoordinate2ScreenXY(Latitude, Longitude, MapControl.ZoomLevel);
 
             var PathGeometry1 = PathGeometry.Parse("M51,42c-5-4-11-7-19-7c-6,0-12,1-20,5l10-35c20-8,30-4,39,2l-10,35z");
             var PathGeometry2 = PathGeometry.Parse("M106,13c-21,9-31,4-40-2l-10,35c9,6,20,11,40,2l10-35z");
@@ -130,13 +130,24 @@ namespace eu.Vanaheimr.Aegir
         }
 
 
+        #region (override) Move(X, Y)
+
+        /// <summary>
+        /// Move all the shapes on this mapping layer.
+        /// </summary>
+        /// <param name="X">X</param>
+        /// <param name="Y">Y</param>
+        public override void Move(Double X, Double Y)
+        { }
+
+        #endregion
+
         #region (override) Redraw()
 
         /// <summary>
-        /// Redraws this feature layer.
+        /// Redraws this mapping layer.
         /// </summary>
-        /// <returns>True if the map was repainted; false otherwise.</returns>
-        public override Boolean Redraw()
+        public override void Redraw()
         {
 
             if (this.IsVisible && !IsCurrentlyPainting)
@@ -150,25 +161,21 @@ namespace eu.Vanaheimr.Aegir
                     this.Children.
                          ForEach<GeoShape>(AShape => {
 
-                            AShape.ZoomLevel = this.MapControl.ZoomLevel;
+                             AShape.ZoomLevel = MapControl.ZoomLevel;
 
-                            Canvas.SetLeft(AShape, this.MapControl.ScreenOffset.X + (Int64) AShape.OnScreenUpperLeft.X);
-                            Canvas.SetTop (AShape, this.MapControl.ScreenOffset.Y + (Int64) AShape.OnScreenLowerRight.Y);
+                             Canvas.SetLeft(AShape, MapControl.ScreenOffset.X + (Int64) AShape.OnScreenUpperLeft.X);
+                             Canvas.SetTop (AShape, MapControl.ScreenOffset.Y + (Int64) AShape.OnScreenLowerRight.Y);
 
-                            AShape.Width  = AShape.OnScreenWidth;
-                            AShape.Height = AShape.OnScreenHeight;
+                             AShape.Width  = AShape.OnScreenWidth;
+                             AShape.Height = AShape.OnScreenHeight;
 
-                        });
+                         });
 
                 }
 
                 IsCurrentlyPainting = false;
 
-                return true;
-
             }
-
-            return false;
 
         }
 

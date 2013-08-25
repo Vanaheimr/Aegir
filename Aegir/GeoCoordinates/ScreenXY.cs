@@ -26,20 +26,6 @@ using eu.Vanaheimr.Illias.Geometry;
 namespace eu.Vanaheimr.Aegir
 {
 
-    public class TilesXY
-    {
-
-        public UInt64 X { get; private set; }
-        public UInt64 Y { get; private set; }
-
-        public TilesXY(UInt64 X, UInt64 Y)
-        {
-            this.X = X;
-            this.Y = Y;
-        }
-
-    }
-
     public class ScreenXY
     {
 
@@ -51,14 +37,6 @@ namespace eu.Vanaheimr.Aegir
             this.X = X;
             this.Y = Y;
         }
-
-    }
-
-    /// <summary>
-    /// Exention methods for working with maps.
-    /// </summary>
-    public static class AegirExtentionMethods
-    {
 
     }
 

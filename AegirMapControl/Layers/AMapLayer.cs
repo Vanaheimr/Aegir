@@ -21,7 +21,6 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.ComponentModel;
 
 using eu.Vanaheimr.Aegir.Controls;
 
@@ -33,7 +32,9 @@ namespace eu.Vanaheimr.Aegir
     /// <summary>
     /// The base functionality of all map layers.
     /// </summary>
-    public abstract class AMapLayer : Canvas
+    public abstract class AMapLayer : Canvas,
+                                      IEquatable<AMapLayer>, IComparable<AMapLayer>,
+                                      IEquatable<String>,    IComparable<String>
     {
 
         #region Data
@@ -102,6 +103,19 @@ namespace eu.Vanaheimr.Aegir
             : this()
         {
 
+            #region Initial Checks
+
+            if (String.IsNullOrEmpty(Id.Trim()))
+                throw new ArgumentNullException("Id", "The map layer identification must not be null or empty!");
+
+            if (MapControl == null)
+                throw new ArgumentNullException("MapControl", "The MapControl must not be null!");
+
+            if (MapControl.ContainsLayerId(Id))
+                throw new ApplicationException("The given 'Id' is already used!");
+
+            #endregion
+
             this.Id          = Id;
             this.MapControl  = MapControl;
             this.ZIndex      = ZIndex;
@@ -116,8 +130,7 @@ namespace eu.Vanaheimr.Aegir
         #region (private) ProcessMapSizeChangedEvent(Sender, SizeChangedEventArgs)
 
         /// <summary>
-        /// Whenever the size of the map canvas was changed
-        /// this method will be called.
+        /// Called whenever the size of the map layer was changed.
         /// </summary>
         /// <param name="Sender">The sender of the event.</param>
         /// <param name="SizeChangedEventArgs">The event arguments.</param>
@@ -129,134 +142,11 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        //#region ZoomTo(ZoomLevel, ScreenOffsetX, ScreenOffsetY)
-
-        ///// <summary>
-        ///// Set the zoom level and screen offset of this map layer.
-        ///// </summary>
-        ///// <param name="ZoomLevel">The desired zoom level.</param>
-        ///// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        ///// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        //public AMapLayer ZoomTo(UInt32 ZoomLevel, Int64 ScreenOffsetX, Int64 ScreenOffsetY)
-        //{
-
-        //    //this.ZoomLevel      = ZoomLevel;
-        //    //this.ScreenOffsetX  = ScreenOffsetX;
-        //    //this.ScreenOffsetY  = ScreenOffsetY;
-
-        //    Redraw();
-
-        //    return this;
-
-        //}
-
-        //#endregion
-
-        //#region SetDisplayOffset(OffsetX, OffsetY)
-
-        ///// <summary>
-        ///// Set the screen offset of this map layer.
-        ///// </summary>
-        ///// <param name="ScreenOffsetX">The x-parameter of the screen offset.</param>
-        ///// <param name="ScreenOffsetY">The y-parameter of the screen offset.</param>
-        //public AMapLayer SetDisplayOffset(Int64 ScreenOffsetX, Int64 ScreenOffsetY)
-        //{
-
-        //    this.ScreenOffsetX  = ScreenOffsetX;
-        //    this.ScreenOffsetY  = ScreenOffsetY;
-
-        //    Redraw();
-
-        //    return this;
-
-        //}
-
-        //#endregion
-
-        public virtual void Move(Double X, Double Y)
-        {
-        }
-
-        #region (virtual) Redraw()
-
-        /// <summary>
-        /// Redraws this feature layer.
-        /// </summary>
-        /// <returns>True if the map was repainted; false otherwise.</returns>
-        public virtual Boolean Redraw()
-        {
-
-            if (this.IsVisible && !IsCurrentlyPainting)
-            {
-
-                IsCurrentlyPainting = true;
-
-                if (!DesignerProperties.GetIsInDesignMode(this))
-                {
-
-                    Feature Feature;
-                    ScreenXY ScreenXY;
-
-                    foreach (var Child in this.Children)
-                    {
-
-                        Feature = Child as Feature;
-
-                        if (Feature != null)
-                        {
-
-                            ScreenXY = GeoCalculations.WorldCoordinates_2_Screen(Feature.Latitude, Feature.Longitude, this.MapControl.ZoomLevel);
-
-                            Canvas.SetLeft(Feature, this.MapControl.ScreenOffset.X + ScreenXY.X);
-                            Canvas.SetTop (Feature, this.MapControl.ScreenOffset.Y + ScreenXY.Y);
-
-                            //if (Feature.GeoWidth != 0)
-                            //    Feature.Width = 
-
-                        }
-
-                    }
-
-                }
-
-                IsCurrentlyPainting = false;
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        #endregion
+        public abstract void Move(Double X, Double Y);
+        public abstract void Redraw();
 
 
-
-        #region IComparable<Identifier> Members
-
-        #region CompareTo(Object)
-
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
-        {
-
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is a feature layer identifier.
-            var FeatureLayer = Object as AMapLayer;
-            if ((Object) FeatureLayer == null)
-                throw new ArgumentException("The given object is not an IFeatureLayer!");
-
-            return this.Id.CompareTo(FeatureLayer.Id);
-
-        }
-
-        #endregion
+        #region IComparable<Identifier/AMapLayer> Members
 
         #region CompareTo(Identifier)
 
@@ -276,19 +166,19 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region CompareTo(FeatureLayer)
+        #region CompareTo(MapLayer)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Identifier">An object to compare with.</param>
-        public Int32 CompareTo(AMapLayer FeatureLayer)
+        public Int32 CompareTo(AMapLayer MapLayer)
         {
 
-            if ((Object) FeatureLayer == null)
+            if ((Object) MapLayer == null)
                 throw new ArgumentNullException("The given feature layer must not be null!");
 
-            return this.Id.CompareTo(FeatureLayer.Id);
+            return this.Id.CompareTo(MapLayer.Id);
 
         }
 
@@ -296,31 +186,7 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region IEquatable<Identifier> Members
-
-        #region Equals(Object)
-
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public new Boolean Equals(Object Object)
-        {
-
-            if (Object == null)
-                return false;
-
-            // Check if the given object is a feature layer.
-            var FeatureLayer = Object as AMapLayer;
-            if ((Object)FeatureLayer == null)
-                return false;
-
-            return this.Id.Equals(FeatureLayer.Id);
-
-        }
-
-        #endregion
+        #region IEquatable<Identifier/AMapLayer> Members
 
         #region Equals(Identifier)
 
@@ -341,20 +207,20 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region Equals(FeatureLayer)
+        #region Equals(MapLayer)
 
         /// <summary>
         /// Compares two feature layers for equality.
         /// </summary>
-        /// <param name="FeatureLayer">A feature layer to compare with.</param>
+        /// <param name="MapLayer">A feature layer to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(AMapLayer FeatureLayer)
+        public Boolean Equals(AMapLayer MapLayer)
         {
 
-            if ((Object) FeatureLayer == null)
+            if ((Object) MapLayer == null)
                 return false;
 
-            return this.Id.Equals(FeatureLayer.Id);
+            return this.Id.Equals(MapLayer.Id);
 
         }
 

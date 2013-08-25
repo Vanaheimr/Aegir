@@ -234,7 +234,7 @@ namespace eu.Vanaheimr.Aegir
                     shape.Value.Item2.Add(resolution, new Tuple<List<ScreenXY>, StringBuilder>(new List<ScreenXY>(), new StringBuilder()));
 
                     shape.Value.Item1.ForEach(GeoCoord => 
-                        shape.Value.Item2[resolution].Item1.Add(GeoCalculations.WorldCoordinates_2_Screen(GeoCoord, resolution))
+                        shape.Value.Item2[resolution].Item1.Add(GeoCalculations.GeoCoordinate2ScreenXY(GeoCoord, resolution))
                     );
 
                 }

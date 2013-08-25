@@ -63,17 +63,17 @@ namespace eu.Vanaheimr.Aegir
 
         private void ProcessPreviewMouseRightButtonDown(Object Sender, MouseEventArgs MouseEventArgs)
         {
-            
+
             var Mouse = MouseEventArgs.GetPosition(this);
 
             AddFeature("NewFeature",
-                       GeoCalculations.Mouse_2_WorldCoordinates(Mouse.X - this.MapControl.ScreenOffset.X,
-                                                                Mouse.Y - this.MapControl.ScreenOffset.Y,
-                                                                this.MapControl.ZoomLevel),
-                                                                5, 5,
-                                                                Brushes.Blue,
-                                                                Brushes.Black,
-                                                                1.0);
+                       GeoCalculations.Mouse2GeoCoordinate(Mouse.X - this.MapControl.ScreenOffset.X,
+                                                           Mouse.Y - this.MapControl.ScreenOffset.Y,
+                                                           this.MapControl.ZoomLevel),
+                                                           5, 5,
+                                                           Brushes.Blue,
+                                                           Brushes.Black,
+                                                           1.0);
 
             Redraw();
 

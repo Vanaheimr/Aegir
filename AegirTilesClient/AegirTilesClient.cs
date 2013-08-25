@@ -244,15 +244,7 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         public Boolean TryGetProvider(String Id, out MapTilesProvider MapTilesProvider)
         {
-
             return this.MapProviders.TryGetValue(Id, out MapTilesProvider);
-
-            //if (this.MapProviders.TryGetValue(Id, out MapTilesProvider))
-            //    return true;
-
-            //MapTilesProvider = null;
-            //return false;
-
         }
 
         #region Remove(MapTilesProviderId)

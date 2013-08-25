@@ -19,12 +19,8 @@
 #region Usings
 
 using System;
-using System.Windows.Shapes;
 using System.Windows.Media;
-
-using eu.Vanaheimr.Aegir;
-using eu.Vanaheimr.Illias.Commons;
-using System.Windows;
+using System.Windows.Shapes;
 
 #endregion
 
@@ -32,9 +28,11 @@ namespace eu.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// A feature on an Aegir map.
+    /// A feature on a feature layer of an Aegir map.
     /// </summary>
-    public class Feature : Shape
+    public class Feature : Shape,
+                           IEquatable<Feature>, IComparable<Feature>,
+                           IEquatable<String>,  IComparable<String>
     {
 
         #region Properties
@@ -126,30 +124,7 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
-        #region IComparable<Identifier> Members
-
-        #region CompareTo(Object)
-
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
-        {
-
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is a feature.
-            var Feature = Object as Feature;
-            if ((Object) Feature == null)
-                throw new ArgumentException("The given object is not a map feature!");
-
-            return this.Id.CompareTo(Feature.Id);
-
-        }
-
-        #endregion
+        #region IComparable<Identifier/Feature> Members
 
         #region CompareTo(Identifier)
 
@@ -189,31 +164,7 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
-        #region IEquatable<Identifier> Members
-
-        #region Equals(Object)
-
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public new Boolean Equals(Object Object)
-        {
-
-            if (Object == null)
-                return false;
-
-            // Check if the given object is a feature.
-            var Feature = Object as Feature;
-            if ((Object) Feature == null)
-                return false;
-
-            return this.Id.Equals(Feature.Id);
-
-        }
-
-        #endregion
+        #region IEquatable<Identifier/Feature> Members
 
         #region Equals(Identifier)
 

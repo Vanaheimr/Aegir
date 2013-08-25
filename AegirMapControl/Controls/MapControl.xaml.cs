@@ -254,9 +254,9 @@ namespace eu.Vanaheimr.Aegir.Controls
 
                         AvoidEndlessVerticalScrolling();
 
-                        MapCenter = GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffset.X,
-                                                                             MousePosition.Y - this.ScreenOffset.Y,
-                                                                             this.ZoomLevel);
+                        MapCenter = GeoCalculations.Mouse2GeoCoordinate(MousePosition.X - this.ScreenOffset.X,
+                                                                        MousePosition.Y - this.ScreenOffset.Y,
+                                                                        this.ZoomLevel);
 
                         MapLayers.Values.ForEach(MapLayer => MapLayer.Move(MousePosition.X - LastMousePositionDuringMovement.X,
                                                                            MousePosition.Y - LastMousePositionDuringMovement.Y));
@@ -288,9 +288,9 @@ namespace eu.Vanaheimr.Aegir.Controls
                 if (GeoPositionChanged != null)
                 {
 
-                    GeoPositionChanged(this, GeoCalculations.Mouse_2_WorldCoordinates(MousePosition.X - this.ScreenOffset.X,
-                                                                                      MousePosition.Y - this.ScreenOffset.Y,
-                                                                                      ZoomLevel));
+                    GeoPositionChanged(this, GeoCalculations.Mouse2GeoCoordinate(MousePosition.X - this.ScreenOffset.X,
+                                                                                 MousePosition.Y - this.ScreenOffset.Y,
+                                                                                 ZoomLevel));
 
                 }
 
@@ -582,7 +582,7 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             var OldZoomLevel = this.ZoomLevel;
             this.ZoomLevel   = ZoomLevel;
-            var NewOffset    = GeoCalculations.WorldCoordinates_2_Screen(Latitude, Longitude, ZoomLevel);
+            var NewOffset    = GeoCalculations.GeoCoordinate2ScreenXY(Latitude, Longitude, ZoomLevel);
 
             var MapSizeAtZoomLevel = (Int64) (Math.Pow(2, ZoomLevel) * 256);
 
@@ -642,9 +642,9 @@ namespace eu.Vanaheimr.Aegir.Controls
             if (this.ZoomLevel < MaxZoomLevel)
             {
 
-                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffset.X,
-                                                                ScreenY - this.ScreenOffset.Y,
-                                                                this.ZoomLevel),
+                ZoomTo(GeoCalculations.Mouse2GeoCoordinate(ScreenX - this.ScreenOffset.X,
+                                                           ScreenY - this.ScreenOffset.Y,
+                                                           this.ZoomLevel),
                        this.ZoomLevel + 1);
 
             }
@@ -666,9 +666,9 @@ namespace eu.Vanaheimr.Aegir.Controls
             if (this.ZoomLevel > MinZoomLevel)
             {
 
-                ZoomTo(GeoCalculations.Mouse_2_WorldCoordinates(ScreenX - this.ScreenOffset.X,
-                                                                ScreenY - this.ScreenOffset.Y,
-                                                                this.ZoomLevel),
+                ZoomTo(GeoCalculations.Mouse2GeoCoordinate(ScreenX - this.ScreenOffset.X,
+                                                           ScreenY - this.ScreenOffset.Y,
+                                                           this.ZoomLevel),
                        this.ZoomLevel - 1);
 
             }
@@ -764,8 +764,8 @@ namespace eu.Vanaheimr.Aegir.Controls
             if (Layer.Id == null)
                 throw new ApplicationException("The identification of the 'Layer' must be set!");
 
-            if (Layer.MapControl == null)
-                throw new ApplicationException("The MapControl of the 'Layer' must be set!");
+            if (Layer.MapControl != this)
+                throw new ApplicationException("The MapControl of the 'Layer' is invalid!");
 
             #endregion
 
@@ -787,6 +787,32 @@ namespace eu.Vanaheimr.Aegir.Controls
 
             return Layer;
 
+        }
+
+        #endregion
+
+        #region ContainsLayer(MapLayer)
+
+        /// <summary>
+        /// Checks if the given map is present within the map control.
+        /// </summary>
+        /// <param name="MapLayer">A map layer.</param>
+        public Boolean ContainsLayerId(AMapLayer MapLayer)
+        {
+            return MapLayers.ContainsKey(MapLayer.Id);
+        }
+
+        #endregion
+
+        #region ContainsLayerId(Id)
+
+        /// <summary>
+        /// Checks if the given map id is present within the map control.
+        /// </summary>
+        /// <param name="Id">The identification of the map layer.</param>
+        public Boolean ContainsLayerId(String Id)
+        {
+            return MapLayers.ContainsKey(Id);
         }
 
         #endregion

@@ -40,8 +40,8 @@ namespace eu.Vanaheimr.Aegir.Tiles
 
         #region Data
 
-        private readonly Byte[] JSON_Success;
-        
+//        private readonly Byte[] JSON_Success;
+
         #endregion
 
         #region Constructor(s)
