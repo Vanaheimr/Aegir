@@ -8,8 +8,8 @@
     <ProjectGuid>{17FC3955-9E9E-4358-A666-A3CD53CCDCE5}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>de.ahzf.Vanaheimr.AegirMapControl</RootNamespace>
-    <AssemblyName>AegirMapControl</AssemblyName>
+    <RootNamespace>eu.Vanaheimr.Aegir.Controls</RootNamespace>
+    <AssemblyName>Vanaheimr.Aegir.MapControl</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

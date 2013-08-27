@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace de.ahzf.Vanaheimr.AegirMapControl.Properties {
+namespace eu.Vanaheimr.Aegir.Controls.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace de.ahzf.Vanaheimr.AegirMapControl.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("de.ahzf.Vanaheimr.AegirMapControl.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("eu.Vanaheimr.Aegir.Controls.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

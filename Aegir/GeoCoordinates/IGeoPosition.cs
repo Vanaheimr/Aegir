@@ -33,17 +33,17 @@ namespace eu.Vanaheimr.Aegir
         /// <summary>
         /// The latitude of something.
         /// </summary>
-        Latitude  Latitude   { get; set; }
+        new Latitude  Latitude   { get; set; }
 
         /// <summary>
         /// The longitude of something.
         /// </summary>
-        Longitude Longitude  { get; set; }
+        new Longitude Longitude  { get; set; }
 
         /// <summary>
         /// The altitude of something.
         /// </summary>
-        Altitude  Altitude   { get; set; }
+        new Altitude  Altitude   { get; set; }
 
     }
 
