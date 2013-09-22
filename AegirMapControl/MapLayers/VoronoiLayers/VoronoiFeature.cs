@@ -19,6 +19,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -84,6 +85,8 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
+        public readonly List<GeoTriangle> DelaunayTriangles;
+
         #endregion
 
         #region Constructor(s)
@@ -98,8 +101,12 @@ namespace eu.Vanaheimr.Aegir
         public VoronoiFeature(String         Id,
                               GeoCoordinate  GeoCoordinate)
         {
-            this.Id             = Id;
-            this.GeoCoordinate  = GeoCoordinate;
+
+            this.Id                = Id;
+            this.GeoCoordinate     = GeoCoordinate;
+            this.DelaunayTriangles = new List<GeoTriangle>();
+            this.Geometry          = new EllipseGeometry();
+
         }
 
         #endregion

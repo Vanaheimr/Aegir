@@ -20,6 +20,7 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Collections.Generic;
 
 #endregion
 
@@ -67,7 +68,6 @@ namespace eu.Vanaheimr.Aegir
         }
 
     }
-
 
 
     /// <summary>
@@ -236,9 +236,9 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
-            this.Latitude   = Latitude;
-            this.Longitude  = Longitude;
-            this.Altitude   = Altitude;
+            this.Latitude           = Latitude;
+            this.Longitude          = Longitude;
+            this.Altitude           = Altitude;
 
         }
 
@@ -401,6 +401,24 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
+        #region DistanceTo(Target)
+
+        /// <summary>
+        /// Calculate the distance between two geo coordinates.
+        /// </summary>
+        /// <param name="Target">Another geo coordinate</param>
+        public Double DistanceTo(GeoCoordinate Target)
+        {
+
+            var d_lng = this.Longitude.DistanceTo(Target.Longitude);
+            var d_lat = this.Latitude. DistanceTo(Target.Latitude);
+
+            return Math.Sqrt(d_lng * d_lng + d_lat * d_lat);
+
+        }
+
+        #endregion
+
         #region DistanceTo(Target, EarthRadiusInKM = 6371)
 
         /// <summary>
@@ -410,10 +428,10 @@ namespace eu.Vanaheimr.Aegir
         /// <seealso cref="http://en.wikipedia.org/wiki/Haversine_formula"/>
         /// <param name="Target">Another geo coordinate</param>
         /// <param name="EarthRadiusInKM">The currently accepted (WGS84) earth radius at the equator is 6378.137 km and 6356.752 km at the polar caps. For aviation purposes the FAI uses a radius of 6371.0 km.</param>
-        public Double DistanceTo(GeoCoordinate Target, UInt32 EarthRadiusInKM = 6371)
+        public Double DistanceKM(GeoCoordinate Target, UInt32 EarthRadiusInKM = 6371)
         {
 
-            var dLat = (Target.Latitude.Value  - this.Latitude.Value).ToRadians();
+            var dLat = (Target.Latitude.Value  - this.Latitude. Value).ToRadians();
             var dLon = (Target.Longitude.Value - this.Longitude.Value).ToRadians();
 
             var a = Math.Sin(dLat / 2)                         * Math.Sin(dLat / 2) +
@@ -465,6 +483,23 @@ namespace eu.Vanaheimr.Aegir
                            new Longitude(lon3.ToDegree())
                        );
 
+        }
+
+        #endregion
+
+
+        #region (static) Swap(ref Pixel1, ref Pixel2)
+
+        /// <summary>
+        /// Swaps two pixels.
+        /// </summary>
+        /// <param name="Pixel1">The first pixel.</param>
+        /// <param name="Pixel2">The second pixel.</param>
+        public static void Swap(ref GeoCoordinate Pixel1, ref GeoCoordinate Pixel2)
+        {
+            var tmp = Pixel2;
+            Pixel2 = Pixel1;
+            Pixel1 = tmp;
         }
 
         #endregion
@@ -590,10 +625,10 @@ namespace eu.Vanaheimr.Aegir
         public Boolean Equals(GeoCoordinate GeoCoordinate)
         {
 
-            if (GeoCoordinate.Latitude.Value != this.Latitude.Value)
+            if (Math.Abs(GeoCoordinate.Latitude.Value  - this.Latitude.Value) > 0.00001)
                 return false;
 
-            if (GeoCoordinate.Longitude.Value != this.Longitude.Value)
+            if (Math.Abs(GeoCoordinate.Longitude.Value - this.Longitude.Value) > 0.00001)
                 return false;
 
             return true;

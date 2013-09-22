@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="Controls\LayerPanel.cs" />
     <Compile Include="MapLayers\EditFeatureLayers\EditFeatureLayer.cs" />
+    <Compile Include="MapLayers\VoronoiLayers\Maths.cs" />
     <Compile Include="MapLayers\VoronoiLayers\VoronoiFeature.cs" />
     <Compile Include="MapLayers\VoronoiLayers\VoronoiLayer.cs" />
     <Compile Include="Shapes\Germany\Bayern.cs">
