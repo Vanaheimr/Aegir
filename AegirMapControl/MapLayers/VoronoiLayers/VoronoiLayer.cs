@@ -287,6 +287,85 @@ namespace eu.Vanaheimr.Aegir
                 #endregion
 
 
+                var Center1                 = new GeoCoordinate(new Latitude(49.7316155727453), new Longitude(10.1409612894059));
+
+                var LineX_3_4               = new GeoLine(new GeoCoordinate(new Latitude(49.732745964269350), new Longitude(10.135724544525146)),
+                                                          new GeoCoordinate(new Latitude(49.731761237693235), new Longitude(10.135746002197264)));
+
+                var Line_S3S4               = new GeoLine(new GeoCoordinate(new Latitude(49.732552), new Longitude(10.139216)),
+                                                          new GeoCoordinate(new Latitude(49.731004), new Longitude(10.138913)));
+
+                var Line_S3S4Center2Center1 = new GeoLine(Line_S3S4.Center,
+                                                          Center1);
+
+                var Intersection1           = Line_S3S4Center2Center1.Intersection(LineX_3_4);
+
+                DrawLine(Line_S3S4.Center, Intersection1, Brushes.Red, 1.0);
+
+                // ------------------------------------------------------------------------
+
+                var LineX_7_8               = new GeoLine(new GeoCoordinate(new Latitude(49.729930425324014), new Longitude(10.137097835540771)),
+                                                          new GeoCoordinate(new Latitude(49.729347879633465), new Longitude(10.138492584228516)));
+
+                var Line_S4S5               = new GeoLine(new GeoCoordinate(new Latitude(49.731004), new Longitude(10.138913)),
+                                                          new GeoCoordinate(new Latitude(49.730237), new Longitude(10.140107)));
+
+                var Line_S4S5Center2Center1 = new GeoLine(Line_S4S5.Center,
+                                                          Center1);
+
+                var Intersection2           = Line_S4S5Center2Center1.Intersection(LineX_7_8);
+
+                DrawLine(Line_S4S5.Center, Intersection2, Brushes.Red, 1.0);
+
+                // ------------------------------------------------------------------------
+
+                var Center2                 = new GeoCoordinate(new Latitude(49.7302216912131), new Longitude(10.1434879302979));
+
+                var LineX_14_15             = new GeoLine(new GeoCoordinate(new Latitude(49.728695974976030), new Longitude(10.143170356750488)),
+                                                          new GeoCoordinate(new Latitude(49.728987252607084), new Longitude(10.144414901733398)));
+
+                var Line_S5S7               = new GeoLine(new GeoCoordinate(new Latitude(49.730237), new Longitude(10.140107)),
+                                                          new GeoCoordinate(new Latitude(49.730664), new Longitude(10.146802)));
+
+                var Line_S5S7Center2Center2 = new GeoLine(Line_S5S7.Center,
+                                                          Center2);
+
+                var Intersection3           = Line_S5S7Center2Center2.Intersection(LineX_14_15);
+
+                DrawLine(Center2, Intersection3, Brushes.Red, 1.0);
+
+                // ------------------------------------------------------------------------
+
+                var LineX_17_18             = new GeoLine(new GeoCoordinate(new Latitude(49.732413101183180), new Longitude(10.149564743041992)),
+                                                          new GeoCoordinate(new Latitude(49.731469976708340), new Longitude(10.148684978485107)));
+
+                var Line_S7S6               = new GeoLine(new GeoCoordinate(new Latitude(49.730664), new Longitude(10.146802)),
+                                                          new GeoCoordinate(new Latitude(49.731791), new Longitude(10.145903)));
+
+                var Line_S7S6Center2Center2 = new GeoLine(Line_S7S6.Center,
+                                                          Center2);
+
+                var Intersection4           = Line_S7S6Center2Center2.Intersection(LineX_17_18);
+
+                DrawLine(Line_S7S6.Center, Intersection4, Brushes.Red, 1.0);
+
+                // ------------------------------------------------------------------------
+
+                var Center3                 = new GeoCoordinate(new Latitude(49.7318726185525), new Longitude(10.1424804925919));
+
+                var LineX_23_24             = new GeoLine(new GeoCoordinate(new Latitude(49.734146738072006), new Longitude(10.144844055175781)),
+                                                          new GeoCoordinate(new Latitude(49.733966442720840), new Longitude(10.142934322357178)));
+
+                var Line_S6S3               = new GeoLine(new GeoCoordinate(new Latitude(49.731791), new Longitude(10.145903)),
+                                                          new GeoCoordinate(new Latitude(49.732552), new Longitude(10.139216)));
+
+                var Line_S6S3Center2Center3 = new GeoLine(Line_S6S3.Center,
+                                                          Center3);
+
+                var Intersection5           = Line_S6S3Center2Center3.Intersection(LineX_23_24);
+
+                DrawLine(Line_S6S3.Center, Intersection5, Brushes.Red, 1.0);
+
             }
 
         }
@@ -306,6 +385,11 @@ namespace eu.Vanaheimr.Aegir
 
             this.Children.Add(Line);
 
+        }
+
+        private void DrawLine(GeoLine Line, Brush Stroke, Double StrokeThickness)
+        {
+            DrawLine(Line.P1, Line.P2, Stroke, StrokeThickness);
         }
 
         private void DrawLine(GeoCoordinate P1, GeoCoordinate P2, Brush Stroke, Double StrokeThickness)

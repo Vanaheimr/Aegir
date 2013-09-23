@@ -71,6 +71,8 @@ namespace eu.Vanaheimr.Aegir
         public GeoShape AddShape(GeoShape AShape)
         {
 
+            AShape.MouseRightButtonDown += MapControl.ProcessMouseRightButtonDown;
+
             // The position and size on the map will be set within the Redraw() method!
             this.Children.Add(AShape);
             AShape.ZoomLevel = this.MapControl.ZoomLevel;
