@@ -65,6 +65,34 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
 
+        #region E12
+
+        /// <summary>
+        /// The first geo coordinate of the triangle.
+        /// </summary>
+        public GeoLine E12 { get; private set; }
+
+        #endregion
+
+        #region E23
+
+        /// <summary>
+        /// The second geo coordinate of the triangle.
+        /// </summary>
+        public GeoLine E23 { get; private set; }
+
+        #endregion
+
+        #region E31
+
+        /// <summary>
+        /// The third geo coordinate of the triangle.
+        /// </summary>
+        public GeoLine E31 { get; private set; }
+
+        #endregion
+
+
         #region CircumCenter
 
         /// <summary>
@@ -108,6 +136,8 @@ namespace eu.Vanaheimr.Aegir
 
         #region Borders
 
+        private GeoLine[] _Borders;
+
         /// <summary>
         /// Return an enumeration of lines representing the
         /// surrounding borders of the triangle.
@@ -116,17 +146,14 @@ namespace eu.Vanaheimr.Aegir
         {
             get
             {
-
-                return new List<GeoLine>() {
-                    new GeoLine(P1, P2),
-                    new GeoLine(P2, P3),
-                    new GeoLine(P3, P1)
-                };
-
+                return _Borders;
             }
         }
 
         #endregion
+
+
+        public List<String> Tags { get; private set; }
 
         #endregion
 
@@ -212,9 +239,17 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
-            this.P1 = Pixel1;
-            this.P2 = Pixel2;
-            this.P3 = Pixel3;
+            this.P1         = Pixel1;
+            this.P2         = Pixel2;
+            this.P3         = Pixel3;
+
+            this.E12        = new GeoLine(P1, P2);
+            this.E23        = new GeoLine(P2, P3);
+            this.E31        = new GeoLine(P3, P1);
+
+            this._Borders   = new GeoLine[3] { E12, E23, E31 };
+
+            this.Tags       = new List<String>();
 
         }
 

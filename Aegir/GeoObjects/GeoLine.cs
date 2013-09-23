@@ -21,6 +21,7 @@ using System;
 
 using eu.Vanaheimr.Illias.Commons;
 using eu.Vanaheimr.Illias.Geometry.Maths;
+using System.Collections.Generic;
 
 #endregion
 
@@ -145,6 +146,8 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
+        public List<String> Tags { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -155,7 +158,7 @@ namespace eu.Vanaheimr.Aegir
         /// Create line with geo coordinates.
         /// </summary>
         /// <param name="GeoCoordinate1">A geo coordinate.</param>
-        /// <param name="GeoCoordinate2">A geo coordinate.</param>
+        /// <param name="GeoVector">A geo vector.</param>
         public GeoLine(GeoCoordinate GeoCoordinate1, GeoVector GeoVector)
         {
 
@@ -169,11 +172,12 @@ namespace eu.Vanaheimr.Aegir
 
             #endregion
 
-            this.P1 = GeoCoordinate1;
-            this.P2 = new GeoCoordinate(new Latitude (GeoCoordinate1.Latitude.Value  + GeoVector.P.Latitude.Value),
-                                        new Longitude(GeoCoordinate1.Longitude.Value + GeoVector.P.Longitude.Value));
+            this.P1     = GeoCoordinate1;
+            this.P2     = new GeoCoordinate(new Latitude (GeoCoordinate1.Latitude.Value  + GeoVector.P.Latitude.Value),
+                                            new Longitude(GeoCoordinate1.Longitude.Value + GeoVector.P.Longitude.Value));
 
             this.Length = GeoCoordinate1.DistanceTo(P2);
+            this.Tags   = new List<String>();
 
         }
 
@@ -202,6 +206,7 @@ namespace eu.Vanaheimr.Aegir
             this.P1     = GeoCoordinate1;
             this.P2     = GeoCoordinate2;
             this.Length = GeoCoordinate1.DistanceTo(GeoCoordinate2);
+            this.Tags   = new List<String>();
 
         }
 

@@ -192,9 +192,9 @@ namespace eu.Vanaheimr.Aegir
                         var P2OnScreen = GeoCalculations.GeoCoordinate2ScreenXY(DelaunayTriangle.Triangle.P2, this.MapControl.ZoomLevel);
                         var P3OnScreen = GeoCalculations.GeoCoordinate2ScreenXY(DelaunayTriangle.Triangle.P3, this.MapControl.ZoomLevel);
 
-                        DrawLine(P1OnScreen, P2OnScreen, Brushes.Blue, 1.0);
-                        DrawLine(P2OnScreen, P3OnScreen, Brushes.Blue, 1.0);
-                        DrawLine(P3OnScreen, P1OnScreen, Brushes.Blue, 1.0);
+                        ////DrawLine(P1OnScreen, P2OnScreen, Brushes.Blue, 1.0);
+                        ////DrawLine(P2OnScreen, P3OnScreen, Brushes.Blue, 1.0);
+                        ////DrawLine(P3OnScreen, P1OnScreen, Brushes.Blue, 1.0);
 
                         //var GeoCircle      = new GeoCircle(_Triangle.P1, _Triangle.P2, _Triangle.P3);
                         var ScreenCircle = new Circle<Double>(new Pixel<Double>(P1OnScreen.X + this.MapControl.ScreenOffset.X, P1OnScreen.Y + this.MapControl.ScreenOffset.Y),
@@ -234,28 +234,58 @@ namespace eu.Vanaheimr.Aegir
                 foreach (var tr1 in DelaunayTriangleList)
                     tr1.Neighbors.Clear();
 
+                HashSet<GeoCoordinate> tr1_h, tr2_h;
+                IEnumerable<GeoCoordinate> Intersection;
+
                 foreach (var tr1 in DelaunayTriangleList)
                 {
                     foreach (var tr2 in DelaunayTriangleList)
                     {
 
-                        var tr1_h = new HashSet<GeoCoordinate>();
+                        tr1_h = new HashSet<GeoCoordinate>();
                         tr1_h.Add(tr1.Triangle.P1);
                         tr1_h.Add(tr1.Triangle.P2);
                         tr1_h.Add(tr1.Triangle.P3);
 
-                        var tr2_h = new HashSet<GeoCoordinate>();
+                        tr2_h = new HashSet<GeoCoordinate>();
                         tr2_h.Add(tr2.Triangle.P1);
                         tr2_h.Add(tr2.Triangle.P2);
                         tr2_h.Add(tr2.Triangle.P3);
 
-                        if (tr1_h.Intersect(tr2_h).Count() == 2)
+                        Intersection = tr1_h.Intersect(tr2_h);
+
+                        if (Intersection.Count() == 2)
                         {
+
                             tr1.Neighbors.Add(tr2);
                             tr2.Neighbors.Add(tr1);
+
+                            foreach (var bo in tr1.Triangle.Borders)
+                                if (Intersection.Contains(bo.P1) && Intersection.Contains(bo.P2))
+                                    bo.Tags.Add("shared");
+
+                            foreach (var bo in tr2.Triangle.Borders)
+                                if (Intersection.Contains(bo.P1) && Intersection.Contains(bo.P2))
+                                    bo.Tags.Add("shared");
+
                         }
 
                     }
+                }
+
+                var aaa = DelaunayTriangleList.SelectMany(v => v.Triangle.Borders).Select(v => v.Tags);
+
+                foreach (var DelaunayTriangle in DelaunayTriangleList)
+                    foreach (var Edge in DelaunayTriangle.Triangle.Borders)
+                {
+
+                    DrawLine(GeoCalculations.GeoCoordinate2ScreenXY(Edge.P1, this.MapControl.ZoomLevel),
+                             GeoCalculations.GeoCoordinate2ScreenXY(Edge.P2, this.MapControl.ZoomLevel),
+                             (Edge.Tags.Contains("shared"))
+                                ? Brushes.LightBlue
+                                : Brushes.Blue,
+                             1.0);
+
                 }
 
                 foreach (var tr1 in DelaunayTriangleList)//.Skip(2).Take(1))
