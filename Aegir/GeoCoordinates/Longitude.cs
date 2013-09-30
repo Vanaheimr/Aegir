@@ -18,6 +18,7 @@
 #region Usings
 
 using System;
+using System.Globalization;
 
 #endregion
 
@@ -35,7 +36,7 @@ namespace eu.Vanaheimr.Aegir
 
         #region Properties
 
-        private Double _Value;
+        private readonly Double _Value;
 
         /// <summary>
         /// Returns the value of the longitude.
@@ -66,6 +67,27 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
         #endregion
+
+
+        public static Longitude Parse(String Longitude)
+        {
+            return new Longitude(Double.Parse(Longitude, CultureInfo.InvariantCulture));
+        }
+
+        public static Longitude Parse(String Longitude, IFormatProvider FormatProvider)
+        {
+            return new Longitude(Double.Parse(Longitude, FormatProvider));
+        }
+
+        public static Longitude Parse(String Longitude, NumberStyles NumberStyle)
+        {
+            return new Longitude(Double.Parse(Longitude, NumberStyle));
+        }
+
+        public static Longitude Parse(String Longitude, NumberStyles NumberStyle, IFormatProvider FormatProvider)
+        {
+            return new Longitude(Double.Parse(Longitude, NumberStyle, FormatProvider));
+        }
 
 
         #region Operator overloading
