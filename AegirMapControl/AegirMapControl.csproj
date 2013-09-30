@@ -59,6 +59,9 @@
     </Compile>
     <Compile Include="Controls\LayerPanel.cs" />
     <Compile Include="MapLayers\EditFeatureLayers\EditFeatureLayer.cs" />
+    <Compile Include="MapLayers\VoronoiLayers\Maths.cs" />
+    <Compile Include="MapLayers\VoronoiLayers\VoronoiFeature.cs" />
+    <Compile Include="MapLayers\VoronoiLayers\VoronoiLayer.cs" />
     <Compile Include="Shapes\Germany\Bayern.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -119,6 +122,10 @@
     <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">
       <Project>{16c85df8-5de6-4a9f-9fc7-7ca5b0440df3}</Project>
       <Name>Commons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Illias\Geometry\Geometry.csproj">
+      <Project>{9f38dcc9-cd80-4b71-8a9c-b3f37e471cab}</Project>
+      <Name>Geometry</Name>
     </ProjectReference>
     <ProjectReference Include="..\AegirTilesClient\AegirTilesClient.csproj">
       <Project>{D6A73280-9D66-4509-9131-3F379E8A3F5A}</Project>

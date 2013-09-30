@@ -67,6 +67,20 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
+        #region Distance(OtherAltitude)
+
+        /// <summary>
+        /// A method to calculate the distance between two altitude.
+        /// </summary>
+        /// <param name="OtherAltitude">Another Altitude.</param>
+        /// <returns>The distance between a and b.</returns>
+        public Double DistanceTo(Altitude OtherAltitude)
+        {
+            return Math.Abs(_Value - OtherAltitude.Value);
+        }
+
+        #endregion
+
 
         #region Operator overloading
 

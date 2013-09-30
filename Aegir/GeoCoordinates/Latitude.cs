@@ -68,6 +68,20 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
+        #region Distance(OtherLatitude)
+
+        /// <summary>
+        /// A method to calculate the distance between two latitudes.
+        /// </summary>
+        /// <param name="OtherLatitude">Another latitude.</param>
+        /// <returns>The distance between a and b.</returns>
+        public Double DistanceTo(Latitude OtherLatitude)
+        {
+            return Math.Abs(_Value - OtherLatitude.Value);
+        }
+
+        #endregion
+
 
         public static Latitude Parse(String Latitude)
         {

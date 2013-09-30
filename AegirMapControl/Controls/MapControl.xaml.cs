@@ -328,6 +328,29 @@ namespace eu.Vanaheimr.Aegir.Controls
 
         #endregion
 
+        #region ProcessMouseRightButtonDown(Sender, MouseButtonEventArgs)
+
+        /// <summary>
+        /// The mouse was moved.
+        /// </summary>
+        /// <param name="Sender">The sender of the event.</param>
+        /// <param name="MouseButtonEventArgs">The mouse button event arguments.</param>
+        public void ProcessMouseRightButtonDown(Object Sender, MouseButtonEventArgs MouseButtonEventArgs)
+        {
+
+            var MousePosition = MouseButtonEventArgs.GetPosition(this);
+
+            var GeoPos        = GeoCalculations.Mouse2GeoCoordinate(MousePosition.X - this.ScreenOffset.X,
+                                                                    MousePosition.Y - this.ScreenOffset.Y,
+                                                                    ZoomLevel);
+
+            Clipboard.SetData(DataFormats.Text, (Object) (GeoPos.Latitude.Value.ToString().Replace(",", ".") + ", " + GeoPos.Longitude.Value.ToString().Replace(",", ".")));
+
+        }
+
+        #endregion
+
+
         #region ProcessMouseLeftDoubleClick(Sender, MouseButtonEventArgs)
 
         /// <summary>
