@@ -18,6 +18,7 @@
 #region Usings
 
 using System;
+using System.Globalization;
 
 #endregion
 
@@ -66,6 +67,28 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
         #endregion
+
+
+        public static Altitude Parse(String Altitude)
+        {
+            return new Altitude(Double.Parse(Altitude, CultureInfo.InvariantCulture));
+        }
+
+        public static Altitude Parse(String Altitude, IFormatProvider FormatProvider)
+        {
+            return new Altitude(Double.Parse(Altitude, FormatProvider));
+        }
+
+        public static Altitude Parse(String Altitude, NumberStyles NumberStyle)
+        {
+            return new Altitude(Double.Parse(Altitude, NumberStyle));
+        }
+
+        public static Altitude Parse(String Altitude, NumberStyles NumberStyle, IFormatProvider FormatProvider)
+        {
+            return new Altitude(Double.Parse(Altitude, NumberStyle, FormatProvider));
+        }
+
 
         #region Distance(OtherAltitude)
 
