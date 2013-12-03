@@ -18,6 +18,7 @@
 #region Usings
 
 using System;
+using System.Globalization;
 
 #endregion
 
@@ -66,6 +67,28 @@ namespace eu.Vanaheimr.Aegir
         #endregion
 
         #endregion
+
+
+        public static Latitude Parse(String Latitude)
+        {
+            return new Latitude(Double.Parse(Latitude, CultureInfo.InvariantCulture));
+        }
+
+        public static Latitude Parse(String Latitude, IFormatProvider FormatProvider)
+        {
+            return new Latitude(Double.Parse(Latitude, FormatProvider));
+        }
+
+        public static Latitude Parse(String Latitude, NumberStyles NumberStyle)
+        {
+            return new Latitude(Double.Parse(Latitude, NumberStyle));
+        }
+
+        public static Latitude Parse(String Latitude, NumberStyles NumberStyle, IFormatProvider FormatProvider)
+        {
+            return new Latitude(Double.Parse(Latitude, NumberStyle, FormatProvider));
+        }
+
 
         #region Distance(OtherLatitude)
 

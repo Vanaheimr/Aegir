@@ -703,7 +703,9 @@ namespace eu.Vanaheimr.Aegir
         /// </summary>
         public override String ToString()
         {
-            return String.Concat("Latitude = ", Latitude.Value, ", Longitude = ", Longitude.Value);
+            return String.Concat("Latitude = ",    Latitude.Value,
+                                 ", Longitude = ", Longitude.Value,
+                                 ", Altitude = ",  Altitude.Value);
         }
 
         #endregion
