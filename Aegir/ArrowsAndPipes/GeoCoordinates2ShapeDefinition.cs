@@ -208,7 +208,7 @@ namespace eu.Vanaheimr.Aegir
     /// A pipe transforming an enumeration of
     /// geo coordinates into shape definitions.
     /// </summary>
-    public class GeoCoordinates2ShapeDefinitionPipe : FuncPipe<IEnumerable<GeoCoordinate>, SDL>
+    public class GeoCoordinates2ShapeDefinitionPipe : SelectPipe<IEnumerable<GeoCoordinate>, SDL>
     {
 
         /// <summary>
@@ -226,9 +226,8 @@ namespace eu.Vanaheimr.Aegir
                                                   IEnumerable<IEnumerable<GeoCoordinate>>  IEnumerable = null,
                                                   IEnumerator<IEnumerable<GeoCoordinate>>  IEnumerator = null)
 
-            : base(Item => Item.GeoCoordinates2ShapeDefinition(OnScreenUpperLeft, ZoomLevel, CloseShape),
-                   IEnumerable,
-                   IEnumerator)
+            : base(IEnumerable,
+                   Item => Item.GeoCoordinates2ShapeDefinition(OnScreenUpperLeft, ZoomLevel, CloseShape))
 
         { }
 

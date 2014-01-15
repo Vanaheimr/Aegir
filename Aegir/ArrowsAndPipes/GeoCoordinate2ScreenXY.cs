@@ -126,7 +126,7 @@ namespace eu.Vanaheimr.Aegir
     /// A pipe transforming an enumeration of geo coordinates
     /// into their corresponding screen positions.
     /// </summary>
-    public class GeoCoordinate2ScreenXYPipe : FuncPipe<GeoCoordinate, ScreenXY>
+    public class GeoCoordinate2ScreenXYPipe : SelectPipe<GeoCoordinate, ScreenXY>
     {
 
         /// <summary>
@@ -140,9 +140,8 @@ namespace eu.Vanaheimr.Aegir
                                           IEnumerable<GeoCoordinate>  IEnumerable = null,
                                           IEnumerator<GeoCoordinate>  IEnumerator = null)
 
-            : base(Item => GeoCalculations.GeoCoordinate2ScreenXY(Item, ZoomLevel),
-                   IEnumerable,
-                   IEnumerator)
+            : base(IEnumerable,
+                   Item => GeoCalculations.GeoCoordinate2ScreenXY(Item, ZoomLevel))
 
         { }
 

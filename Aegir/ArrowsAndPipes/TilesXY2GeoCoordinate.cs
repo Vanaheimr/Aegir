@@ -104,7 +104,7 @@ namespace eu.Vanaheimr.Aegir
     /// A pipe transforming an enumeration of tiles
     /// into their corresponding geo coordinates.
     /// </summary>
-    public class TilesXY2GeoCoordinatePipe : FuncPipe<TilesXY, GeoCoordinate>
+    public class TilesXY2GeoCoordinatePipe : SelectPipe<TilesXY, GeoCoordinate>
     {
 
         /// <summary>
@@ -118,9 +118,8 @@ namespace eu.Vanaheimr.Aegir
                                          IEnumerable<TilesXY>  IEnumerable = null,
                                          IEnumerator<TilesXY>  IEnumerator = null)
 
-            : base(Item => GeoCalculations.TilesXY2GeoCoordinate(Item, ZoomLevel),
-                   IEnumerable,
-                   IEnumerator)
+            : base(IEnumerable,
+                   Item => GeoCalculations.TilesXY2GeoCoordinate(Item, ZoomLevel))
 
         { }
 

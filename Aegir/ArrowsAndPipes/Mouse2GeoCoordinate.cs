@@ -107,7 +107,7 @@ namespace eu.Vanaheimr.Aegir
     /// A pipe transforming an enumeration of mouse positions
     /// on the map into their corresponding geo coordinates.
     /// </summary>
-    public class Mouse2GeoCoordinatePipe : FuncPipe<Tuple<Double, Double>, GeoCoordinate>
+    public class Mouse2GeoCoordinatePipe : SelectPipe<Tuple<Double, Double>, GeoCoordinate>
     {
 
         /// <summary>
@@ -121,9 +121,8 @@ namespace eu.Vanaheimr.Aegir
                                        IEnumerable<Tuple<Double, Double>>  IEnumerable = null,
                                        IEnumerator<Tuple<Double, Double>>  IEnumerator = null)
 
-            : base(Item => GeoCalculations.Mouse2GeoCoordinate(Item.Item1, Item.Item2, ZoomLevel),
-                   IEnumerable,
-                   IEnumerator)
+            : base(IEnumerable,
+                   Item => GeoCalculations.Mouse2GeoCoordinate(Item.Item1, Item.Item2, ZoomLevel))
 
         { }
 
