@@ -329,6 +329,19 @@ namespace eu.Vanaheimr.Aegir
 
         #endregion
 
+        #region ToString(FormatProvider)
+
+        /// <summary>
+        /// Returns a string representation of the given object.
+        /// </summary>
+        /// <param name="FormatProvider">An object that supplies culture-specific formatting information.</param>
+        public String ToString(IFormatProvider FormatProvider)
+        {
+            return this.Value.ToString(FormatProvider);
+        }
+
+        #endregion
+
     }
 
 }
