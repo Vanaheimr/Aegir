@@ -24,12 +24,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-using eu.Vanaheimr.Balder;
-using eu.Vanaheimr.Illias.Geometry;
+using org.GraphDefined.Vanaheimr.Illias.Geometry;
 
 #endregion
 
-namespace eu.Vanaheimr.Loki
+namespace org.GraphDefined.Vanaheimr.Loki
 {
 
     public class HeatMap

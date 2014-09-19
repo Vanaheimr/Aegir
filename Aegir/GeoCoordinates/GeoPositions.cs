@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     /// <summary>

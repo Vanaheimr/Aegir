@@ -20,12 +20,12 @@
 using System;
 using System.Collections.Generic;
 
-using eu.Vanaheimr.Styx;
-using eu.Vanaheimr.Styx.Arrows;
+using org.GraphDefined.Vanaheimr.Styx;
+using org.GraphDefined.Vanaheimr.Styx.Arrows;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     public class GeoBoundingBox

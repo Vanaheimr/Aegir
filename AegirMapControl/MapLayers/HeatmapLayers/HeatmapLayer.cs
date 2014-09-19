@@ -21,13 +21,13 @@
 using System;
 using System.Windows.Media;
 
-using eu.Vanaheimr.Aegir.Controls;
+using org.GraphDefined.Vanaheimr.Aegir.Controls;
 using System.ComponentModel;
 using System.Windows.Controls;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     /// <summary>

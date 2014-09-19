@@ -19,13 +19,13 @@
 
 using System;
 
-using eu.Vanaheimr.Illias.Commons;
-using eu.Vanaheimr.Illias.Geometry.Maths;
+using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Illias.Geometry.Maths;
 using System.Collections.Generic;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
     // lat == y
     // lng == x

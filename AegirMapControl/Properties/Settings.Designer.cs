@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace eu.Vanaheimr.Aegir.Controls.Properties {
+namespace org.GraphDefined.Vanaheimr.Aegir.Controls.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

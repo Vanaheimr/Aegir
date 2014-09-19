@@ -8,10 +8,11 @@
     <ProjectGuid>{61C069F9-3FDD-41AA-AB9A-113D3D62140C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>de.ahzf.Vanaheimr.AegirHTTPServer</RootNamespace>
-    <AssemblyName>AegirHTTPServer</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>org.GraphDefined.Vanaheimr.AegirHTTPService</RootNamespace>
+    <AssemblyName>Vanaheimr.AegirHTTPService</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,8 +22,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\AegirHTTPServer.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Vanaheimr.AegirHTTPService.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,29 +57,21 @@
     <Compile Include="AegirService\AegirHTTPService_XML.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Bifrost\BifrostHTTPServer\BifrostHTTPServer.csproj">
-      <Project>{DC46B5EF-ECC5-465E-B1C4-85596343A03F}</Project>
-      <Name>BifrostHTTPServer</Name>
+    <ProjectReference Include="..\..\Illias\Illias.NET4.5\Illias.NET4.5.csproj">
+      <Project>{23d37453-2d4e-4bd8-b40f-3e731fee7712}</Project>
+      <Name>Illias.NET4.5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Balder\Balder\Balder.csproj">
-      <Project>{D2B4E7C7-0524-4DE5-9D62-2DE05682A74D}</Project>
-      <Name>Balder</Name>
+    <ProjectReference Include="..\..\Illias\Illias\Illias.csproj">
+      <Project>{e156f18d-d41c-4529-9bcc-9962e6ee25da}</Project>
+      <Name>Illias</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Hermod\HermodHTTPServer\HermodHTTPServer.csproj">
-      <Project>{9CE48DAC-0512-4947-942B-EF4C42C52B47}</Project>
-      <Name>HermodHTTPServer</Name>
+    <ProjectReference Include="..\..\Styx\Styx.NET4.5\Styx.NET4.5.csproj">
+      <Project>{af76ecc0-2ca5-4cff-9e1e-ff5478c4b6e4}</Project>
+      <Name>Styx.NET4.5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Hermod\HermodHTTP\HermodHTTP.csproj">
-      <Project>{9A00BD39-1385-4DB4-8F38-363BB947CCB4}</Project>
-      <Name>HermodHTTP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
-      <Project>{477EFD16-3627-4473-957D-44CA9A9DFB79}</Project>
-      <Name>Hermod</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Illias\Commons\Commons.csproj">
-      <Project>{16C85DF8-5DE6-4A9F-9FC7-7CA5B0440DF3}</Project>
-      <Name>Commons</Name>
+    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
+      <Project>{3949790d-8591-4101-9e4d-ce7a758e7409}</Project>
+      <Name>Styx</Name>
     </ProjectReference>
     <ProjectReference Include="..\AegirTilesClient\AegirTilesClient.csproj">
       <Project>{D6A73280-9D66-4509-9131-3F379E8A3F5A}</Project>

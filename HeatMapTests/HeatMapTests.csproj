@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HeatMapTests</RootNamespace>
     <AssemblyName>HeatMapTests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,16 +47,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Balder\Balder\Balder.csproj">
-      <Project>{D2B4E7C7-0524-4DE5-9D62-2DE05682A74D}</Project>
-      <Name>Balder</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Balder\PropertyGraphs\PropertyGraphs.csproj">
-      <Project>{562AC94F-60EA-4911-8C62-684F02867783}</Project>
-      <Name>PropertyGraphs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\HeatMap\HeatMap.csproj">
-      <Project>{472F0378-292E-4D92-9A37-D59ACCCC307C}</Project>
+      <Project>{2050e45a-9214-4080-8f8d-1e75a4c634ed}</Project>
       <Name>HeatMap</Name>
     </ProjectReference>
   </ItemGroup>

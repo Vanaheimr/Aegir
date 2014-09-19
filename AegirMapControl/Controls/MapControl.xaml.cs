@@ -26,11 +26,11 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 
-using eu.Vanaheimr.Illias.Commons;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir.Controls
+namespace org.GraphDefined.Vanaheimr.Aegir.Controls
 {
 
     /// <summary>

@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Aegir")]
 [assembly: AssemblyDescription("Working with graphs and maps.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ahzf.de")]
+[assembly: AssemblyCompany("GraphDefined GmbH")]
 [assembly: AssemblyProduct("Aegir")]
-[assembly: AssemblyCopyright("Copyright © Achim 'ahzf' Friedland 2011-2013")]
+[assembly: AssemblyCopyright("Copyright © 2010-2014 GraphDefined GmbH")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

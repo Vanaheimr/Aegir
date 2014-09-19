@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AegirHTTPServere")]
-[assembly: AssemblyDescription("Working with graphs and maps.")]
+[assembly: AssemblyTitle("AegirHTTPService")]
+[assembly: AssemblyDescription("A HTTP interface for working with graphs and maps.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ahzf.de")]
-[assembly: AssemblyProduct("AegirHTTPServere")]
-[assembly: AssemblyCopyright("Copyright © Achim 'ahzf' Friedland 2011-2012")]
+[assembly: AssemblyCompany("GraphDefined GmbH")]
+[assembly: AssemblyProduct("AegirHTTPService")]
+[assembly: AssemblyCopyright("Copyright © 2010-2014 GraphDefined GmbH")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

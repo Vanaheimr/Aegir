@@ -25,7 +25,7 @@ using System.Windows.Controls;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     /// <summary>

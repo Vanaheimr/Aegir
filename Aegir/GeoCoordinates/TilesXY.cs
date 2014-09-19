@@ -19,11 +19,11 @@
 
 using System;
 
-using eu.Vanaheimr.Illias.Geometry;
+using org.GraphDefined.Vanaheimr.Illias.Geometry;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     public class TilesXY

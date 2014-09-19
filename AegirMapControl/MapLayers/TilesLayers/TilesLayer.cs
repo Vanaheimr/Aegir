@@ -32,12 +32,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-using eu.Vanaheimr.Aegir.Tiles;
-using eu.Vanaheimr.Aegir.Controls;
+using org.GraphDefined.Vanaheimr.Aegir.Tiles;
+using org.GraphDefined.Vanaheimr.Aegir.Controls;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     /// <summary>

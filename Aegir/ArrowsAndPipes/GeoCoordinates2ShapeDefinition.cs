@@ -22,13 +22,13 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 
-using eu.Vanaheimr.Styx;
-using eu.Vanaheimr.Styx.Arrows;
-using eu.Vanaheimr.Illias.Commons;
+using org.GraphDefined.Vanaheimr.Styx;
+using org.GraphDefined.Vanaheimr.Styx.Arrows;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     #region (class) SDL

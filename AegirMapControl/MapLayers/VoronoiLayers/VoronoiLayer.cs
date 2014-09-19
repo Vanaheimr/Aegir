@@ -26,13 +26,13 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using eu.Vanaheimr.Illias.Geometry;
-using eu.Vanaheimr.Aegir.Controls;
+using org.GraphDefined.Vanaheimr.Illias.Geometry;
+using org.GraphDefined.Vanaheimr.Aegir.Controls;
 using System.Windows.Shapes;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     /// <summary>

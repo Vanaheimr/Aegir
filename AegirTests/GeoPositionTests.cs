@@ -23,7 +23,7 @@ using NUnit.Framework;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir.UnitTests
+namespace org.GraphDefined.Vanaheimr.Aegir.UnitTests
 {
 
     /// <summary>

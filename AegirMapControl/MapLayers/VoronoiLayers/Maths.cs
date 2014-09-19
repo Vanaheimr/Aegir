@@ -1,13 +1,13 @@
-﻿using eu.Vanaheimr.Aegir;
-using eu.Vanaheimr.Illias.Geometry;
-using eu.Vanaheimr.Illias.Geometry.Maths;
+﻿using org.GraphDefined.Vanaheimr.Aegir;
+using org.GraphDefined.Vanaheimr.Illias.Geometry;
+using org.GraphDefined.Vanaheimr.Illias.Geometry.Maths;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     public class TriCircle

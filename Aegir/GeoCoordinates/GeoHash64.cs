@@ -27,7 +27,7 @@ using System;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     #region GeoHash64Extentions

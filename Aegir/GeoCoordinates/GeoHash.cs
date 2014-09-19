@@ -28,7 +28,7 @@ using System.Text;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir
+namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     #region GeoHashExtentions

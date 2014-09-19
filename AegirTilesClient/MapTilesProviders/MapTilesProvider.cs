@@ -26,11 +26,11 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using eu.Vanaheimr.Illias.Commons;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace eu.Vanaheimr.Aegir.Tiles
+namespace org.GraphDefined.Vanaheimr.Aegir.Tiles
 {
 
     /// <summary>
