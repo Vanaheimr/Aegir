@@ -90,6 +90,23 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         }
 
 
+        public static Boolean TryParse(String Text, out Longitude Longitude)
+        {
+
+            Double Value;
+
+            if (Double.TryParse(Text, NumberStyles.Any, CultureInfo.InvariantCulture, out Value))
+            {
+                Longitude = new Longitude(Value);
+                return true;
+            }
+
+            Longitude = new Longitude(0);
+            return false;
+
+        }
+
+
         #region Distance(OtherLongitude)
 
         /// <summary>

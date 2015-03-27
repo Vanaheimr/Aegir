@@ -70,6 +70,13 @@ namespace org.GraphDefined.Vanaheimr.Aegir
     }
 
 
+    public enum GravitationalModel
+    {
+        WGS84,
+        EGM96,
+        EGM2008
+    }
+
     /// <summary>
     /// A geographical coordinate or position on a map.
     /// </summary>
@@ -192,6 +199,20 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
         #endregion
 
+        public Boolean IsValid
+        {
+            get
+            {
+                return (Latitude.Value != 0.0 && Longitude.Value != 0.0);
+            }
+        }
+
+
+        /// <summary>
+        /// The gravitational model.
+        /// </summary>
+        public GravitationalModel Projection { get; set; }
+
         #endregion
 
         #region Constructor(s)
@@ -239,6 +260,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             this.Latitude           = Latitude;
             this.Longitude          = Longitude;
             this.Altitude           = Altitude;
+            this.Projection         = GravitationalModel.WGS84;
 
         }
 
@@ -262,6 +284,8 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             if (!TryParseString(GeoString, (lat, lng) => { this.Latitude = lat; this.Longitude = lng; }))
                 throw new ArgumentException("The string represenation of the geo coordinate is invalid!");
+
+            this.Projection = GravitationalModel.WGS84;
 
         }
 
