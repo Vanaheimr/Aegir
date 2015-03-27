@@ -559,7 +559,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         #region Operator != (GeoCoordinate1, GeoCoordinate2)
 
         /// <summary>
-        /// Compares two vertices for inequality.
+        /// Compares two geo coordinates for inequality.
         /// </summary>
         /// <param name="GeoCoordinate1">A geo coordinate.</param>
         /// <param name="GeoCoordinate2">Another geo coordinate.</param>
