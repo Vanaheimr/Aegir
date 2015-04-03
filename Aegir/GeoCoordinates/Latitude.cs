@@ -359,6 +359,19 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
         #endregion
 
+        #region ToString(Format)
+
+        /// <summary>
+        /// Returns a string representation of the given object.
+        /// </summary>
+        /// <param name="Format">A composite format string</param>
+        public String ToString(String Format)
+        {
+            return String.Format(Format, this.Value);
+        }
+
+        #endregion
+
     }
 
 }
