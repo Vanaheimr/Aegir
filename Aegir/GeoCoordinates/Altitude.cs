@@ -89,6 +89,22 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             return new Altitude(Double.Parse(Altitude, NumberStyle, FormatProvider));
         }
 
+        public static Boolean TryParse(String Text, out Altitude Altitude)
+        {
+
+            Double Value;
+
+            if (Double.TryParse(Text, NumberStyles.Any, CultureInfo.InvariantCulture, out Value))
+            {
+                Altitude = new Altitude(Value);
+                return true;
+            }
+
+            Altitude = new Altitude(0);
+            return false;
+
+        }
+
 
         #region Distance(OtherAltitude)
 

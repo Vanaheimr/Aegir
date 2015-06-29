@@ -244,7 +244,9 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// <param name="Latitude">The Latitude (south to nord).</param>
         /// <param name="Longitude">The Longitude (parallel to equator).</param>
         /// <param name="Altitude">The Altitude.</param>
-        public GeoCoordinate(Latitude Latitude, Longitude Longitude, Altitude Altitude)
+        public GeoCoordinate(Latitude   Latitude,
+                             Longitude  Longitude,
+                             Altitude   Altitude)
         {
 
             #region Initial checks
@@ -296,6 +298,110 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         }
 
         #endregion
+
+        #endregion
+
+
+        #region Parse(LatitudeString, LongitudeString, AltitudeString = null)
+
+        /// <summary>
+        /// Parse the given latitude and longitude string representations.
+        /// </summary>
+        /// <param name="LatitudeString">The Latitude (south to nord).</param>
+        /// <param name="LongitudeString">The Longitude (parallel to equator).</param>
+        /// <param name="AltitudeString">The Altitude.</param>
+        public static GeoCoordinate Parse(String  LatitudeString,
+                                          String  LongitudeString,
+                                          String  AltitudeString = null)
+        {
+
+            Latitude  LatitudeValue;
+            Longitude LongitudeValue;
+            Altitude  AltitudeValue;
+
+            if (!Latitude.TryParse(LatitudeString, out LatitudeValue))
+                throw new Exception("Invalid 'latitude' value!");
+
+            if (!Longitude.TryParse(LongitudeString, out LongitudeValue))
+                throw new Exception("Invalid 'longitude' value!");
+
+            if (AltitudeString != null)
+            {
+                if (!Altitude.TryParse(AltitudeString, out AltitudeValue))
+                    throw new Exception("Invalid 'altitude' value!");
+            }
+            else
+                AltitudeValue = new Altitude(0);
+
+            return new GeoCoordinate(LatitudeValue, LongitudeValue, AltitudeValue);
+
+        }
+
+        #endregion
+
+        #region TryParse(LatitudeString, LongitudeString, out GeoCoordinate)
+
+        /// <summary>
+        /// Parse the given latitude and longitude string representations.
+        /// </summary>
+        /// <param name="LatitudeString">The Latitude (south to nord).</param>
+        /// <param name="LongitudeString">The Longitude (parallel to equator).</param>
+        /// <param name="GeoCoordinate">The resulting geo coordinate.</param>
+        public static Boolean TryParse(String             LatitudeString,
+                                       String             LongitudeString,
+                                       out GeoCoordinate  GeoCoordinate)
+        {
+
+            Latitude  LatitudeValue;
+            Longitude LongitudeValue;
+            GeoCoordinate = null;
+
+            if (!Latitude. TryParse(LatitudeString,  out LatitudeValue))
+                return false;
+
+            if (!Longitude.TryParse(LongitudeString, out LongitudeValue))
+                return false;
+
+            GeoCoordinate = new GeoCoordinate(LatitudeValue, LongitudeValue);
+            return true;
+
+        }
+
+        #endregion
+
+        #region TryParse(LatitudeString, LongitudeString, AltitudeString, out GeoCoordinate)
+
+        /// <summary>
+        /// Parse the given latitude and longitude string representations.
+        /// </summary>
+        /// <param name="LatitudeString">The Latitude (south to nord).</param>
+        /// <param name="LongitudeString">The Longitude (parallel to equator).</param>
+        /// <param name="AltitudeString">The Altitude.</param>
+        /// <param name="GeoCoordinate">The resulting geo coordinate.</param>
+        public static Boolean TryParse(String             LatitudeString,
+                                       String             LongitudeString,
+                                       String             AltitudeString,
+                                       out GeoCoordinate  GeoCoordinate)
+        {
+
+            Latitude  LatitudeValue;
+            Longitude LongitudeValue;
+            Altitude  AltitudeValue;
+            GeoCoordinate = null;
+
+            if (!Latitude. TryParse(LatitudeString,  out LatitudeValue))
+                return false;
+
+            if (!Longitude.TryParse(LongitudeString, out LongitudeValue))
+                return false;
+
+            if (!Altitude.TryParse(AltitudeString, out AltitudeValue))
+                return false;
+
+            GeoCoordinate = new GeoCoordinate(LatitudeValue, LongitudeValue, AltitudeValue);
+            return true;
+
+        }
 
         #endregion
 
