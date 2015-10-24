@@ -223,30 +223,17 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
         #region Constructor(s)
 
-        #region GeoCoordinate(Latitude, Longitude)
+        #region GeoCoordinate(Latitude, Longitude, Altitude = null)
 
         /// <summary>
         /// Create a new geographical coordinate or position on a map.
         /// </summary>
         /// <param name="Latitude">The Latitude (south to nord).</param>
         /// <param name="Longitude">The Longitude (parallel to equator).</param>
-        public GeoCoordinate(Latitude Latitude, Longitude Longitude)
-            : this(Latitude, Longitude, new Altitude(0))
-        { }
-
-        #endregion
-
-        #region GeoCoordinate(Latitude, Longitude, Altitude)
-
-        /// <summary>
-        /// Create a new geographical coordinate or position on a map.
-        /// </summary>
-        /// <param name="Latitude">The Latitude (south to nord).</param>
-        /// <param name="Longitude">The Longitude (parallel to equator).</param>
-        /// <param name="Altitude">The Altitude.</param>
+        /// <param name="Altitude">The (optional) Altitude.</param>
         public GeoCoordinate(Latitude   Latitude,
                              Longitude  Longitude,
-                             Altitude   Altitude)
+                             Altitude?  Altitude = null)
         {
 
             #region Initial checks
@@ -267,7 +254,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             this.Latitude           = Latitude;
             this.Longitude          = Longitude;
-            this.Altitude           = Altitude;
+            this.Altitude           = Altitude != null && Altitude.HasValue ? Altitude.Value : new Altitude(0);
             this.Projection         = GravitationalModel.WGS84;
 
         }
@@ -298,6 +285,26 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         }
 
         #endregion
+
+        #endregion
+
+
+        #region Create(Latitude, Longitude, Altitude = null)
+
+        /// <summary>
+        /// Create a new geographical coordinate or position on a map.
+        /// </summary>
+        /// <param name="Latitude">The Latitude (south to nord).</param>
+        /// <param name="Longitude">The Longitude (parallel to equator).</param>
+        /// <param name="Altitude">The (optional) Altitude.</param>
+        public static GeoCoordinate Create(Latitude   Latitude,
+                                           Longitude  Longitude,
+                                           Altitude?  Altitude = null)
+        {
+
+            return new GeoCoordinate(Latitude, Longitude, Altitude);
+
+        }
 
         #endregion
 

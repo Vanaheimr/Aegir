@@ -69,6 +69,11 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         #endregion
 
 
+        public static Longitude Parse(Double Longitude)
+        {
+            return new Longitude(Longitude);
+        }
+
         public static Longitude Parse(String Longitude)
         {
             return new Longitude(Double.Parse(Longitude, CultureInfo.InvariantCulture));
