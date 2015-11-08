@@ -219,6 +219,22 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
         #endregion
 
+        #region Zero
+
+        /// <summary>
+        /// Calculate the distance between two geo coordinates.
+        /// </summary>
+        /// <param name="Target">Another geo coordinate</param>
+        public static GeoCoordinate Zero
+        {
+            get
+            {
+                return new GeoCoordinate(Latitude.Parse(0), Longitude.Parse(0));
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Constructor(s)
