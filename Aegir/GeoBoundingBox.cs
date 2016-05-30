@@ -41,10 +41,20 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         public Longitude      Longitude2        { get; private set; }
         public Altitude       Altitude2         { get; private set; }
 
-        public Latitude       GeoWidth          { get; private set; }
-        public Longitude      GeoHeight         { get; private set; }
-        public Altitude       GeoAlitude        { get; private set; }
+        public Double         GeoWidth          { get; private set; }
+        public Double         GeoHeight         { get; private set; }
+        public Double         GeoAlitude        { get; private set; }
 
+
+        public GeoBoundingBox(Latitude  Latitude,
+                              Longitude Longitude,
+                              Latitude  Latitude2,
+                              Longitude Longitude2)
+
+            : this(Latitude,  Longitude,  new Altitude(0),
+                   Latitude2, Longitude2, new Altitude(0))
+
+        { }
 
         public GeoBoundingBox(Latitude  Latitude,
                               Longitude Longitude,
@@ -64,9 +74,9 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             this.Longitude2     = Longitude2;
             this.Altitude2      = Altitude2;
 
-            this.GeoWidth       = new Latitude (Latitude2. Value - Latitude. Value);
-            this.GeoHeight      = new Longitude(Longitude2.Value - Longitude.Value);
-            this.GeoAlitude     = new Altitude (Altitude2. Value - Altitude. Value);
+            this.GeoWidth       = GeoCoordinate1.DistanceKM(new GeoCoordinate(GeoCoordinate1.Latitude, GeoCoordinate2.Longitude)); // Longitude West  <-> East
+            this.GeoHeight      = GeoCoordinate1.DistanceKM(new GeoCoordinate(GeoCoordinate2.Latitude, GeoCoordinate1.Longitude)); // Latitude  North <-> South
+            this.GeoAlitude     = Altitude2. Value - Altitude. Value;
 
         }
 

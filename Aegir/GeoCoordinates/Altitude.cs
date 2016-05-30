@@ -69,6 +69,11 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         #endregion
 
 
+        public static Altitude Parse(Double Longitude)
+        {
+            return new Altitude(Longitude);
+        }
+
         public static Altitude Parse(String Altitude)
         {
             return new Altitude(Double.Parse(Altitude, CultureInfo.InvariantCulture));
