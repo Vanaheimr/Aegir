@@ -71,6 +71,8 @@
     <Compile Include="GeoCoordinates\GeoPositions.cs" />
     <Compile Include="GeoCoordinates\GeoCoordinate.cs" />
     <Compile Include="GeoCoordinates\IReadonlyGeoPosition.cs" />
+    <Compile Include="GeoJSON\GeoJSONFeature.cs" />
+    <Compile Include="GeoJSON\GeoJSONFile.cs" />
     <Compile Include="GeoJSON\GeoJSON.cs" />
     <Compile Include="GeoCoordinates\IGeoPosition.cs" />
     <Compile Include="ArrowsAndPipes\GeoCoordinates2ShapeDefinition.cs" />
