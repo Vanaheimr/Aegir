@@ -57,6 +57,9 @@
     <Compile Include="ArrowsAndPipes\Mouse2GeoCoordinate.cs" />
     <Compile Include="ArrowsAndPipes\GeoCoordinate2TilesXY.cs" />
     <Compile Include="GeoBoundingBox.cs" />
+    <Compile Include="GeoCoordinates\NumericExtensions.cs" />
+    <Compile Include="GeoCoordinates\GravitationalModel.cs" />
+    <Compile Include="GeoCoordinates\Planets.cs" />
     <Compile Include="GeoCoordinates\TilesXY.cs" />
     <Compile Include="GeoCoordinates\Altitude.cs" />
     <Compile Include="GeoCoordinates\ScreenXY.cs" />

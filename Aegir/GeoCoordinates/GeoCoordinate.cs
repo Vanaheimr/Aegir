@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2010-2013, Achim 'ahzf' Friedland <achim.friedland@graphdefined.com>
+ * Copyright (c) 2010-2016, Achim 'ahzf' Friedland <achim.friedland@graphdefined.com>
  * This file is part of Aegir <http://www.github.com/Vanaheimr/Aegir>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,73 +20,13 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Globalization;
-using System.Collections.Generic;
+
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
 namespace org.GraphDefined.Vanaheimr.Aegir
 {
-
-
-    /// <summary>
-    /// Convert to Radians.
-    /// </summary>
-    /// <param name="val">The value to convert to radians</param>
-    /// <returns>The value in radians</returns>
-    public static class NumericExtensions
-    {
-
-        public static Double ToRadians(this Double Value)
-        {
-            return Value * (Math.PI / 180);
-        }
-
-        public static Double ToRadians(this Latitude Latitude)
-        {
-            return Latitude.Value * (Math.PI / 180);
-        }
-
-        public static Double ToRadians(this Longitude Longitude)
-        {
-            return Longitude.Value * (Math.PI / 180);
-        }
-
-
-        public static Double ToDegree(this Double Value)
-        {
-            return Value * (180 / Math.PI);
-        }
-
-        public static Double ToDegree(this Latitude Latitude)
-        {
-            return Latitude.Value * (180 / Math.PI);
-        }
-
-        public static Double ToDegree(this Longitude Longitude)
-        {
-            return Longitude.Value * (180 / Math.PI);
-        }
-
-        public static Boolean IsValid(this GeoCoordinate Coordinate)
-        {
-
-            if (Coordinate == null)
-                return false;
-
-            return (Coordinate.Latitude. Value != 0.0 &&
-                    Coordinate.Longitude.Value != 0.0);
-
-        }
-
-    }
-
-
-    public enum GravitationalModel
-    {
-        WGS84,
-        EGM96,
-        EGM2008
-    }
 
     /// <summary>
     /// A geographical coordinate or position on a map.
@@ -183,63 +123,46 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
         #region Properties
 
-        #region Latitude
+        /// <summary>
+        /// The planet.
+        /// </summary>
+        public Planets             Planet       { get; }
 
         /// <summary>
         /// The Latitude (south to nord).
         /// </summary>
-        public Latitude     Latitude    { get; private set; }
-
-        #endregion
-
-        #region Longitude
+        public Latitude            Latitude     { get; }
 
         /// <summary>
         /// The Longitude (parallel to equator).
         /// </summary>
-        public Longitude    Longitude   { get; private set; }
-
-        #endregion
-
-        #region Altitude
+        public Longitude           Longitude    { get; }
 
         /// <summary>
         /// The Altitude.
         /// </summary>
-        public Altitude     Altitude    { get; private set; }
-
-        #endregion
-
-        #region Projection
+        public Altitude            Altitude     { get; }
 
         /// <summary>
         /// The gravitational model.
         /// </summary>
-        public GravitationalModel Projection { get; set; }
+        public GravitationalModel  Projection   { get; }
 
         #endregion
 
-        #region Zero
+        #region Statics
 
         /// <summary>
-        /// Calculate the distance between two geo coordinates.
+        /// The zero coordinate.
         /// </summary>
-        /// <param name="Target">Another geo coordinate</param>
         public static GeoCoordinate Zero
-        {
-            get
-            {
-                return new GeoCoordinate(Latitude.Parse(0), Longitude.Parse(0));
-            }
-        }
 
-        #endregion
+            => new GeoCoordinate(Latitude. Parse(0),
+                                 Longitude.Parse(0));
 
         #endregion
 
         #region Constructor(s)
-
-        #region GeoCoordinate(Latitude, Longitude, Altitude = null)
 
         /// <summary>
         /// Create a new geographical coordinate or position on a map.
@@ -247,60 +170,38 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// <param name="Latitude">The Latitude (south to nord).</param>
         /// <param name="Longitude">The Longitude (parallel to equator).</param>
         /// <param name="Altitude">The (optional) Altitude.</param>
-        public GeoCoordinate(Latitude   Latitude,
-                             Longitude  Longitude,
-                             Altitude?  Altitude = null)
+        /// <param name="Projection">The gravitational model or projection of the geo coordinates.</param>
+        /// <param name="Planet">The planet.</param>
+        public GeoCoordinate(Latitude            Latitude,
+                             Longitude           Longitude,
+                             Altitude?           Altitude    = null,
+                             GravitationalModel  Projection  = GravitationalModel.WGS84,
+                             Planets             Planet      = Planets.Earth)
         {
 
             #region Initial checks
 
             if (Latitude  < MinLatitude)
-                throw new ArgumentException("The latitude value must be at least "  + MinLatitude + "°!");
+                throw new ArgumentException("The latitude value must be at least "  + MinLatitude + "°!",  nameof(Latitude));
 
             if (Latitude  > MaxLatitude)
-                throw new ArgumentException("The latitude value must be at most "   + MaxLatitude + "°!");
+                throw new ArgumentException("The latitude value must be at most "   + MaxLatitude + "°!",  nameof(Latitude));
 
             if (Longitude < MinLongitude)
-                throw new ArgumentException("The longitude value must be at least " + MinLongitude + "°!");
+                throw new ArgumentException("The longitude value must be at least " + MinLongitude + "°!", nameof(Longitude));
 
             if (Longitude > MaxLongitude)
-                throw new ArgumentException("The longitude value must be at most "  + MaxLongitude + "°!");
+                throw new ArgumentException("The longitude value must be at most "  + MaxLongitude + "°!", nameof(Longitude));
 
             #endregion
 
-            this.Latitude           = Latitude;
-            this.Longitude          = Longitude;
-            this.Altitude           = Altitude != null && Altitude.HasValue ? Altitude.Value : new Altitude(0);
-            this.Projection         = GravitationalModel.WGS84;
+            this.Latitude    = Latitude;
+            this.Longitude   = Longitude;
+            this.Altitude    = Altitude != null && Altitude.HasValue ? Altitude.Value : new Altitude(0);
+            this.Projection  = Projection;
+            this.Planet      = Planet;
 
         }
-
-        #endregion
-
-        #region GeoCoordinate(GeoString)
-
-        /// <summary>
-        /// Create a new geographical coordinate or position on a map.
-        /// </summary>
-        /// <param name="GeoString">A string representation of a geo coordinate.</param>
-        public GeoCoordinate(String GeoString)
-        {
-
-            #region Initial checks
-
-            if (GeoString == null || GeoString == "")
-                throw new ArgumentNullException("The string represenation of the geo coordinate must not be null or empty!");
-
-            #endregion
-
-            if (!TryParseString(GeoString, (lat, lng) => { this.Latitude = lat; this.Longitude = lng; }))
-                throw new ArgumentException("The string represenation of the geo coordinate is invalid!");
-
-            this.Projection = GravitationalModel.WGS84;
-
-        }
-
-        #endregion
 
         #endregion
 

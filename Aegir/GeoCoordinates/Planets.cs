@@ -19,34 +19,25 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
     /// <summary>
-    /// Geographical positions (e.g. for debugging).
+    /// Planets as GPS prefixes.
     /// </summary>
-    public static class GeoPositions
+    public enum Planets
     {
 
         /// <summary>
-        /// Geographical positions in Germany.
+        /// You home planet.
         /// </summary>
-        public static class Germany
-        {
+        Earth,
 
-            /// <summary>
-            /// The geographical position of Berlin, Germany.
-            /// </summary>
-            public static GeoCoordinate Berlin()
-            {
-                return new GeoCoordinate(new Latitude(52.500556), new Longitude(13.398889));
-            }
+        /// <summary>
+        /// Ok, not a real planet, but maybe the first rock in the sky having a Tesla charging station.
+        /// </summary>
+        Moon,
 
-            /// <summary>
-            /// The geographical position of Jena, Germany.
-            /// </summary>
-            public static GeoCoordinate Jena()
-            {
-                return new GeoCoordinate(new Latitude(50.929054), new Longitude(11.584074));
-            }
-
-        }
+        /// <summary>
+        /// The red planet.
+        /// </summary>
+        Mars
 
     }
 

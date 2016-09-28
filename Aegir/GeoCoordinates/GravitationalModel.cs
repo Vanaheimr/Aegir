@@ -15,26 +15,14 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
 namespace org.GraphDefined.Vanaheimr.Aegir
 {
 
-    /// <summary>
-    /// The Aegir ontology.
-    /// </summary>
-    public static class Semantics
+    public enum GravitationalModel
     {
-
-        public static String Measurements = "Measurements";
-        public static String Longitude    = "Longitude";
-        public static String Latitude     = "Latitude";
-        public static String Altitude     = "Altitude";
-
+        WGS84,
+        EGM96,
+        EGM2008
     }
 
 }
