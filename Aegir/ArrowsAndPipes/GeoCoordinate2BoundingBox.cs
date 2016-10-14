@@ -64,8 +64,9 @@ namespace org.GraphDefined.Vanaheimr.Aegir
                 if (GeoCoordinate.Longitude.Value < MinLng)
                     MinLng = GeoCoordinate.Longitude.Value;
 
-                if (GeoCoordinate.Altitude.Value < MinAlt)
-                    MinAlt = GeoCoordinate.Altitude.Value;
+                if (GeoCoordinate.Altitude.HasValue &&
+                    GeoCoordinate.Altitude.Value.Value < MinAlt)
+                    MinAlt = GeoCoordinate.Altitude.Value.Value;
 
 
                 if (GeoCoordinate.Latitude.Value > MaxLat)
@@ -74,8 +75,9 @@ namespace org.GraphDefined.Vanaheimr.Aegir
                 if (GeoCoordinate.Longitude.Value > MaxLng)
                     MaxLng = GeoCoordinate.Longitude.Value;
 
-                if (GeoCoordinate.Altitude.Value > MaxAlt)
-                    MaxAlt = GeoCoordinate.Altitude.Value;
+                if (GeoCoordinate.Altitude.HasValue &&
+                    GeoCoordinate.Altitude.Value.Value > MaxAlt)
+                    MaxAlt = GeoCoordinate.Altitude.Value.Value;
 
             }
 

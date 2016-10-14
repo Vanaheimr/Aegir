@@ -32,7 +32,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
     /// A geographical coordinate or position on a map.
     /// </summary>
     public class GeoCoordinate : IGeoCoordinate,
-                                 IEquatable<GeoCoordinate>,
+                                 IEquatable <GeoCoordinate>,
                                  IComparable<GeoCoordinate>
 
     {
@@ -141,7 +141,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// <summary>
         /// The Altitude.
         /// </summary>
-        public Altitude            Altitude     { get; }
+        public Altitude?           Altitude     { get; }
 
         /// <summary>
         /// The gravitational model.
@@ -197,7 +197,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             this.Latitude    = Latitude;
             this.Longitude   = Longitude;
-            this.Altitude    = Altitude != null && Altitude.HasValue ? Altitude.Value : new Altitude(0);
+            this.Altitude    = Altitude ?? new Altitude?();
             this.Projection  = Projection;
             this.Planet      = Planet;
 
@@ -243,7 +243,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             Longitude LongitudeValue;
             Altitude  AltitudeValue;
 
-            if (!Latitude.TryParse(LatitudeString, out LatitudeValue))
+            if (!Latitude. TryParse(LatitudeString, out LatitudeValue))
                 throw new Exception("Invalid 'latitude' value!");
 
             if (!Longitude.TryParse(LongitudeString, out LongitudeValue))
@@ -251,7 +251,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             if (AltitudeString != null)
             {
-                if (!Altitude.TryParse(AltitudeString, out AltitudeValue))
+                if (!Aegir.Altitude.TryParse(AltitudeString, out AltitudeValue))
                     throw new Exception("Invalid 'altitude' value!");
             }
             else
@@ -319,7 +319,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             if (!Longitude.TryParse(LongitudeString, out LongitudeValue))
                 return false;
 
-            if (!Altitude.TryParse(AltitudeString, out AltitudeValue))
+            if (!Aegir.Altitude.TryParse(AltitudeString, out AltitudeValue))
                 return false;
 
             GeoCoordinate = new GeoCoordinate(LatitudeValue, LongitudeValue, AltitudeValue);
@@ -794,13 +794,12 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// Returns a string representation of the given object.
         /// </summary>
         public override String ToString()
-        {
 
-            return String.Concat("Latitude = ",    Latitude.Value,
-                               ", Longitude = ", Longitude.Value,
-                               ", Altitude = ",  Altitude.Value);
-
-        }
+            => String.Concat("Latitude = ",   Latitude.Value,
+                             ", Longitude = ",  Longitude.Value,
+                             Altitude.HasValue
+                                 ? ", Altitude = " + Altitude.Value
+                                 : "");
 
         #endregion
 
