@@ -262,7 +262,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// </summary>
         /// <param name="Line">A line.</param>
         /// <param name="IntersectionGeoCoordinate">The intersection of both lines.</param>
-        /// <param name="InfiniteLines">Wether the lines should be treated as infinite or not.</param>
+        /// <param name="InfiniteLines">Whether the lines should be treated as infinite or not.</param>
         /// <returns>True if the lines intersect; False otherwise.</returns>
         public Boolean IntersectsWith(GeoLine Line, out GeoCoordinate IntersectionGeoCoordinate, Boolean InfiniteLines = false, Boolean ExcludeEdges = false)
         {
@@ -428,7 +428,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// </summary>
         /// <param name="Line1">A line.</param>
         /// <param name="Line2">A line.</param>
-        /// <param name="InfiniteLines">Wether the lines should be treated as infinite or not.</param>
+        /// <param name="InfiniteLines">Whether the lines should be treated as infinite or not.</param>
         /// <returns>True if the lines intersect; False otherwise.</returns>
         public Boolean IntersectsWith(GeoLine Line2, Boolean InfiniteLines = false, Boolean ExcludeEdges = false)
         {
@@ -445,7 +445,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// </summary>
         /// <param name="Line1">A line.</param>
         /// <param name="Line2">A line.</param>
-        /// <param name="InfiniteLines">Wether the lines should be treated as infinite or not.</param>
+        /// <param name="InfiniteLines">Whether the lines should be treated as infinite or not.</param>
         public GeoCoordinate Intersection(GeoLine Line2, Boolean InfiniteLines = false, Boolean ExcludeEdges = false)
         {
             GeoCoordinate Intersection;
