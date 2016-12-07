@@ -128,7 +128,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
                                                             Dictionary<UInt32,
                                                                        Tuple<List<ScreenXY>, StringBuilder>>>>();
 
-            GeoCoordinate GeoCoordinate = null;
+            GeoCoordinate GeoCoordinate = default(GeoCoordinate);
 
             #endregion
 

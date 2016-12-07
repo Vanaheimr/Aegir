@@ -271,7 +271,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             if (Line == null)
             {
-                IntersectionGeoCoordinate = null;
+                IntersectionGeoCoordinate = default(GeoCoordinate);
                 return false;
             }
 
@@ -290,7 +290,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
                     return true;
                 }
 
-                IntersectionGeoCoordinate = null;
+                IntersectionGeoCoordinate = default(GeoCoordinate);
                 return false;
 
             }
@@ -308,7 +308,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
                     return true;
                 }
 
-                IntersectionGeoCoordinate = null;
+                IntersectionGeoCoordinate = default(GeoCoordinate);
                 return false;
 
             }
@@ -319,7 +319,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             else if (this.Gradient == Line.Gradient)
             {
-                IntersectionGeoCoordinate = null;
+                IntersectionGeoCoordinate = default(GeoCoordinate);
                 return false;
             }
 
@@ -329,7 +329,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             else if (this.Gradient == -1*Line.Gradient)
             {
-                IntersectionGeoCoordinate = null;
+                IntersectionGeoCoordinate = default(GeoCoordinate);
                 return false;
             }
 

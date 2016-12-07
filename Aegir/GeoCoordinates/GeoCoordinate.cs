@@ -31,9 +31,9 @@ namespace org.GraphDefined.Vanaheimr.Aegir
     /// <summary>
     /// A geographical coordinate or position on a map.
     /// </summary>
-    public class GeoCoordinate : IGeoCoordinate,
-                                 IEquatable <GeoCoordinate>,
-                                 IComparable<GeoCoordinate>
+    public struct GeoCoordinate : IGeoCoordinate,
+                                  IEquatable <GeoCoordinate>,
+                                  IComparable<GeoCoordinate>
 
     {
 
@@ -278,7 +278,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             Latitude  LatitudeValue;
             Longitude LongitudeValue;
-            GeoCoordinate = null;
+            GeoCoordinate = default(GeoCoordinate);
 
             if (!Latitude. TryParse(LatitudeString,  out LatitudeValue))
                 return false;
@@ -311,7 +311,7 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             Latitude  LatitudeValue;
             Longitude LongitudeValue;
             Altitude  AltitudeValue;
-            GeoCoordinate = null;
+            GeoCoordinate = default(GeoCoordinate);
 
             if (!Latitude. TryParse(LatitudeString,  out LatitudeValue))
                 return false;
@@ -342,10 +342,10 @@ namespace org.GraphDefined.Vanaheimr.Aegir
 
             GeoCoordinate GeoCoordinate;
 
-            if (GeoCoordinate.TryParseString(GeoString, out GeoCoordinate))
+            if (TryParseString(GeoString, out GeoCoordinate))
                 return GeoCoordinate;
 
-            return null;
+            return default(GeoCoordinate);
 
         }
 
@@ -667,15 +667,12 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         {
 
             if (Object == null)
-                throw new ArgumentNullException("The given Object must not be null!");
+                throw new ArgumentNullException(nameof(Object), "The given Object must not be null!");
 
-            // Check if the given object can be casted to a GeoCoordinate
-            var GeoCoordinate = Object as GeoCoordinate;
+            if (!(Object is GeoCoordinate))
+                throw new ArgumentException("The given object is not a GeoCoordinate!", nameof(Object));
 
-            if ((Object) GeoCoordinate == null)
-                throw new ArgumentException("The given object is not a GeoCoordinate!");
-
-            return CompareTo(GeoCoordinate);
+            return CompareTo((GeoCoordinate) Object);
 
         }
 
@@ -690,12 +687,12 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         public Int32 CompareTo(GeoCoordinate GeoCoordinate)
         {
 
-            var lat = GeoCoordinate.Latitude.Value.CompareTo(this.Latitude.Value);
+            var lat = GeoCoordinate.Latitude.Value.CompareTo(Latitude.Value);
 
             if (lat != 0)
                 return lat;
 
-            return GeoCoordinate.Longitude.Value.CompareTo(this.Longitude.Value);
+            return GeoCoordinate.Longitude.Value.CompareTo(Longitude.Value);
 
         }
 
@@ -718,12 +715,10 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             if (Object == null)
                 return false;
 
-            // Check if the given object is an GeoCoordinate.
-            var GeoCoordinate = Object as GeoCoordinate;
-            if ((Object) GeoCoordinate == null)
+            if (!(Object is GeoCoordinate))
                 return false;
 
-            return this.Equals(GeoCoordinate);
+            return Equals((GeoCoordinate) Object);
 
         }
 
@@ -739,10 +734,10 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         public Boolean Equals(IGeoCoordinate IGeoCoordinate)
         {
 
-            if (IGeoCoordinate.Latitude. Value != this.Latitude. Value)
+            if (IGeoCoordinate.Latitude. Value != Latitude. Value)
                 return false;
 
-            if (IGeoCoordinate.Longitude.Value != this.Longitude.Value)
+            if (IGeoCoordinate.Longitude.Value != Longitude.Value)
                 return false;
 
             return true;
@@ -761,10 +756,10 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         public Boolean Equals(GeoCoordinate GeoCoordinate)
         {
 
-            if (Math.Abs(GeoCoordinate.Latitude.Value  - this.Latitude.Value) > 0.00001)
+            if (GeoCoordinate.Latitude.Value  != Latitude.Value)
                 return false;
 
-            if (Math.Abs(GeoCoordinate.Longitude.Value - this.Longitude.Value) > 0.00001)
+            if (GeoCoordinate.Longitude.Value != Longitude.Value)
                 return false;
 
             return true;
@@ -783,7 +778,13 @@ namespace org.GraphDefined.Vanaheimr.Aegir
         /// <returns></returns>
         public override Int32 GetHashCode()
         {
-            return Latitude.GetHashCode() << 1 ^ Longitude.GetHashCode();
+            unchecked
+            {
+
+                return Latitude. GetHashCode() * 5 ^
+                       Longitude.GetHashCode();
+
+            }
         }
 
         #endregion

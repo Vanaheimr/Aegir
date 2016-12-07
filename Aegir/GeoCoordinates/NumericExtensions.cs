@@ -68,17 +68,6 @@ namespace org.GraphDefined.Vanaheimr.Aegir
             return Longitude.Value * (180 / Math.PI);
         }
 
-        public static Boolean IsValid(this GeoCoordinate Coordinate)
-        {
-
-            if (Coordinate == null)
-                return false;
-
-            return (Coordinate.Latitude. Value != 0.0 &&
-                    Coordinate.Longitude.Value != 0.0);
-
-        }
-
     }
 
 }
